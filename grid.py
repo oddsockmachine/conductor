@@ -114,17 +114,16 @@ class Display(object):
         self.print_grid(select_column(display_notes(NOTE_GRID, CURR_PAGE), 3))
 
     def draw(self):
-        # k = 0
+        # self.k = 0
         # cursor_x = 0
         # cursor_y = 0
-        # while (k != ord('q')):
-        self.k = self.scr.getch()
-        if (self.k == ord('q')):
-            return
+        # while (self.k != ord('q')):
+        # if (self.k == ord('q')):
+        #     return
 
         # Initialization
-        self.scr.clear()
-        height, width = 32, 48
+        # self.scr.clear()
+        height, width = 16, 46
 
         if self.k == curses.KEY_DOWN:
             self.cursor_y = self.cursor_y + 1
@@ -145,7 +144,7 @@ class Display(object):
 
         for x in range(0,48,3):
             for y in range(0,16,1):
-                self.scr.addstr(y, x, '░░')
+                self.scr.addstr(y, x, '░░')#, curses.color_pair(4))
         # self.scr.move(self.cursor_y, self.cursor_x)
         self.scr.addstr(self.cursor_y, self.cursor_x, '▓▓')#, curses.color_pair(1))
 
@@ -153,7 +152,7 @@ class Display(object):
         self.scr.refresh()
 
         # Wait for next input
-        print(self.k)
+        self.k = self.scr.getch()
         return self.k
 
 def main(stdscr):
@@ -163,6 +162,7 @@ def main(stdscr):
     curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
+    curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_BLACK)
     display_grid = Display(16,16,stdscr)
     k = 0
     while (k != ord('q')):
