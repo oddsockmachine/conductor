@@ -4,8 +4,8 @@ class Note_Grid(object):
     """docstring for Note_Grid."""
     def __init__(self, bars=4, height=H):
         super(Note_Grid, self).__init__()
-        self.bars = min(bars, 4)  # Option to reduce number of bars < 4
-        self.height = H
+        self.bars = min(bars, 8)  # Option to reduce number of bars < 4
+        self.height = height
         self.width = self.bars * 4
         # A W x H grid to store notes on
         self.note_grid = [[LED_BLANK for x in range(self.width)] for y in range(self.height)]
@@ -14,31 +14,42 @@ class Note_Grid(object):
         # self.key = "pentatonic"
         # self.octave = 2  # Starting octave
 
-    def touch_note(self, x, y, on_off):
+    # def touch_note(self, x, y, on_off):
+    def validate_touch(self, x, y):
         if x > self.width:
             logging.warning('Requested {} > {}'.format(x, self.width))
-            return
+            return False
         if y > H:
             logging.warning('Requested {} > {}'.format(y, self.height))
-            return
+            return False
         if y < 0:
             logging.warning('Requested {} < 0'.format(y))
-            return
+            return False
         if x < 0:
             logging.warning('Requested {} < 0'.format(y))
-            return
-        if on_off not in [NOTE_ON, NOTE_OFF]:
-            logging.warning('Note state {} not valid'.format(on_off))
-            return
-        self.note_grid[x][y] = on_off
-        pass
+            return False
+        return True
+
+    def touch_note(self, x, y):
+        if not self.validate_touch(x, y):
+            return False
+        curr_note = self.note_grid[x][y]
+        if curr_note == NOTE_ON:
+            self.note_grid[x][y] = NOTE_OFF
+        if curr_note == NOTE_OFF:
+            self.note_grid[x][y] = NOTE_ON
+        return True
 
     def add_note(self, x, y):
-        self.touch_note(x, y, NOTE_ON)
+        if not self.validate_touch(x, y):
+            return False
+        self.note_grid[x][y] = NOTE_ON
         return
 
     def del_note(self, x, y):
-        self.touch_note(x, y, NOTE_OFF)
+        if not self.validate_touch(x, y):
+            return False
+        self.note_grid[x][y] = NOTE_OFF
         return
 
     def get_notes_from_beat(self, beat):

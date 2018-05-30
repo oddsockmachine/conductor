@@ -4,3 +4,4 @@ class Sequencer(object):
     def __init__(self, arg):
         super(Sequencer, self).__init__()
         self.arg = arg
+        

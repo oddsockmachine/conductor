@@ -15,6 +15,7 @@ Display
     Box
     Etc
   Sequencer
+    current_visible_instrument
     tempo
     beat/bar number
     Instruments
