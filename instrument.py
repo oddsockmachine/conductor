@@ -1,5 +1,5 @@
 #coding=utf-8
-
+# from time import sleep
 from constants import *
 from note_grid import Note_Grid
 
@@ -103,7 +103,7 @@ class Instrument(object):
                 self.curr_page_num += 1
                 print("next page")
                 self.curr_page_num = self.curr_page_num % len(self.pages)
-        print("b{}/{}, p{}/{}, r{}/{}".format(self.beat_position, self.width, self.curr_page_num+1, len(self.pages), self.curr_rept_num+1, self.get_curr_page().repeats))
+        # print("b{}/{}, p{}/{}, r{}/{}".format(self.beat_position, self.width, self.curr_page_num+1, len(self.pages), self.curr_rept_num+1, self.get_curr_page().repeats))
         return
 
 ins = Instrument("foo", "a", "pentatonic", 2)
@@ -113,16 +113,23 @@ ins.touch_note(6,6)
 ins.touch_note(6,6)
 ins.add_note(1,1)
 ins.add_note(0,0)
+ins.inc_curr_page_repeats()
+
+ins.inc_curr_page_repeats()
+
 ins.print_curr_page_notes()
 ins.add_page(1)
 ins.add_page(2)
 for i in range(20):
     ins.step_beat()
-ins.inc_curr_page_repeats()
+    ins.print_curr_page_notes()
+    # sleep(0.1)
+# ins.inc_curr_page_repeats()
 
 for i in range(40):
     ins.step_beat()
-    # ins.print_curr_page_notes()
+    ins.print_curr_page_notes()
+    # sleep(0.1)
 
 # ins.curr_page_num = 1
 # ins.touch_note(15,15)
