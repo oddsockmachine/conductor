@@ -10,12 +10,7 @@ locale.setlocale(locale.LC_ALL, '')
 # curses.cbreak()
 # stdscr.keypad(True)
 
-LED_BLANK = 0
-LED_SELECT = 1
-LED_CURSOR = 2
-LED_ACTIVE = 3
-NOTE_OFF = 0
-NOTE_ON = 3
+from constants import *
 
 CURR_PAGE = 0
 
@@ -78,15 +73,26 @@ class Note_Grid(object):
         self.name = page_name
         self.note_grid = [[LED_BLANK for x in range(self.width)] for y in range(self.height)]
 
-class Select_Grid(object):
+class Instrument(object):
+    pass
+
+class Sequencer(object):
+    """docstring for Sequencer."""
+    def __init__(self, arg):
+        super(Sequencer, self).__init__()
+        self.arg = arg
+
+
+class Selector(object):
     def __init__(self):
         self.rows_selected = []
         self.columns_selected = []
 
-class Cursor_Grid(object):
+class Cursor(object):
     def __init__(self):
         self.x = -1
         self.y = -1
+        self.visible = True
 
 class Display(object):
     def __init__(self, h, w, scr):
@@ -101,6 +107,7 @@ class Display(object):
         self.k = 1
         self.cursor_x = 0
         self.cursor_y = 0
+        self.cursor = Cursor()
 
 
     def print_grid(self):
