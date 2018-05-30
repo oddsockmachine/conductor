@@ -99,6 +99,7 @@ class Instrument(object):
             print("page done")
             self.curr_rept_num += 1
             if self.curr_rept_num == self.get_curr_page().repeats:
+                self.curr_rept_num = 0
                 self.curr_page_num += 1
                 print("next page")
                 self.curr_page_num = self.curr_page_num % len(self.pages)
