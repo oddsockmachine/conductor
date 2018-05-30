@@ -40,3 +40,5 @@ Display
 
 TODO:
 instrument cell to midi
+unit test for all classes
+make sequencer run in thread

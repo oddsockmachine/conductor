@@ -1,3 +1,4 @@
+#coding=utf-8
 from time import sleep
 from constants import *
 from instrument import Instrument
@@ -9,7 +10,7 @@ class Sequencer(object):
         self.instruments = [Instrument("foo", "a", "pentatonic", 2)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         self.max_num_instruments = MAX_INSTRUMENTS
-        self.tempo = 60
+        self.tempo = 20
         self.beat_position = 0
         self.height = H
         self.width = W
@@ -43,12 +44,12 @@ class Sequencer(object):
         return
 
     def step_beat(self):
-        sleep(0.1)
+        sleep(1.0/self.tempo)
         self.beat_position += 1
         self.beat_position %= self.width
         for ins in self.instruments:
             ins.step_beat(self.beat_position)
-            ins.print_curr_page_notes()
+            # ins.print_curr_page_notes()
         pass
 
     def get_curr_instrument(self):
@@ -57,28 +58,25 @@ class Sequencer(object):
     def touch_note(self, x, y):
         self.get_curr_instrument().touch_note(x, y)
 
+    def output(self, scr):
+        note_grid = self.get_curr_instrument().get_curr_page_grid()
+        display = {0: '. ', 1:'░░', 2:'▒▒', 3:'▓▓'}
+        for r, row in enumerate(note_grid):  # row counter
+            for c, cell in enumerate(row):  # column counter
+                if c == self.beat_position: # and display[y] != LED_ACTIVE:
+                    scr.addstr(H-r, c*2, display[LED_ACTIVE])#, curses.color_pair(4))
+                    # print(display[LED_SELECT]),
+                else:
+                    # print(display[cell]),
+                    scr.addstr(H-r, c*2, display[LED_SELECT])#, curses.color_pair(4))
+        scr.refresh()
+        self.step_beat()
+        return
 
-seq = Sequencer()
-seq.next_instrument()
-seq.prev_instrument()
-seq.prev_instrument()
-seq.touch_note(3,3)
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
-seq.step_beat()
+# seq = Sequencer()
+# seq.next_instrument()
+# seq.prev_instrument()
+# seq.prev_instrument()
+# seq.touch_note(3,3)
+# for i in range(20):
+#     seq.step_beat()
