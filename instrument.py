@@ -13,11 +13,16 @@ class Instrument(object):
         self.width = self.bars * 4
         print self.bars, self.width
         self.curr_page_num = 0
+        self.curr_rept_num = 0
         self.beat_position = 0
         self.pages = [Note_Grid(self.bars, self.height)]
         self.key = "a"
         self.scale = "pentatonic"
         self.octave = 2  # Starting octave
+
+    def get_curr_page(self):
+        return self.pages[self.curr_page_num]
+
 
     def add_page(self, pos=-1):
         '''Add or insert a new blank page into the list of pages'''
@@ -33,7 +38,7 @@ class Instrument(object):
 
     def touch_note(self, x, y):
         '''touch the x/y cell on the current page'''
-        page = self.pages[self.curr_page_num]
+        page = self.get_curr_page()
         if not page.validate_touch(x, y):
             return False
         page.touch_note(x, y)
@@ -42,18 +47,18 @@ class Instrument(object):
     def add_note(self, x, y, page=False):
         '''force-on a x/y cell on the current page'''
         # if not page:
-        #     page = self.pages[self.curr_page_num]
+        #     page = self.get_curr_page()
         # if page > len(self.pages):
         #     logging.warning('Requested page {} > {}'.format(page, len(self.pages)))
         #     return False
-        page = self.pages[self.curr_page_num]
+        page = self.get_curr_page()
         if not page.validate_touch(x, y):
             return False
         page.add_note(x, y)
         return
 
     def del_note(self, x, y):
-        page = self.pages[self.curr_page_num]
+        page = self.get_curr_page()
         if not page.validate_touch(x, y):
             return False
         page.del_note(x, y)
@@ -63,7 +68,7 @@ class Instrument(object):
         return
 
     def get_curr_page_grid(self):
-        page = self.pages[self.curr_page_num]
+        page = self.get_curr_page()
         return page.note_grid
 
     def print_curr_page_notes(self):
@@ -78,8 +83,26 @@ class Instrument(object):
             print('')
         print('')
 
+    def inc_curr_page_repeats(self):
+        print("inc!")
+        self.get_curr_page().inc_repeats()
+        return
+
+    def dec_curr_page_repeats(self):
+        self.get_curr_page().dec_repeats()
+        return
+
     def step_beat(self):
         self.beat_position += 1
+        if self.beat_position == self.width:
+            self.beat_position = 0
+            print("page done")
+            self.curr_rept_num += 1
+            if self.curr_rept_num == self.get_curr_page().repeats:
+                self.curr_page_num += 1
+                print("next page")
+                self.curr_page_num = self.curr_page_num % len(self.pages)
+        print("b{}/{}, p{}/{}, r{}/{}".format(self.beat_position, self.width, self.curr_page_num+1, len(self.pages), self.curr_rept_num+1, self.get_curr_page().repeats))
         return
 
 ins = Instrument("foo", "a", "pentatonic", 2)
@@ -92,12 +115,16 @@ ins.add_note(0,0)
 ins.print_curr_page_notes()
 ins.add_page(1)
 ins.add_page(2)
-for i in range(3):
+for i in range(20):
     ins.step_beat()
-    ins.print_curr_page_notes()
+ins.inc_curr_page_repeats()
 
-ins.curr_page_num = 1
-ins.touch_note(15,15)
-ins.print_curr_page_notes()
-ins.curr_page_num = 2
-ins.print_curr_page_notes()
+for i in range(40):
+    ins.step_beat()
+    # ins.print_curr_page_notes()
+
+# ins.curr_page_num = 1
+# ins.touch_note(15,15)
+# ins.print_curr_page_notes()
+# ins.curr_page_num = 2
+# ins.print_curr_page_notes()

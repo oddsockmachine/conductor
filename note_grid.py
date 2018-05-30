@@ -1,7 +1,7 @@
 from constants import *
 
 class Note_Grid(object):
-    """docstring for Note_Grid."""
+    """A grid of notes, also a page of music."""
     def __init__(self, bars=4, height=H):
         super(Note_Grid, self).__init__()
         self.bars = min(bars, 8)  # Option to reduce number of bars < 4
@@ -13,6 +13,14 @@ class Note_Grid(object):
         # self.key = "A"
         # self.key = "pentatonic"
         # self.octave = 2  # Starting octave
+
+    def inc_repeats(self):
+        self.repeats += 1
+        return
+
+    def dec_repeats(self):
+        self.repeats -= 1
+        return
 
     # def touch_note(self, x, y, on_off):
     def validate_touch(self, x, y):
