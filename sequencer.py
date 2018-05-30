@@ -1,7 +1,84 @@
+from time import sleep
+from constants import *
+from instrument import Instrument
 
 class Sequencer(object):
     """docstring for Sequencer."""
-    def __init__(self, arg):
+    def __init__(self):
         super(Sequencer, self).__init__()
-        self.arg = arg
-        
+        self.instruments = [Instrument("foo", "a", "pentatonic", 2)]  # limit to 16 midi channels
+        self.current_visible_instrument = 0
+        self.max_num_instruments = MAX_INSTRUMENTS
+        self.tempo = 60
+        self.beat_position = 0
+        self.height = H
+        self.width = W
+    def inc_tempo(self, amt):
+        self.tempo += amt
+        return
+
+    def dec_tempo(self, amt):
+        self.tempo -= amt
+        return
+
+    def add_instrument(name, key, scale, octave, bars=W/4, height=H):
+        if len(self.instruments) == 16:
+            logging.warning('Already at 16 instruments')
+            return False
+        self.instruments.append(Instrument(name, key, scale, octave, bars, height))
+        return
+
+    def next_instrument(self):
+        if self.current_visible_instrument == len(self.instruments):
+            logging.warning('Reached end of instruments')
+            return False
+        self.current_visible_instrument += 1
+        return
+
+    def prev_instrument(self):
+        if self.current_visible_instrument == 0:
+            logging.warning('Reached start of instruments')
+            return False
+        self.current_visible_instrument -= 1
+        return
+
+    def step_beat(self):
+        sleep(0.1)
+        self.beat_position += 1
+        self.beat_position %= self.width
+        for ins in self.instruments:
+            ins.step_beat(self.beat_position)
+            ins.print_curr_page_notes()
+        pass
+
+    def get_curr_instrument(self):
+        return self.instruments[self.current_visible_instrument]
+
+    def touch_note(self, x, y):
+        self.get_curr_instrument().touch_note(x, y)
+
+
+seq = Sequencer()
+seq.next_instrument()
+seq.prev_instrument()
+seq.prev_instrument()
+seq.touch_note(3,3)
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()
+seq.step_beat()

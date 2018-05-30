@@ -11,3 +11,5 @@ NOTE_ON = 3
 
 W = 16
 H = 16
+
+MAX_INSTRUMENTS = 16

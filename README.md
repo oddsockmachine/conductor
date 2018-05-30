@@ -37,3 +37,6 @@ Display
     Panes
       full
       half
+
+TODO:
+instrument cell to midi
