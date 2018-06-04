@@ -2,18 +2,23 @@
 from time import sleep
 from constants import *
 from instrument import Instrument
+# from multiprocessing.connection import Listener
 
 class Sequencer(object):
     """docstring for Sequencer."""
-    def __init__(self):
+    def __init__(self, bars=4):
         super(Sequencer, self).__init__()
-        self.instruments = [Instrument("foo", "a", "pentatonic", 2)]  # limit to 16 midi channels
+        self.instruments = [Instrument("foo", "a", "pentatonic", octave=2, bars=bars)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         self.max_num_instruments = MAX_INSTRUMENTS
         self.tempo = 20
         self.beat_position = 0
         self.height = H
-        self.width = W
+        self.width = bars*4
+        address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
+        # self.listener = Listener(address, authkey='secret password')
+        # self.conn = None
+
     def inc_tempo(self, amt):
         self.tempo += amt
         return
@@ -49,7 +54,7 @@ class Sequencer(object):
         self.beat_position %= self.width
         for ins in self.instruments:
             ins.step_beat(self.beat_position)
-            # ins.print_curr_page_notes()
+            ins.print_curr_page_notes()
         pass
 
     def get_curr_instrument(self):
@@ -73,10 +78,38 @@ class Sequencer(object):
         self.step_beat()
         return
 
-# seq = Sequencer()
-# seq.next_instrument()
-# seq.prev_instrument()
-# seq.prev_instrument()
-# seq.touch_note(3,3)
-# for i in range(20):
-#     seq.step_beat()
+    # def run(self):
+    #     self.conn = self.listener.accept()
+    #     print("Connected")
+    #     while True:
+    #         msg = self.conn.recv()
+    #         self.step_beat()
+    #         # print(msg)
+    #         if msg == 'close':
+    #             self.conn.close()
+    #             break
+
+
+
+if __name__ == '__main__':
+    seq = Sequencer(bars=4)
+    seq.touch_note(1,3)
+    # seq.run()
+    # try:
+    #     print("foo")
+    #     # sequencer.run()
+    # except KeyboardInterrupt:
+    #     print 'Interrupted'
+    #     # try:
+    #     sequencer.listener.close()
+    #     sys.exit(0)
+    #     # except SystemExit:
+    #     #     os._exit(0)
+
+
+    seq.next_instrument()
+    seq.prev_instrument()
+    seq.prev_instrument()
+    seq.touch_note(3,3)
+    for i in range(20):
+        seq.step_beat()

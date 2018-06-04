@@ -5,11 +5,11 @@ from note_grid import Note_Grid
 
 class Instrument(object):
     """docstring for Instrument."""
-    def __init__(self, name, key, scale, octave, bars=W/4, height=H):
+    def __init__(self, name, key, scale, octave=2, bars=W/4, height=H):
         super(Instrument, self).__init__()
         self.name = name
         self.height = height
-        self.bars = min(bars, W/4)  # Option to reduce number of bars < 4
+        self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
         self.width = self.bars * 4
         self.curr_page_num = 0
         self.curr_rept_num = 0
