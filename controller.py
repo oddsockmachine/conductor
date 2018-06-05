@@ -1,6 +1,7 @@
 from sequencer import Sequencer
 from time import sleep, time
 import curses
+from constants import *
 
 # TODO
 # Create nice GUI, overlay, buttons, info etc on screen
@@ -16,23 +17,26 @@ class Controller(object):
         self.sequencer = Sequencer()
         self.last = time()
         self.stdscr = stdscr
-
+        self.cursor_x = 0
+        self.cursor_y = 0
 
 
     def run(self):
         while True:
             if self.get_clock_tick():
                 self.sequencer.step_beat()
-                self.sequencer.output(self.stdscr)
+                self.draw()
             key = self.get_keys()
             if key:
                 # Deal with key input
                 # if key == ord('q'):
-                exit()
-                # self.sequencer.output(self.stdscr)
-                # self.stdscr.addstr(str(key) + ' ')
+                self.sequencer.touch_note(10,4)
+
+                # return()
+                self.draw()
+                self.stdscr.addstr(str(key) + ' ')
                 pass
-            sleep(0.05)
+            sleep(0.01)
             self.stdscr.refresh()
         pass
 
@@ -52,11 +56,20 @@ class Controller(object):
             return True
         return False
 
+    def draw(self):
+        self.sequencer.output(self.stdscr)
+        self.stdscr.addstr(H-self.cursor_x, self.cursor_y*2, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
+
+
 
 def main(stdscr):
     stdscr.nodelay(1)
     controller = Controller(stdscr)
+    controller.sequencer.touch_note(3,3)
+    controller.sequencer.touch_note(10,4)
+    controller.sequencer.touch_note(4,6)
     controller.run()
+
 
 if __name__ == '__main__':
     curses.wrapper(main)

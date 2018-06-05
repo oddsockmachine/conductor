@@ -9,6 +9,8 @@ LED_ACTIVE = 3
 NOTE_OFF = 0
 NOTE_ON = 3
 
+DISPLAY = {0: '. ', 1:'░░', 2:'▒▒', 3:'▓▓'}
+
 W = 16
 H = 16
 

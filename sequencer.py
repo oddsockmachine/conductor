@@ -70,15 +70,16 @@ class Sequencer(object):
 
     def output(self, scr):
         note_grid = self.get_curr_instrument().get_curr_page_grid()
-        display = {0: '. ', 1:'░░', 2:'▒▒', 3:'▓▓'}
         for r, row in enumerate(note_grid):  # row counter
             for c, cell in enumerate(row):  # column counter
-                if c == self.beat_position: # and display[y] != LED_ACTIVE:
-                    scr.addstr(H-r, c*2, display[LED_ACTIVE])#, curses.color_pair(4))
-                    # print(display[LED_SELECT]),
+                if cell == NOTE_ON:
+                    scr.addstr(H-r, c*2, DISPLAY[NOTE_ON])#, curses.color_pair(4))
+                elif c == self.beat_position: # and DISPLAY[y] != LED_ACTIVE:
+                    scr.addstr(H-r, c*2, DISPLAY[LED_SELECT])#, curses.color_pair(4))
+                    # print(DISPLAY[LED_SELECT]),
                 else:
-                    # print(display[cell]),
-                    scr.addstr(H-r, c*2, display[LED_SELECT])#, curses.color_pair(4))
+                    # print(DISPLAY[cell]),
+                    scr.addstr(H-r, c*2, DISPLAY[LED_BLANK])#, curses.color_pair(4))
         # scr.refresh()
         # self.step_beat()
         return
