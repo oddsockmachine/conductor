@@ -18,8 +18,7 @@ class Controller(object):
         self.sequencer = Sequencer()
         self.last = time()
         self.stdscr = stdscr
-        self.cursor_x = 0
-        self.cursor_y = 0
+        self.cursor = Cursor()
 
 
     def run(self):
@@ -45,19 +44,15 @@ class Controller(object):
         if c == -1:
             return None
         if c == curses.KEY_DOWN:
-            self.cursor_y = self.cursor_y - 1
+            self.cursor.move(0, -1)
         elif c == curses.KEY_UP:
-            self.cursor_y = self.cursor_y + 1
+            self.cursor.move(0, 1)
         elif c == curses.KEY_RIGHT:
-            self.cursor_x = self.cursor_x + 1
+            self.cursor.move(1, 0)
         elif c == curses.KEY_LEFT:
-            self.cursor_x = self.cursor_x - 1
-        self.cursor_x = max(0, self.cursor_x)
-        self.cursor_x = min(W-1, self.cursor_x)
-        self.cursor_y = max(0, self.cursor_y)
-        self.cursor_y = min(H-1, self.cursor_y)
+            self.cursor.move(-1, 0)
         if c == 10:
-            self.sequencer.touch_note(self.cursor_x, self.cursor_y)
+            self.sequencer.touch_note(self.cursor.x, self.cursor.y)
         if c == ord('q'):
             exit()
         return str(c)
@@ -74,8 +69,9 @@ class Controller(object):
 
     def draw(self):
         self.sequencer.draw(self.stdscr)
-        self.stdscr.addstr(H-self.cursor_y-1, self.cursor_x*2, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
-        self.stdscr.addstr(20, 40, "x{}, y{}".format(self.cursor_x, self.cursor_y))#, curses.color_pair(4))
+        # self.stdscr.addstr(H-self.cursor_y-1, self.cursor_x*2, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
+        self.cursor.draw(self.stdscr)
+        self.stdscr.addstr(20, 40, "x{}, y{}  ".format(self.cursor.x, self.cursor.y))#, curses.color_pair(4))
 
 
 
