@@ -1,4 +1,5 @@
 from sequencer import Sequencer
+from cursor import Cursor
 from time import sleep, time
 import curses
 from constants import *
@@ -44,9 +45,9 @@ class Controller(object):
         if c == -1:
             return None
         if c == curses.KEY_DOWN:
-            self.cursor_y = self.cursor_y + 1
-        elif c == curses.KEY_UP:
             self.cursor_y = self.cursor_y - 1
+        elif c == curses.KEY_UP:
+            self.cursor_y = self.cursor_y + 1
         elif c == curses.KEY_RIGHT:
             self.cursor_x = self.cursor_x + 1
         elif c == curses.KEY_LEFT:
@@ -57,6 +58,8 @@ class Controller(object):
         self.cursor_y = min(H-1, self.cursor_y)
         if c == 10:
             self.sequencer.touch_note(self.cursor_x, self.cursor_y)
+        if c == ord('q'):
+            exit()
         return str(c)
 
     def get_clock_tick(self):
@@ -70,7 +73,7 @@ class Controller(object):
         return False
 
     def draw(self):
-        self.sequencer.output(self.stdscr)
+        self.sequencer.draw(self.stdscr)
         self.stdscr.addstr(H-self.cursor_y-1, self.cursor_x*2, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
         self.stdscr.addstr(20, 40, "x{}, y{}".format(self.cursor_x, self.cursor_y))#, curses.color_pair(4))
 

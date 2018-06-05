@@ -67,7 +67,7 @@ class Sequencer(object):
     def touch_note(self, x, y):
         self.get_curr_instrument().touch_note(x, y)
 
-    def output(self, scr):
+    def draw(self, scr):
         note_grid = self.get_curr_instrument().get_curr_page_grid()
         for r, row in enumerate(note_grid):  # row counter
             for c, cell in enumerate(row):  # column counter
