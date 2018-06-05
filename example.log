@@ -1,124 +1,239 @@
-WARNING:root:Beat 2 > 16
-WARNING:root:Requested page <note_grid.Note_Grid object at 0x10f085310> > 1
-WARNING:root:Requested page <note_grid.Note_Grid object at 0x10a1b8350> > 1
-WARNING:root:Requested page <note_grid.Note_Grid object at 0x109b46350> > 1
-WARNING:root:Requested page <note_grid.Note_Grid object at 0x106116390> > 1
-WARNING:root:Requested page <note_grid.Note_Grid object at 0x10fce4390> > 1
-WARNING:root:Requested page <note_grid.Note_Grid object at 0x10fce4390> > 1
-WARNING:root:Requested 15 > 8
-WARNING:root:Requested 15 > 8
-WARNING:root:Requested 15 > 8
-WARNING:root:Requested 15 > 8
-WARNING:root:Requested 15 > 8
-WARNING:root:Requested 15 > 12
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:0
+WARNING:root:1
+WARNING:root:1
+WARNING:root:2
+WARNING:root:2
+WARNING:root:3
+WARNING:root:3
 WARNING:root:Reached end of instruments
+WARNING:root:3
 WARNING:root:Reached end of instruments
+WARNING:root:3
 WARNING:root:Reached end of instruments
-WARNING:root:Reached start of instruments
+WARNING:root:3
 WARNING:root:Reached end of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
+WARNING:root:3
 WARNING:root:Reached end of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
+WARNING:root:3
 WARNING:root:Reached end of instruments
+WARNING:root:prev
+WARNING:root:3
+WARNING:root:2
+WARNING:root:prev
+WARNING:root:2
+WARNING:root:1
+WARNING:root:prev
+WARNING:root:1
+WARNING:root:0
+WARNING:root:prev
+WARNING:root:0
 WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
 WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:0
+WARNING:root:1
+WARNING:root:1
+WARNING:root:2
+WARNING:root:2
+WARNING:root:3
+WARNING:root:3
 WARNING:root:Reached end of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:3
+WARNING:root:2
+WARNING:root:prev
+WARNING:root:2
+WARNING:root:1
+WARNING:root:prev
+WARNING:root:1
+WARNING:root:0
+WARNING:root:0
+WARNING:root:1
+WARNING:root:1
+WARNING:root:2
+WARNING:root:2
+WARNING:root:3
+WARNING:root:3
 WARNING:root:Reached end of instruments
+WARNING:root:prev
+WARNING:root:3
+WARNING:root:2
+WARNING:root:prev
+WARNING:root:2
+WARNING:root:1
+WARNING:root:prev
+WARNING:root:1
+WARNING:root:0
+WARNING:root:prev
+WARNING:root:0
 WARNING:root:Reached start of instruments
+WARNING:root:prev
+WARNING:root:0
 WARNING:root:Reached start of instruments
+WARNING:root:0
+WARNING:root:1
+WARNING:root:1
+WARNING:root:2
+WARNING:root:2
+WARNING:root:3
+WARNING:root:3
 WARNING:root:Reached end of instruments
+WARNING:root:prev
+WARNING:root:3
+WARNING:root:2
+WARNING:root:prev
+WARNING:root:2
+WARNING:root:1
+WARNING:root:prev
+WARNING:root:1
+WARNING:root:0
+WARNING:root:prev
+WARNING:root:0
 WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
+WARNING:root:0
+WARNING:root:1
+WARNING:root:1
+WARNING:root:2
+WARNING:root:2
+WARNING:root:3
+WARNING:root:3
 WARNING:root:Reached end of instruments
+WARNING:root:prev
+WARNING:root:3
+WARNING:root:2
+WARNING:root:prev
+WARNING:root:2
+WARNING:root:1
+WARNING:root:prev
+WARNING:root:1
+WARNING:root:0
+WARNING:root:prev
+WARNING:root:0
 WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
+WARNING:root:0
+WARNING:root:1
+WARNING:root:1
+WARNING:root:2
+WARNING:root:2
+WARNING:root:3
+WARNING:root:3
 WARNING:root:Reached end of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Reached start of instruments
-WARNING:root:Requested 20 > 16
-WARNING:root:Requested 30 > 16
-WARNING:root:Requested 30 > 16
-WARNING:root:Requested 30 > 16
-WARNING:root:Requested 30 > 16
-WARNING:root:Requested 30 > 16
-WARNING:root:Requested 30 > 16
-WARNING:root:Requested 30 > 16
-WARNING:root:Requested 22 > 16
-WARNING:root:Requested 22 > 16
-WARNING:root:Requested 22 > 16
+WARNING:root:prev
+WARNING:root:3
+WARNING:root:2
+WARNING:root:prev
+WARNING:root:2
+WARNING:root:1
+WARNING:root:prev
+WARNING:root:1
+WARNING:root:0
+WARNING:root:0
+WARNING:root:1
+WARNING:root:1
+WARNING:root:2
+WARNING:root:2
+WARNING:root:3
+WARNING:root:3
+WARNING:root:Reached end of instruments
+WARNING:root:prev
+WARNING:root:3
+WARNING:root:2
+WARNING:root:prev
+WARNING:root:2
+WARNING:root:1
+WARNING:root:prev
+WARNING:root:1
+WARNING:root:0
+WARNING:root:prev
+WARNING:root:0
+WARNING:root:Reached start of instruments
+WARNING:root:0
+WARNING:root:1
+WARNING:root:1
+WARNING:root:2
+WARNING:root:2
+WARNING:root:3
+WARNING:root:3
+WARNING:root:Reached end of instruments
+WARNING:root:prev
+WARNING:root:3
+WARNING:root:2
+WARNING:root:prev
+WARNING:root:2
+WARNING:root:1
+WARNING:root:prev
+WARNING:root:1
+WARNING:root:0

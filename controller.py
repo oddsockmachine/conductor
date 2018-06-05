@@ -55,13 +55,15 @@ class Controller(object):
             self.sequencer.touch_note(self.cursor.x, self.cursor.y)
         if c == ord('q'):
             exit()
+        if c == ord('.'):  # > without shift
+            self.sequencer.next_instrument()
+        if c == ord(','):  # < without shift
+            self.sequencer.prev_instrument()
         return str(c)
 
     def get_clock_tick(self):
         x = time()
         diff = x - self.last
-        # print (dir(diff))
-        # print(diff)
         if diff > 0.3:  # 0.3 ms since last tick
             self.last = x
             return True
@@ -69,7 +71,6 @@ class Controller(object):
 
     def draw(self):
         self.sequencer.draw(self.stdscr)
-        # self.stdscr.addstr(H-self.cursor_y-1, self.cursor_x*2, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
         self.cursor.draw(self.stdscr)
         self.stdscr.addstr(20, 40, "x{}, y{}  ".format(self.cursor.x, self.cursor.y))#, curses.color_pair(4))
 
@@ -78,9 +79,12 @@ class Controller(object):
 def main(stdscr):
     stdscr.nodelay(1)
     controller = Controller(stdscr)
-    controller.sequencer.touch_note(3,3)
-    controller.sequencer.touch_note(10,4)
-    controller.sequencer.touch_note(4,6)
+    controller.sequencer.touch_note(1,3)
+    controller.sequencer.touch_note(1,4)
+    controller.sequencer.touch_note(1,6)
+    controller.sequencer.add_instrument("bar", "b", "pentatonic", octave=3, bars=4)
+    controller.sequencer.add_instrument("baz", "c", "pentatonic", octave=4, bars=4)
+    controller.sequencer.add_instrument("wee", "d", "pentatonic", octave=5, bars=4)
     controller.run()
 
 

@@ -32,7 +32,7 @@ class Sequencer(object):
         self.tempo -= amt
         return
 
-    def add_instrument(name, key, scale, octave, bars=W/4, height=H):
+    def add_instrument(self, name, key, scale, octave=2, bars=W/4, height=H):
         if len(self.instruments) == 16:
             logging.warning('Already at 16 instruments')
             return False
@@ -40,17 +40,22 @@ class Sequencer(object):
         return
 
     def next_instrument(self):
-        if self.current_visible_instrument == len(self.instruments):
+        logging.warning(self.current_visible_instrument)
+        if self.current_visible_instrument == len(self.instruments)-1:
             logging.warning('Reached end of instruments')
             return False
         self.current_visible_instrument += 1
+        logging.warning(self.current_visible_instrument)
         return
 
     def prev_instrument(self):
+        logging.warning("prev")
+        logging.warning(self.current_visible_instrument)
         if self.current_visible_instrument == 0:
             logging.warning('Reached start of instruments')
             return False
         self.current_visible_instrument -= 1
+        logging.warning(self.current_visible_instrument)
         return
 
     def step_beat(self):
@@ -69,8 +74,8 @@ class Sequencer(object):
 
     def draw(self, scr):
         note_grid = self.get_curr_instrument().get_curr_page_grid()
-        for r, row in enumerate(note_grid):  # row counter
-            for c, cell in enumerate(row):  # column counter
+        for c, column in enumerate(note_grid):  # row counter
+            for r, cell in enumerate(column):  # column counter
                 if cell == NOTE_ON:
                     scr.addstr(H-r-1, c*2, DISPLAY[NOTE_ON])#, curses.color_pair(4))
                 elif c == self.beat_position: # and DISPLAY[y] != LED_ACTIVE:
