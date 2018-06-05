@@ -29,15 +29,14 @@ class Controller(object):
             key = self.get_keys()
             if key:
                 # Deal with key input
-                # if key == ord('q'):
-                self.sequencer.touch_note(10,4)
-
                 # return()
                 self.draw()
-                self.stdscr.addstr(str(key) + ' ')
+                # self.stdscr.addstr(str(key) + ' ')
                 pass
-            sleep(0.01)
+            sleep(0.002)
             self.stdscr.refresh()
+            # self.draw()  # ??
+
         pass
 
     def get_keys(self):
@@ -49,13 +48,13 @@ class Controller(object):
         elif c == curses.KEY_UP:
             self.cursor_y = self.cursor_y - 1
         elif c == curses.KEY_RIGHT:
-            self.cursor_x = self.cursor_x + 2
+            self.cursor_x = self.cursor_x + 1
         elif c == curses.KEY_LEFT:
-            self.cursor_x = self.cursor_x - 2
+            self.cursor_x = self.cursor_x - 1
         self.cursor_x = max(0, self.cursor_x)
-        self.cursor_x = min(W*2-2, self.cursor_x)
-        self.cursor_y = max(1, self.cursor_y)
-        self.cursor_y = min(H, self.cursor_y)
+        self.cursor_x = min(W-1, self.cursor_x)
+        self.cursor_y = max(0, self.cursor_y)
+        self.cursor_y = min(H-1, self.cursor_y)
         if c == 10:
             self.sequencer.touch_note(self.cursor_x, self.cursor_y)
         return str(c)
@@ -65,14 +64,15 @@ class Controller(object):
         diff = x - self.last
         # print (dir(diff))
         # print(diff)
-        if diff > 0.3:
+        if diff > 0.3:  # 0.3 ms since last tick
             self.last = x
             return True
         return False
 
     def draw(self):
         self.sequencer.output(self.stdscr)
-        self.stdscr.addstr(self.cursor_y, self.cursor_x, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
+        self.stdscr.addstr(H-self.cursor_y-1, self.cursor_x*2, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
+        self.stdscr.addstr(20, 40, "x{}, y{}".format(self.cursor_x, self.cursor_y))#, curses.color_pair(4))
 
 
 
