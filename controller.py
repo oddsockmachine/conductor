@@ -42,9 +42,23 @@ class Controller(object):
 
     def get_keys(self):
         c = self.stdscr.getch()
-        if c != -1:
-            return str(c)
-        return None
+        if c == -1:
+            return None
+        if c == curses.KEY_DOWN:
+            self.cursor_y = self.cursor_y + 1
+        elif c == curses.KEY_UP:
+            self.cursor_y = self.cursor_y - 1
+        elif c == curses.KEY_RIGHT:
+            self.cursor_x = self.cursor_x + 2
+        elif c == curses.KEY_LEFT:
+            self.cursor_x = self.cursor_x - 2
+        self.cursor_x = max(0, self.cursor_x)
+        self.cursor_x = min(W*2-2, self.cursor_x)
+        self.cursor_y = max(1, self.cursor_y)
+        self.cursor_y = min(H, self.cursor_y)
+        if c == 10:
+            self.sequencer.touch_note(self.cursor_x, self.cursor_y)
+        return str(c)
 
     def get_clock_tick(self):
         x = time()
@@ -58,7 +72,7 @@ class Controller(object):
 
     def draw(self):
         self.sequencer.output(self.stdscr)
-        self.stdscr.addstr(H-self.cursor_x, self.cursor_y*2, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
+        self.stdscr.addstr(self.cursor_y, self.cursor_x, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
 
 
 

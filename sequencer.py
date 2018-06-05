@@ -59,7 +59,6 @@ class Sequencer(object):
         self.beat_position %= self.width
         for ins in self.instruments:
             ins.step_beat(self.beat_position)
-            # ins.print_curr_page_notes()
         pass
 
     def get_curr_instrument(self):
@@ -119,3 +118,4 @@ if __name__ == '__main__':
     seq.touch_note(3,3)
     for i in range(20):
         seq.step_beat()
+        seq.get_curr_instrument().print_curr_page_notes()
