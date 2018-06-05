@@ -19,6 +19,11 @@ class Sequencer(object):
         # self.listener = Listener(address, authkey='secret password')
         # self.conn = None
 
+    def handle_cmd(self, msg):
+        cmd = msg['cmd']
+
+        return
+
     def inc_tempo(self, amt):
         self.tempo += amt
         return
@@ -54,7 +59,7 @@ class Sequencer(object):
         self.beat_position %= self.width
         for ins in self.instruments:
             ins.step_beat(self.beat_position)
-            ins.print_curr_page_notes()
+            # ins.print_curr_page_notes()
         pass
 
     def get_curr_instrument(self):
@@ -74,8 +79,8 @@ class Sequencer(object):
                 else:
                     # print(display[cell]),
                     scr.addstr(H-r, c*2, display[LED_SELECT])#, curses.color_pair(4))
-        scr.refresh()
-        self.step_beat()
+        # scr.refresh()
+        # self.step_beat()
         return
 
     # def run(self):

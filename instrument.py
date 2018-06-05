@@ -76,9 +76,9 @@ class Instrument(object):
         for r, row in enumerate(grid):  # row counter
             for c, cell in enumerate(row):  # column counter
                 if c == self.beat_position: # and display[y] != LED_ACTIVE:
-                    print(display[LED_SELECT]),
+                    print(display[LED_SELECT], end='')
                 else:
-                    print(display[cell]),
+                    print(display[cell], end='')
             print('')
         print('')
 
