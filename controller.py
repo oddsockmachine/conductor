@@ -3,7 +3,8 @@ from cursor import Cursor
 from time import sleep, time
 import curses
 from constants import *
-from mido import open_output
+import mido
+mido.get_output_names()
 # TODO
 # Create nice GUI, overlay, buttons, info etc on screen
 # sequencer shouldn't print anything, just provide grid data structure
@@ -13,11 +14,10 @@ from mido import open_output
 
 class Controller(object):
     """docstring for Controller."""
-    def __init__(self, stdscr):
+    def __init__(self, stdscr, mport):
         super(Controller, self).__init__()
-        self.midi_out_port = mido.open_output()
-        print(self.midi_out_port)
-        self.sequencer = Sequencer(self.midi_out_port)
+        self.mport = mport
+        self.sequencer = Sequencer(mport)
         self.last = time()
         self.stdscr = stdscr
         self.cursor = Cursor()
@@ -79,19 +79,21 @@ class Controller(object):
 
 def main(stdscr):
     stdscr.nodelay(1)
-    controller = Controller(stdscr)
-    controller.sequencer.touch_note(1,3)
-    controller.sequencer.touch_note(1,4)
-    controller.sequencer.touch_note(1,6)
-    controller.sequencer.touch_note(2,6)
-    controller.sequencer.touch_note(2,6)
-    controller.sequencer.touch_note(3,1)
-    controller.sequencer.touch_note(3,4)
-    controller.sequencer.touch_note(4,7)
-    controller.sequencer.add_instrument("b", "pentatonic", octave=3, bars=4)
-    controller.sequencer.add_instrument("c", "pentatonic", octave=4, bars=4)
-    controller.sequencer.add_instrument("d", "pentatonic", octave=5, bars=4)
-    controller.run()
+    with mido.open_output('Flynn', autoreset=True, virtual=True) as mport:
+
+        controller = Controller(stdscr, mport)
+        controller.sequencer.touch_note(1,3)
+        controller.sequencer.touch_note(1,4)
+        controller.sequencer.touch_note(1,6)
+        controller.sequencer.touch_note(2,6)
+        controller.sequencer.touch_note(2,6)
+        controller.sequencer.touch_note(3,1)
+        controller.sequencer.touch_note(3,4)
+        controller.sequencer.touch_note(4,7)
+        controller.sequencer.add_instrument("b", "pentatonic", octave=3, bars=4)
+        controller.sequencer.add_instrument("c", "pentatonic", octave=4, bars=4)
+        controller.sequencer.add_instrument("d", "pentatonic", octave=5, bars=4)
+        controller.run()
 
 
 if __name__ == '__main__':

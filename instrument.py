@@ -3,17 +3,19 @@
 from constants import *
 from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, scales, keys
-from mido import Message
+import mido
 
 class Instrument(object):
     """docstring for Instrument."""
-    def __init__(self, ins_num, midi_out_port, key, scale, octave=2, bars=W/4, height=H):
+    def __init__(self, ins_num, mport, key, scale, octave=2, bars=W/4, height=H):
         super(Instrument, self).__init__()
         if not isinstance(ins_num, int):
             print("Instrument num {} must be an int".format(ins_num))
             exit()
         self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
-        self.midi_out_port = midi_out_port
+        self.mport = mport
+        logging.info(mport)
+
         self.height = height
         self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
         self.width = self.bars * 4
@@ -110,10 +112,9 @@ class Instrument(object):
 
     def step_beat(self, beat=None):
         '''Increment the beat counter, and do the math on pages and repeats'''
-        # TODO get notes from beat before incrementing, store, noteoff after inc
-        if beat:
-            self.beat_position = beat
-            return
+        # if beat:
+        #     self.beat_position = beat
+        #     return
         self.beat_position += 1
         if self.beat_position == self.width:
             self.beat_position = 0
@@ -127,7 +128,7 @@ class Instrument(object):
         # print("b{}/{}, p{}/{}, r{}/{}".format(self.beat_position, self.width, self.curr_page_num+1, len(self.pages), self.curr_rept_num+1, self.get_curr_page().repeats))
         new_notes = self.get_curr_notes()
         self.output(self.old_notes, new_notes)
-        self.old_notes = new_notes  #
+        self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
 
     def get_curr_notes(self):
@@ -140,50 +141,65 @@ class Instrument(object):
 
     def output(self, old_notes, new_notes):
         """Return all note-ons from the current beat, and all note-offs from the last"""
+        logging.info(self.beat_position)
+
         notes_off = [self.cell_to_midi(c) for c in old_notes]
         notes_on = [self.cell_to_midi(c) for c in new_notes]
-        # print("off: {}".format("/".join(notes_off)))
-        # print("on: {}".format("/".join(notes_on)))
-        off_msgs = [Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
-        on_msgs = [Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
+        logging.info(notes_on)
+        logging.info(notes_off)
+        off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
+        on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
+        logging.info(on_msgs)
+        logging.info(off_msgs)
         msgs = off_msgs + on_msgs
-        # print(msgs)
+        # logging.info(msgs)
         for msg in msgs:
-            midi_out_port.send(msg)
+            logging.info(msg)
+            self.mport.send(msg)
 
 
 
 
 if __name__ == '__main__':
-    ins = Instrument(8, "a", "pentatonic", octave=2, bars=4)
-    ins.touch_note(4,4)
-    ins.touch_note(5,5)
-    ins.touch_note(6,6)
-    ins.touch_note(6,7)
-    ins.touch_note(6,5)
-    ins.touch_note(7,6)
-    ins.add_note(1,1)
-    ins.add_note(0,0)
-    ins.inc_curr_page_repeats()
+    from time import sleep
+    with mido.open_output('Flynn', autoreset=True, virtual=True) as mport:
 
-    ins.inc_curr_page_repeats()
+        print(mport)
+        sleep(1)
+        on = mido.Message('note_on', note=61)
+        print('Sending {}'.format(on))
+        mport.send(on)
 
-    ins.print_curr_page_notes()
-    ins.add_page(1)
-    ins.add_page(2)
-    for i in range(6):
-        ins.step_beat()
-        ins.print_curr_page_notes()
-        # sleep(0.1)
-    # ins.inc_curr_page_repeats()
+        ins = Instrument(8, mport, "a", "pentatonic", octave=2, bars=4)
+        ins.touch_note(4,4)
+        ins.touch_note(5,5)
+        ins.touch_note(6,6)
+        ins.touch_note(6,7)
+        ins.touch_note(6,5)
+        ins.touch_note(7,6)
+        ins.add_note(1,1)
+        ins.add_note(0,0)
+        # ins.inc_curr_page_repeats()
+        #
+        # ins.inc_curr_page_repeats()
+        #
+        # ins.print_curr_page_notes()
+        # ins.add_page(1)
+        # ins.add_page(2)
+        for i in range(50):
+            ins.step_beat()
+            sleep(0.2)
+            ins.print_curr_page_notes()
+            # sleep(0.1)
+        # ins.inc_curr_page_repeats()
 
-    # for i in range(40):
-    #     ins.step_beat()
-    #     ins.print_curr_page_notes()
-    #     # sleep(0.1)
+        # for i in range(40):
+        #     ins.step_beat()
+        #     ins.print_curr_page_notes()
+        #     # sleep(0.1)
 
-    # ins.curr_page_num = 1
-    # ins.touch_note(15,15)
-    # ins.print_curr_page_notes()
-    # ins.curr_page_num = 2
-    # ins.print_curr_page_notes()
+        # ins.curr_page_num = 1
+        # ins.touch_note(15,15)
+        # ins.print_curr_page_notes()
+        # ins.curr_page_num = 2
+        # ins.print_curr_page_notes()

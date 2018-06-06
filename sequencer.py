@@ -6,16 +6,17 @@ from instrument import Instrument
 
 class Sequencer(object):
     """docstring for Sequencer."""
-    def __init__(self, midi_out_port, bars=4):
+    def __init__(self, mport, bars=4):
         super(Sequencer, self).__init__()
-        self.instruments = [Instrument(0, midi_out_port, "a", "pentatonic", octave=2, bars=bars)]  # limit to 16 midi channels
+        self.mport = mport
+        self.instruments = [Instrument(0, self.mport, "a", "pentatonic", octave=2, bars=bars)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         self.max_num_instruments = MAX_INSTRUMENTS
         self.tempo = 20
         self.beat_position = 0
         self.height = H
         self.width = bars*4
-        self.midi_out_port = midi_out_port
+        self.mport = mport
         # address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
         # self.listener = Listener(address, authkey='secret password')
         # self.conn = None
@@ -38,7 +39,7 @@ class Sequencer(object):
             logging.warning('Already at 16 instruments')
             return False
         ins_num = len(self.instruments)
-        self.instruments.append(Instrument(ins_num, key, scale, octave, bars, height))
+        self.instruments.append(Instrument(ins_num, self.mport, key, scale, octave, bars, height))
         return
 
     def next_instrument(self):
@@ -56,7 +57,7 @@ class Sequencer(object):
         return
 
     def step_beat(self):
-        sleep(1.0/self.tempo)
+        # sleep(1.0/self.tempo)
         self.beat_position += 1
         self.beat_position %= self.width
         for ins in self.instruments:
