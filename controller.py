@@ -1,5 +1,6 @@
 from sequencer import Sequencer
 from cursor import Cursor
+from display import Display
 from time import sleep, time
 import curses
 from constants import *
@@ -21,6 +22,7 @@ class Controller(object):
         self.last = time()
         self.stdscr = stdscr
         self.cursor = Cursor()
+        self.display = Display(stdscr)
 
     def run(self):
         while True:
@@ -72,9 +74,9 @@ class Controller(object):
 
     def draw(self):
         self.sequencer.draw(self.stdscr)
-        self.cursor.draw(self.stdscr)
+        # self.cursor.draw(self.stdscr)
         self.stdscr.addstr(20, 40, "x{}, y{}  ".format(self.cursor.x, self.cursor.y))#, curses.color_pair(4))
-
+        self.display.draw_cursor(self.cursor)
 
 
 def main(stdscr):
@@ -90,7 +92,7 @@ def main(stdscr):
         controller.sequencer.touch_note(3,1)
         controller.sequencer.touch_note(3,4)
         controller.sequencer.touch_note(4,7)
-        controller.sequencer.add_instrument("a", "pentatonic", octave=2, bars=4)
+        controller.sequencer.add_instrument("a", "major", octave=2, bars=4)
         # controller.sequencer.add_instrument("c", "pentatonic", octave=4, bars=4)
         # controller.sequencer.add_instrument("d", "pentatonic", octave=5, bars=4)
         controller.run()

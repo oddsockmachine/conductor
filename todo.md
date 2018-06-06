@@ -1,12 +1,10 @@
 convert between standard xy and curses xy - all positions, calculations etc should be done in standard, only convert to curses when it's time to draw
 reverse touch_note: higher y = higher note, currently 0 = highest/top row
 
-delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc. Sequencer should pass in grid of LED statuses
+delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc. Sequencer should pass in grid of LED statuses, display should decide how to draw it
 build out gui, include info, buttons, borders etc
 
 midi in for clock detection
-midi out
-  for each instrument
 
 Save each piano roll on exit
 Load in piano roll using command line arg

@@ -9,7 +9,7 @@ class Sequencer(object):
     def __init__(self, mport, bars=4):
         super(Sequencer, self).__init__()
         self.mport = mport
-        self.instruments = [Instrument(0, self.mport, "a", "pentatonic", octave=2, bars=bars)]  # limit to 16 midi channels
+        self.instruments = [Instrument(0, self.mport, "a", "major", octave=2, bars=bars)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         self.max_num_instruments = MAX_INSTRUMENTS
         self.tempo = 20
@@ -69,6 +69,9 @@ class Sequencer(object):
 
     def touch_note(self, x, y):
         self.get_curr_instrument().touch_note(x, y)
+
+    def get_note_grid(self):
+        return self.get_curr_instrument().get_curr_page_grid()
 
     def draw(self, scr):
         note_grid = self.get_curr_instrument().get_curr_page_grid()
