@@ -10,5 +10,9 @@ load in piano roll using runtime option
 
 Z-mode - normally time moves along the x-axis, pitch on y, instruments on z. Live performance mode with instruments along x, pitch on y, time steps through z. In other words, the ability to play all 16 instruments in real time
 
+synchronize with Ableton - already in time, but are start of bars the same or offset?
+  call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 
 convert everything to asynchronous/event driven
+
+accept midi notes in on all channels, add note to current beat - would allow live playing and editing of an instrument

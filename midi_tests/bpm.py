@@ -19,10 +19,11 @@ try:
         while True:
             sleep(1)
             for message in port.iter_pending():
-                if message.type == "clock":
-                    beatclockcount += 1
-                    print('.', end='')
-                    sys.stdout.flush()
+                # if message.type == "clock":
+                beatclockcount += 1
+                print('.', end='')
+                print(message)
+                sys.stdout.flush()
             print(beatclockcount)
             beatclockcount = 0
 
