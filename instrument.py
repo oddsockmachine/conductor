@@ -2,6 +2,7 @@
 # from time import sleep
 from constants import *
 from note_grid import Note_Grid
+from note_conversion import create_cell_to_midi_note_lookup, scales, keys
 
 class Instrument(object):
     """docstring for Instrument."""
@@ -15,10 +16,17 @@ class Instrument(object):
         self.curr_rept_num = 0
         self.beat_position = 0
         self.pages = [Note_Grid(self.bars, self.height)]
-        self.key = "a"
-        self.scale = "pentatonic"
-        self.octave = 2  # Starting octave
+        if key not in keys:
+            print('Requested key {} not known'.format(key))
+            exit()
+        self.key = key
+        if scale not in scales.keys():
+            print('Requested scale {} not known'.format(scale))
+            exit()
+        self.scale = scale
+        self.octave = octave  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
+        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, height)
 
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
@@ -35,7 +43,8 @@ class Instrument(object):
 
     def cell_to_midi(self, cell):
         '''convert a cell height to a midi note based on key, scale, octave'''
-        return str(cell)
+        midi_note_num = self.note_converter[cell]
+        return str(midi_note_num)
 
     def touch_note(self, x, y):
         '''touch the x/y cell on the current page'''

@@ -5,10 +5,8 @@ delegate drawing to a Display component - which can be switched out for eg LEDs,
 build out gui, include info, buttons, borders etc
 
 midi in for clock detection
-convert from y position to midi note depending on scale, key and octave
-midi out for each instrument
-  at beat_step
-  (and remember to note_off where necessary)
+midi out
+  for each instrument
 
 
 

@@ -10,16 +10,23 @@ scales = {
     "pentatonic": [3,2,3,2,2],
 }
 
+keys = ['a','a#','b','c','c#','d','d#','e','f','f#','g','g#']
+
 def get_starting_note(octave, key):
-    cell0 = 21 + (12 * octave) + ['a','a#','b','c','c#','d','d#','e','f','f#','g','g#'].index(key)
+    '''calculate which midi note number is at cell 0. Everything else is an offset from there'''
+    # midi21 = A0, first note on piano.
+    # This is not perfect, since it actually goes A0,A#0,B0,_C1_, not _C0_
+    cell0 = 21 + (12 * octave) + keys.index(key)
     return cell0
 
 def get_full_scale(height, scale_name):
+    '''Extend a scale to cover the height of the grid'''
     scale = scales[scale_name]  # Get the scale intervals
     times = int(height/len(scale)) + 1  # How many times to repeat the intervals to fill up the grid height
     return (scale * times)[:height]  # Repeat the intervals, then trim to fit
 
 def scale_to_offset(scale):
+    '''Convert a scales intervals to offsets from the root note'''
     accum = 0
     offsets = [0]
     for s in scale[:-1]:
@@ -28,6 +35,7 @@ def scale_to_offset(scale):
     return offsets
 
 def create_cell_to_midi_note_lookup(scale, octave, key, height):
+    '''Create a lookup table between cell height and midi note number'''
     starting_note = get_starting_note(octave, key)
     offset = scale_to_offset(get_full_scale(height, scale))
     notes = [x + starting_note for x in offset]
