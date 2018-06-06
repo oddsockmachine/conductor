@@ -3,7 +3,7 @@ from cursor import Cursor
 from time import sleep, time
 import curses
 from constants import *
-
+from mido import open_output
 # TODO
 # Create nice GUI, overlay, buttons, info etc on screen
 # sequencer shouldn't print anything, just provide grid data structure
@@ -15,11 +15,12 @@ class Controller(object):
     """docstring for Controller."""
     def __init__(self, stdscr):
         super(Controller, self).__init__()
-        self.sequencer = Sequencer()
+        self.midi_out_port = mido.open_output()
+        print(self.midi_out_port)
+        self.sequencer = Sequencer(self.midi_out_port)
         self.last = time()
         self.stdscr = stdscr
         self.cursor = Cursor()
-
 
     def run(self):
         while True:
@@ -87,9 +88,9 @@ def main(stdscr):
     controller.sequencer.touch_note(3,1)
     controller.sequencer.touch_note(3,4)
     controller.sequencer.touch_note(4,7)
-    controller.sequencer.add_instrument("bar", "b", "pentatonic", octave=3, bars=4)
-    controller.sequencer.add_instrument("baz", "c", "pentatonic", octave=4, bars=4)
-    controller.sequencer.add_instrument("wee", "d", "pentatonic", octave=5, bars=4)
+    controller.sequencer.add_instrument("b", "pentatonic", octave=3, bars=4)
+    controller.sequencer.add_instrument("c", "pentatonic", octave=4, bars=4)
+    controller.sequencer.add_instrument("d", "pentatonic", octave=5, bars=4)
     controller.run()
 
 

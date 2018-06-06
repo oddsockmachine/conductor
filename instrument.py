@@ -3,12 +3,17 @@
 from constants import *
 from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, scales, keys
+from mido import Message
 
 class Instrument(object):
     """docstring for Instrument."""
-    def __init__(self, name, key, scale, octave=2, bars=W/4, height=H):
+    def __init__(self, ins_num, midi_out_port, key, scale, octave=2, bars=W/4, height=H):
         super(Instrument, self).__init__()
-        self.name = name
+        if not isinstance(ins_num, int):
+            print("Instrument num {} must be an int".format(ins_num))
+            exit()
+        self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
+        self.midi_out_port = midi_out_port
         self.height = height
         self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
         self.width = self.bars * 4
@@ -44,7 +49,7 @@ class Instrument(object):
     def cell_to_midi(self, cell):
         '''convert a cell height to a midi note based on key, scale, octave'''
         midi_note_num = self.note_converter[cell]
-        return str(midi_note_num)
+        return midi_note_num
 
     def touch_note(self, x, y):
         '''touch the x/y cell on the current page'''
@@ -137,13 +142,20 @@ class Instrument(object):
         """Return all note-ons from the current beat, and all note-offs from the last"""
         notes_off = [self.cell_to_midi(c) for c in old_notes]
         notes_on = [self.cell_to_midi(c) for c in new_notes]
-        print("off: {}".format("/".join(notes_off)))
-        print("on: {}".format("/".join(notes_on)))
+        # print("off: {}".format("/".join(notes_off)))
+        # print("on: {}".format("/".join(notes_on)))
+        off_msgs = [Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
+        on_msgs = [Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
+        msgs = off_msgs + on_msgs
+        # print(msgs)
+        for msg in msgs:
+            midi_out_port.send(msg)
+
 
 
 
 if __name__ == '__main__':
-    ins = Instrument("foo", "a", "pentatonic", octave=2, bars=4)
+    ins = Instrument(8, "a", "pentatonic", octave=2, bars=4)
     ins.touch_note(4,4)
     ins.touch_note(5,5)
     ins.touch_note(6,6)
