@@ -1,5 +1,5 @@
 import logging
-logging.basicConfig(filename='example.log',level=logging.DEBUG)
+logging.basicConfig(filename='sequencer.log',level=logging.DEBUG)
 
 LED_BLANK = 0
 LED_SELECT = 1
