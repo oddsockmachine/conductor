@@ -8,10 +8,11 @@ else:
     portname = "Flynn"  # Use default port
 
 try:
-    with mido.open_input(portname) as port:
+    with mido.open_input('Flynn_In', autoreset=True, virtual=True) as port:
         print('Using {}'.format(port))
         print('Waiting for messages...')
         for message in port:
+            print(message.type)
             print('Received {}'.format(message))
             sys.stdout.flush()
 except KeyboardInterrupt:

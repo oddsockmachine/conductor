@@ -82,8 +82,8 @@ class Controller(object):
                 # print('Received {}'.format(message))
                 self.beatclockcount += 1
                 # print(str(self.beatclockcount))
-        if self.beatclockcount > 6:
-            self.beatclockcount = 0
+        if self.beatclockcount >= 24:
+            self.beatclockcount %= 24
             return True
         return False
 
@@ -92,7 +92,7 @@ class Controller(object):
         self.sequencer.draw(self.stdscr)
         # self.cursor.draw(self.stdscr)
         self.stdscr.addstr(20, 40, "x{}, y{}  ".format(self.cursor.x, self.cursor.y))#, curses.color_pair(4))
-        self.stdscr.addstr(19, 40, str(self.beatclockcount))#, curses.color_pair(4))
+        self.stdscr.addstr(19, 40, str(self.beatclockcount)+"  ")#, curses.color_pair(4))
 
         self.display.draw_cursor(self.cursor)
 

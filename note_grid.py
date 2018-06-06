@@ -66,6 +66,9 @@ class Note_Grid(object):
             return
         return self.note_grid[beat]
 
+    def get_note(self, x, y):
+        return self.note_grid[x][y]
+
 
 if __name__ == '__main__':
     notes = Note_Grid()

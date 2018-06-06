@@ -70,8 +70,24 @@ class Sequencer(object):
     def touch_note(self, x, y):
         self.get_curr_instrument().touch_note(x, y)
 
-    def get_note_grid(self):
-        return self.get_curr_instrument().get_curr_page_grid()
+    def get_led_grid(self):
+        note_grid = self.get_curr_instrument().get_curr_page_grid()
+        led_grid = []
+        for c in range(self.width):
+            col = []
+            for r in range(self.height):
+                col.append()
+        for c, column in enumerate(note_grid):  # row counter
+            led_col = []
+            for r, cell in enumerate(column):  # column counter
+                if cell == NOTE_ON:
+                    scr.addstr(H-r-1, c*2, DISPLAY[NOTE_ON])#, curses.color_pair(4))
+                elif c == self.beat_position: # and DISPLAY[y] != LED_ACTIVE:
+                    scr.addstr(H-r-1, c*2, DISPLAY[LED_SELECT])#, curses.color_pair(4))
+                else:
+                    scr.addstr(H-r-1, c*2, DISPLAY[LED_BLANK])#, curses.color_pair(4))
+        return
+
 
     def draw(self, scr):
         note_grid = self.get_curr_instrument().get_curr_page_grid()

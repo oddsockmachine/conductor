@@ -84,6 +84,9 @@ class Instrument(object):
     def get_notes_from_curr_beat(self):
         return
 
+    def get_curr_page_leds(self):
+        return
+
     def get_curr_page_grid(self):
         # page = self.get_curr_page()
         return self.get_curr_page().note_grid
