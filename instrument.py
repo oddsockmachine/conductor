@@ -31,9 +31,10 @@ class Instrument(object):
     def set_next_page(self):
         '''Override and skip to a particular page when the beat reaches the end'''
         return
+
     def cell_to_midi(self, cell):
         '''convert a cell height to a midi note based on key, scale, octave'''
-        return
+        return str(cell)
 
     def touch_note(self, x, y):
         '''touch the x/y cell on the current page'''
@@ -94,6 +95,8 @@ class Instrument(object):
 
     def step_beat(self, beat=None):
         '''Increment the beat counter, and do the math on pages and repeats'''
+        old_notes = self.get_curr_notes()
+        # TODO get notes from beat before incrementing, store, noteoff after inc
         if beat:
             self.beat_position = beat
             return
@@ -108,14 +111,36 @@ class Instrument(object):
                 # print("next page")
                 self.curr_page_num %= len(self.pages)
         # print("b{}/{}, p{}/{}, r{}/{}".format(self.beat_position, self.width, self.curr_page_num+1, len(self.pages), self.curr_rept_num+1, self.get_curr_page().repeats))
+        new_notes = self.get_curr_notes()
+        self.output(old_notes, new_notes)
         return
 
+    def get_curr_notes(self):
+        grid = self.get_curr_page_grid()
+        beat_pos = self.beat_position
+        beat_notes = [row[beat_pos] for row in grid][::-1]  # extract column from grid
+
+        notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
+        return notes_on
+
+
+    def output(self, old_notes, new_notes):
+        """Return all note-ons from the current beat, and all note-offs from the last"""
+        notes_off = [self.cell_to_midi(c) for c in old_notes]
+        notes_on = [self.cell_to_midi(c) for c in new_notes]
+        print("off: {}".format("/".join(notes_off)))
+        print("on: {}".format("/".join(notes_on)))
+
+
+
 if __name__ == '__main__':
-    ins = Instrument("foo", "a", "pentatonic", 2)
+    ins = Instrument("foo", "a", "pentatonic", octave=2, bars=4)
     ins.touch_note(4,4)
     ins.touch_note(5,5)
     ins.touch_note(6,6)
-    ins.touch_note(6,6)
+    ins.touch_note(6,7)
+    ins.touch_note(6,5)
+    ins.touch_note(7,6)
     ins.add_note(1,1)
     ins.add_note(0,0)
     ins.inc_curr_page_repeats()
@@ -125,16 +150,16 @@ if __name__ == '__main__':
     ins.print_curr_page_notes()
     ins.add_page(1)
     ins.add_page(2)
-    for i in range(20):
+    for i in range(6):
         ins.step_beat()
         ins.print_curr_page_notes()
         # sleep(0.1)
     # ins.inc_curr_page_repeats()
 
-    for i in range(40):
-        ins.step_beat()
-        ins.print_curr_page_notes()
-        # sleep(0.1)
+    # for i in range(40):
+    #     ins.step_beat()
+    #     ins.print_curr_page_notes()
+    #     # sleep(0.1)
 
     # ins.curr_page_num = 1
     # ins.touch_note(15,15)

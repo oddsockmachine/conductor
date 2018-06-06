@@ -15,7 +15,8 @@ class Sequencer(object):
         self.beat_position = 0
         self.height = H
         self.width = bars*4
-        address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
+        self.midi = None
+        # address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
         # self.listener = Listener(address, authkey='secret password')
         # self.conn = None
 
@@ -40,22 +41,17 @@ class Sequencer(object):
         return
 
     def next_instrument(self):
-        logging.warning(self.current_visible_instrument)
         if self.current_visible_instrument == len(self.instruments)-1:
             logging.warning('Reached end of instruments')
             return False
         self.current_visible_instrument += 1
-        logging.warning(self.current_visible_instrument)
         return
 
     def prev_instrument(self):
-        logging.warning("prev")
-        logging.warning(self.current_visible_instrument)
         if self.current_visible_instrument == 0:
             logging.warning('Reached start of instruments')
             return False
         self.current_visible_instrument -= 1
-        logging.warning(self.current_visible_instrument)
         return
 
     def step_beat(self):
@@ -80,13 +76,12 @@ class Sequencer(object):
                     scr.addstr(H-r-1, c*2, DISPLAY[NOTE_ON])#, curses.color_pair(4))
                 elif c == self.beat_position: # and DISPLAY[y] != LED_ACTIVE:
                     scr.addstr(H-r-1, c*2, DISPLAY[LED_SELECT])#, curses.color_pair(4))
-                    # print(DISPLAY[LED_SELECT]),
                 else:
-                    # print(DISPLAY[cell]),
                     scr.addstr(H-r-1, c*2, DISPLAY[LED_BLANK])#, curses.color_pair(4))
-        # scr.refresh()
-        # self.step_beat()
         return
+
+    def output(self, scr):
+        pass
 
     # def run(self):
     #     self.conn = self.listener.accept()
