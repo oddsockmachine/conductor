@@ -134,27 +134,22 @@ class Instrument(object):
     def get_curr_notes(self):
         grid = self.get_curr_page_grid()
         beat_pos = self.beat_position
-        beat_notes = [row[beat_pos] for row in grid][::-1]  # extract column from grid
+        # beat_notes = [row[beat_pos] for row in grid][::-1]  # extract column from grid
+        beat_notes = grid[beat_pos]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
 
 
     def output(self, old_notes, new_notes):
         """Return all note-ons from the current beat, and all note-offs from the last"""
-        logging.info(self.beat_position)
-
         notes_off = [self.cell_to_midi(c) for c in old_notes]
         notes_on = [self.cell_to_midi(c) for c in new_notes]
-        logging.info(notes_on)
-        logging.info(notes_off)
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
-        logging.info(on_msgs)
-        logging.info(off_msgs)
         msgs = off_msgs + on_msgs
-        # logging.info(msgs)
+        # if len(msgs)>0:
+        #     logging.info(msgs)
         for msg in msgs:
-            logging.info(msg)
             self.mport.send(msg)
 
 

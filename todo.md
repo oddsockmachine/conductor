@@ -8,6 +8,8 @@ midi in for clock detection
 midi out
   for each instrument
 
-
+Save each piano roll on exit
+Load in piano roll using command line arg
+load in piano roll using runtime option
 
 Z-mode - normally time moves along the x-axis, pitch on y, instruments on z. Live performance mode with instruments along x, pitch on y, time steps through z. In other words, the ability to play all 16 instruments in real time
