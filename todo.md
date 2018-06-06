@@ -1,11 +1,14 @@
 convert between standard xy and curses xy - all positions, calculations etc should be done in standard, only convert to curses when it's time to draw
+reverse touch_note: higher y = higher note, currently 0 = highest/top row
 
 delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc. Sequencer should pass in grid of LED statuses
 build out gui, include info, buttons, borders etc
 
 midi in for clock detection
-midi out for each instrument at beat_step (and remember to note_off where necessary)
 convert from y position to midi note depending on scale, key and octave
+midi out for each instrument
+  at beat_step
+  (and remember to note_off where necessary)
 
 
 

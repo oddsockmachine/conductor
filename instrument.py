@@ -18,6 +18,7 @@ class Instrument(object):
         self.key = "a"
         self.scale = "pentatonic"
         self.octave = 2  # Starting octave
+        self.old_notes = []  # Keep track of currently playing notes so we can off them next step
 
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
@@ -95,7 +96,6 @@ class Instrument(object):
 
     def step_beat(self, beat=None):
         '''Increment the beat counter, and do the math on pages and repeats'''
-        old_notes = self.get_curr_notes()
         # TODO get notes from beat before incrementing, store, noteoff after inc
         if beat:
             self.beat_position = beat
@@ -112,14 +112,14 @@ class Instrument(object):
                 self.curr_page_num %= len(self.pages)
         # print("b{}/{}, p{}/{}, r{}/{}".format(self.beat_position, self.width, self.curr_page_num+1, len(self.pages), self.curr_rept_num+1, self.get_curr_page().repeats))
         new_notes = self.get_curr_notes()
-        self.output(old_notes, new_notes)
+        self.output(self.old_notes, new_notes)
+        self.old_notes = new_notes  #
         return
 
     def get_curr_notes(self):
         grid = self.get_curr_page_grid()
         beat_pos = self.beat_position
         beat_notes = [row[beat_pos] for row in grid][::-1]  # extract column from grid
-
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
 
