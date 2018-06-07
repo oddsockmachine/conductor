@@ -1,3 +1,18 @@
+## Architecture
+
+Display
+
+Cursor
+
+Controller
+
+Sequencer
+
+Instrument
+
+Note_Grid
+
+
 ## Constants
 
 Constants are shared throughout the program, and do not change at runtime.
@@ -21,3 +36,5 @@ The y/pitch of the note in the column is its index in the list.
 This sometimes seems at odds with a traditional coordinate system, or the way an array is naively printed out.
 This is done to ensure the note_grid always represents _notes_ versus time, not necessarily their position on a display.
 When a note_grid is ready for display, only then do we do the necessary conversion to absolute position.
+Each component should ideally have a print method for debugging its state, which will handle that conversion.
+However, the internal representation of that component's state should be in whatever format is most fitting.
