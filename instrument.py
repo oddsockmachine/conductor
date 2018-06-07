@@ -1,5 +1,4 @@
 #coding=utf-8
-# from time import sleep
 from constants import *
 from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, scales, keys
@@ -72,16 +71,17 @@ class Instrument(object):
         if not page.validate_touch(x, y):
             return False
         page.add_note(x, y)
-        return
+        return True
 
     def del_note(self, x, y):
         page = self.get_curr_page()
         if not page.validate_touch(x, y):
             return False
         page.del_note(x, y)
-        return
+        return True
 
     def get_notes_from_curr_beat(self):
+        self.get_curr_page().get_notes_from_beat(self.beat_position)
         return
 
     def get_curr_page_leds(self):
@@ -93,13 +93,13 @@ class Instrument(object):
 
     def print_curr_page_notes(self):
         grid = self.get_curr_page_grid()
-        display = {0: '. ', 1: '░░', 2:'▒▒', 3:'▓▓'}
-        for r, row in enumerate(grid):  # row counter
-            for c, cell in enumerate(row):  # column counter
-                if c == self.beat_position: # and display[y] != LED_ACTIVE:
-                    print(display[LED_SELECT], end='')
+        # display = {0: '. ', 1: '░░', 2:'▒▒', 3:'▓▓'}
+        for c, column in enumerate(grid):  # row counter
+            for r, cell in enumerate(column):  # column counter
+                if r == self.beat_position: # and display[y] != LED_ACTIVE:
+                    print(DISPLAY[LED_SELECT], end='')
                 else:
-                    print(display[cell], end='')
+                    print(DISPLAY[cell], end='')
             print('')
         print('')
 
@@ -150,54 +150,48 @@ class Instrument(object):
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
         msgs = off_msgs + on_msgs
-        # if len(msgs)>0:
-        #     logging.info(msgs)
-        for msg in msgs:
-            self.mport.send(msg)
+        if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
+            for msg in msgs:
+                self.mport.send(msg)
 
 
 
 
-if __name__ == '__main__':
-    from time import sleep
-    with mido.open_output('Flynn', autoreset=True, virtual=True) as mport:
 
-        print(mport)
-        sleep(1)
-        on = mido.Message('note_on', note=61)
-        print('Sending {}'.format(on))
-        mport.send(on)
+import unittest
+class TestInstrument(unittest.TestCase):
 
-        ins = Instrument(8, mport, "a", "pentatonic", octave=2, bars=4)
-        ins.touch_note(4,4)
-        ins.touch_note(5,5)
-        ins.touch_note(6,6)
-        ins.touch_note(6,7)
-        ins.touch_note(6,5)
-        ins.touch_note(7,6)
-        ins.add_note(1,1)
-        ins.add_note(0,0)
-        # ins.inc_curr_page_repeats()
-        #
-        # ins.inc_curr_page_repeats()
-        #
-        # ins.print_curr_page_notes()
-        # ins.add_page(1)
-        # ins.add_page(2)
-        for i in range(50):
-            ins.step_beat()
-            sleep(0.2)
-            ins.print_curr_page_notes()
-            # sleep(0.1)
+    def test_instrument(self):
+        ins = Instrument(8, None, "a", "pentatonic", octave=2, bars=4)
+        self.assertTrue(ins.touch_note(4,5))
+        self.assertTrue(ins.touch_note(5,5))
+        self.assertTrue(ins.touch_note(6,5))
+        self.assertTrue(ins.touch_note(6,7))
+        self.assertTrue(ins.touch_note(6,6))
+        self.assertTrue(ins.touch_note(7,8))
+        self.assertFalse(ins.touch_note(-1,-1))
+        self.assertFalse(ins.touch_note(99,-99))
+        self.assertTrue(ins.touch_note(1,0))
+        self.assertTrue(ins.touch_note(0,0))
+        ins.inc_curr_page_repeats()
+        ins.add_page(1)
+        ins.print_curr_page_notes()
+
+        ins.step_beat()
+        ins.get_curr_page_grid()
+        ins.print_curr_page_notes()
         # ins.inc_curr_page_repeats()
 
         # for i in range(40):
         #     ins.step_beat()
         #     ins.print_curr_page_notes()
-        #     # sleep(0.1)
 
         # ins.curr_page_num = 1
         # ins.touch_note(15,15)
         # ins.print_curr_page_notes()
         # ins.curr_page_num = 2
         # ins.print_curr_page_notes()
+
+
+if __name__ == '__main__':
+    unittest.main()

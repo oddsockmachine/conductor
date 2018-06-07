@@ -1,8 +1,22 @@
+
+WHAT IS GOING ON WITH THE GRID AND Y POSITION?
+
+lots more unit tests
+
+delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc.
+  Sequencer should pass in grid of LED statuses, display should decide how to draw it
+  build out gui, include
+    info, current instrument, page status, key, octave, scale
+    buttons,
+    borders
+    etc
+
+
 convert between standard xy and curses xy - all positions, calculations etc should be done in standard, only convert to curses when it's time to draw
 reverse touch_note: higher y = higher note, currently 0 = highest/top row
 
-delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc. Sequencer should pass in grid of LED statuses, display should decide how to draw it
-build out gui, include info, buttons, borders etc
+is it possible/desirable to edit a page while another page is playing?
+
 
 Save each piano roll on exit
 Load in piano roll using command line arg
@@ -16,3 +30,9 @@ synchronize with Ableton - already in time, but are start of bars the same or of
 convert everything to asynchronous/event driven
 
 accept midi notes in on all channels, add note to current beat - would allow live playing and editing of an instrument
+
+Show root notes, pentatonic notes, etc in different colors/shades
+  Root note for pentatonics
+  root and pentatonic for modes
+
+How to have one sequence running/looping live, but have another being built up in the background/cue output?

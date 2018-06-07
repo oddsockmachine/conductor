@@ -26,8 +26,8 @@ class Display(object):
         self.stdscr.addstr(self.grid_height-cursor.y-1, cursor.x*2, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
         return
 
-    def draw_grid(self, note_grid):
-        '''convert a note_grid to led_grid'''
+    def draw_grid(self, led_grid):
+        '''Take a led_grid/array from the sequencer and print it to the screen'''
         return
 
     def draw_all(self):
