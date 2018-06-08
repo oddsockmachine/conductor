@@ -1,19 +1,18 @@
 
 # unit tests
-- for sequencer, cursor, controller, display(?)
+- for cursor, controller, display(?)
 
 # delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc.
-  Sequencer should pass in grid of LED statuses, display should decide how to draw it
-  build out gui, include
+- build out gui, include
+    grid relative position
     info, current instrument, page status, key, octave, scale
     buttons,
     borders, dividers (between bars, octaves etc)
     etc
+- Switch themes on the fly
 
 # Controls for adding/changing pages/instruments, setting musical constraints etc
 - When adding instrument, select from helpful presets: eg drums
-
-# convert between standard xy and curses xy - all positions, calculations etc should be done in standard, only convert to curses when it's time to draw
 
 # is it possible/desirable to edit a page while another page is playing?
 
@@ -42,8 +41,10 @@
 
 # Handle LED colors better
 - Show root notes, pentatonic notes, etc in different colors/shades
--  Root note for pentatonics
--  root and pentatonic for modes
+- Root note for pentatonics
+- root and pentatonic for modes
+- Should be handled by sequencer.get_led_status/get_led_grid, seq has access to scale and cell info
 
 # Dual mode
 - How to have one sequencer running/looping live, but have another being built up in the background/cue output?
+- So a "done"/playing song can be left for a short time, while the start of another is built up behind the scenes
