@@ -22,10 +22,10 @@ class Note_Grid(object):
         return
 
     def validate_touch(self, x, y):
-        if x > self.width:
+        if x >= self.width:
             logging.warning('Requested {} > {}'.format(x, self.width))
             return False
-        if y > H:
+        if y >= H:
             logging.warning('Requested {} > {}'.format(y, self.height))
             return False
         if y < 0:
@@ -40,19 +40,20 @@ class Note_Grid(object):
         '''touch/invert a note status. x = beat/time, y = pitch'''
         if not self.validate_touch(x, y):
             return False
-        y = (self.height - y) - 1
+        # y = (self.height - y) - 1
         curr_note = self.note_grid[x][y]
         if curr_note == NOTE_ON:
             self.note_grid[x][y] = NOTE_OFF
         if curr_note == NOTE_OFF:
             self.note_grid[x][y] = NOTE_ON
+        print(self.note_grid[x])
         return True
 
     def add_note(self, x, y):
         '''add a note. x = beat/time, y = pitch'''
         if not self.validate_touch(x, y):
             return False
-        y = (self.height - y) - 1
+        # y = (self.height - y) - 1
         self.note_grid[x][y] = NOTE_ON
         return True
 
@@ -60,7 +61,7 @@ class Note_Grid(object):
         '''remove a note. x = beat/time, y = pitch'''
         if not self.validate_touch(x, y):
             return False
-        y = self.height - y - 1
+        # y = self.height - y - 1
         self.note_grid[x][y] = NOTE_OFF
         return True
 
@@ -69,11 +70,13 @@ class Note_Grid(object):
             logging.warning('Beat {} > {}'.format(beat, self.width))
             return
         # y = self.height - y - 1
-        return self.note_grid[beat][::-1]
+        return self.note_grid[beat]
 
     def get_note_by_pitch(self, x, y):
         '''get a note status. x = beat/time, y = pitch'''
-        y = self.height - y - 1
+        if not self.validate_touch(x, y):
+            return False
+        # y = self.height - y
         return self.note_grid[x][y]
 
     def get_note_by_position(self, x, y):
@@ -83,7 +86,7 @@ class Note_Grid(object):
     def print_notes(self):
         for y in range(self.height):
             for x in range(self.width):
-                print(DISPLAY[self.get_note_by_pitch(x, self.height-y)], end='')
+                print(DISPLAY[self.get_note_by_pitch(x, self.height - y -1)], end='')
             print('')
         print('')
 
@@ -96,20 +99,20 @@ class TestNoteGrid(unittest.TestCase):
         notes = Note_Grid()
         self.assertEqual(len(notes.note_grid), 16)
         self.assertEqual(len(notes.note_grid[0]), 16)
-        self.assertTrue(notes.touch_note(1,1))
+        self.assertTrue(notes.touch_note(0,0))
         self.assertTrue(notes.touch_note(0,15))
         self.assertTrue(notes.touch_note(0,14))
         self.assertTrue(notes.touch_note(0,13))
         self.assertTrue(notes.touch_note(1,13))
-        self.assertTrue(notes.touch_note(2,13))
+        self.assertTrue(notes.touch_note(2,10))
         self.assertTrue(notes.touch_note(2,2))
         self.assertTrue(notes.add_note(3,3))
         self.assertTrue(notes.del_note(4,4))
         self.assertTrue(notes.del_note(2,2))
 
-        self.assertEqual(notes.get_notes_from_beat(0), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3])
-        self.assertEqual(notes.get_notes_from_beat(1), [0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0])
-        self.assertEqual(notes.get_notes_from_beat(2), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0])
+        self.assertEqual(notes.get_notes_from_beat(0), [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3])
+        self.assertEqual(notes.get_notes_from_beat(1), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0])
+        self.assertEqual(notes.get_notes_from_beat(2), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0])
         self.assertEqual(notes.get_notes_from_beat(3), [0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         self.assertEqual(notes.get_notes_from_beat(4), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         print(notes.note_grid)
@@ -120,15 +123,18 @@ class TestNoteGrid(unittest.TestCase):
         self.assertFalse(notes.touch_note(-1,1))
         self.assertFalse(notes.touch_note(1,-1))
 
+        self.assertFalse(notes.get_note_by_pitch(0,16))
+        self.assertFalse(notes.get_note_by_pitch(16,0))
+        self.assertFalse(notes.get_note_by_pitch(-1,0))
+        self.assertFalse(notes.get_note_by_pitch(1,-1))
         self.assertEqual(notes.get_note_by_pitch(0,15), NOTE_ON)
         self.assertEqual(notes.get_note_by_pitch(0,14), NOTE_ON)
         self.assertEqual(notes.get_note_by_pitch(0,13), NOTE_ON)
         self.assertEqual(notes.get_note_by_pitch(1,13), NOTE_ON)
         self.assertEqual(notes.get_note_by_pitch(1,11), NOTE_OFF)
         self.assertEqual(notes.get_note_by_position(0,0), NOTE_ON)
-        self.assertEqual(notes.get_note_by_position(0,1), NOTE_ON)
-        self.assertEqual(notes.get_note_by_position(0,2), NOTE_ON)
-        self.assertEqual(notes.get_note_by_position(1,2), NOTE_ON)
+        self.assertEqual(notes.get_note_by_position(0,1), NOTE_OFF)
+        self.assertEqual(notes.get_note_by_position(2,10), NOTE_ON)
         self.assertEqual(notes.get_note_by_position(1,4), NOTE_OFF)
 
 

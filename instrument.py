@@ -92,6 +92,8 @@ class Instrument(object):
         return self.get_curr_page().note_grid
 
     def print_curr_page_notes(self):
+        self.get_curr_page().print_notes()
+        return
         grid = self.get_curr_page_grid()
         # display = {0: '. ', 1: '░░', 2:'▒▒', 3:'▓▓'}
         for c, column in enumerate(grid):  # row counter
@@ -163,16 +165,16 @@ class TestInstrument(unittest.TestCase):
 
     def test_instrument(self):
         ins = Instrument(8, None, "a", "pentatonic", octave=2, bars=4)
-        self.assertTrue(ins.touch_note(4,5))
-        self.assertTrue(ins.touch_note(5,5))
-        self.assertTrue(ins.touch_note(6,5))
-        self.assertTrue(ins.touch_note(6,7))
-        self.assertTrue(ins.touch_note(6,6))
-        self.assertTrue(ins.touch_note(7,8))
+        self.assertTrue(ins.touch_note(0,1))
+        self.assertTrue(ins.touch_note(0,3))
+        self.assertTrue(ins.touch_note(0,5))
+        self.assertTrue(ins.touch_note(2,6))
+        self.assertTrue(ins.touch_note(2,7))
+        self.assertTrue(ins.touch_note(2,8))
         self.assertFalse(ins.touch_note(-1,-1))
         self.assertFalse(ins.touch_note(99,-99))
         self.assertTrue(ins.touch_note(1,0))
-        self.assertTrue(ins.touch_note(0,0))
+        self.assertTrue(ins.touch_note(2,0))
         ins.inc_curr_page_repeats()
         ins.add_page(1)
         ins.print_curr_page_notes()
