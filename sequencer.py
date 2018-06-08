@@ -12,27 +12,19 @@ class Sequencer(object):
         self.instruments = [Instrument(0, self.mport, "e", "major", octave=2, bars=bars)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         self.max_num_instruments = MAX_INSTRUMENTS
-        self.tempo = 20
+        # self.tempo = 20
         self.beat_position = 0
         self.height = H
         self.width = bars*4
         self.mport = mport
-        # address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
-        # self.listener = Listener(address, authkey='secret password')
-        # self.conn = None
 
-    def handle_cmd(self, msg):
-        cmd = msg['cmd']
-
-        return
-
-    def inc_tempo(self, amt):
-        self.tempo += amt
-        return
-
-    def dec_tempo(self, amt):
-        self.tempo -= amt
-        return
+    # def inc_tempo(self, amt):
+    #     self.tempo += amt
+    #     return
+    #
+    # def dec_tempo(self, amt):
+    #     self.tempo -= amt
+    #     return
 
     def add_instrument(self, key, scale, octave=2, bars=int(W/4), height=H):
         if len(self.instruments) == 16:
@@ -57,11 +49,10 @@ class Sequencer(object):
         return
 
     def step_beat(self):
-        # sleep(1.0/self.tempo)
         self.beat_position += 1
         self.beat_position %= self.width
         for ins in self.instruments:
-            ins.step_beat(self.beat_position)
+            ins.step_beat()#self.beat_position)
         pass
 
     def get_curr_instrument(self):
@@ -101,24 +92,11 @@ class Sequencer(object):
                     scr.addstr(H-r-1, c*2, DISPLAY[LED_BLANK])#, curses.color_pair(4))
         return
 
-    def output(self, scr):
-        pass
-
-    # def run(self):
-    #     self.conn = self.listener.accept()
-    #     print("Connected")
-    #     while True:
-    #         msg = self.conn.recv()
-    #         self.step_beat()
-    #         # print(msg)
-    #         if msg == 'close':
-    #             self.conn.close()
-    #             break
 
 
 
 if __name__ == '__main__':
-    seq = Sequencer(bars=4)
+    seq = Sequencer(None)
     seq.touch_note(1,3)
     # seq.run()
     # try:
