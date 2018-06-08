@@ -46,7 +46,6 @@ class Note_Grid(object):
             self.note_grid[x][y] = NOTE_OFF
         if curr_note == NOTE_OFF:
             self.note_grid[x][y] = NOTE_ON
-        print(self.note_grid[x])
         return True
 
     def add_note(self, x, y):
