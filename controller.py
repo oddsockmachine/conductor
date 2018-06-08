@@ -28,16 +28,13 @@ class Controller(object):
 
     def run(self):
         while True:
-            # self.get_midi_tick()
             if self.get_midi_tick():
                 self.sequencer.step_beat()
                 self.draw()
             key = self.get_keys()
             if key:
                 # Deal with key input
-                # return()
                 self.draw()
-                # self.stdscr.addstr(str(key) + ' ')
                 pass
             sleep(0.002)
             self.stdscr.refresh()
@@ -67,56 +64,47 @@ class Controller(object):
             self.sequencer.prev_instrument()
         return str(c)
 
-    def get_clock_tick(self):
-        return self.get_midi_tick()
-        x = time()
-        diff = x - self.last
-        if diff > 0.3:  # 0.3 ms since last tick
-            self.last = x
-            return True
-        return False
+    # def get_clock_tick(self):
+    #     return self.get_midi_tick()
+    #     x = time()
+    #     diff = x - self.last
+    #     if diff > 0.3:  # 0.3 ms since last tick
+    #         self.last = x
+    #         return True
+    #     return False
 
     def get_midi_tick(self):
         for message in self.mportin.iter_pending():
             if message.type == "clock":
-                # print('Received {}'.format(message))
                 self.beatclockcount += 1
-                # print(str(self.beatclockcount))
         if self.beatclockcount >= 24:
             self.beatclockcount %= 24
             return True
         return False
 
     def draw(self):
-        # pass
-        self.sequencer.draw(self.stdscr)
-        # self.cursor.draw(self.stdscr)
+        status = {}  # TODO from sequencer?
+        led_grid = self.sequencer.get_led_grid()
+        cursor_pos = self.cursor.get_pos()
+        self.display.draw_all(status, led_grid, cursor_pos)
+
+
         self.stdscr.addstr(20, 40, "x{}, y{}  ".format(self.cursor.x, self.cursor.y))
         # self.stdscr.addstr(19, 40, str(self.beatclockcount)+"  ")
         self.stdscr.addstr(19, 40, str(self.sequencer.current_visible_instrument)+"  ")
 
-        self.display.draw_cursor(self.cursor)
 
 
 def main(stdscr):
     stdscr.nodelay(1)
     with mido.open_output('Flynn', autoreset=True, virtual=True) as mport:
         with mido.open_input('Flynn_In', autoreset=True, virtual=True) as mportin:
-
             controller = Controller(stdscr, mport, mportin)
-            controller.sequencer.touch_note(1,3)
-            controller.sequencer.touch_note(1,4)
-            controller.sequencer.touch_note(1,6)
-            controller.sequencer.touch_note(2,6)
-            controller.sequencer.touch_note(2,6)
-            controller.sequencer.touch_note(3,1)
             controller.sequencer.touch_note(3,4)
-            controller.sequencer.touch_note(4,7)
             controller.sequencer.add_instrument("a", "major", octave=2)
             # controller.sequencer.add_instrument("c", "pentatonic", octave=4, bars=4)
             # controller.sequencer.add_instrument("d", "pentatonic", octave=5, bars=4)
             controller.run()
-
 
 if __name__ == '__main__':
     curses.wrapper(main)

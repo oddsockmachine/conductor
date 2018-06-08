@@ -27,7 +27,10 @@ class Cursor(object):
         else:
             self.visible = False
         return
+    #
+    # def draw(self, stdscr):
+    #     stdscr.addstr(self.height-self.y-1, self.x*2, DISPLAY[LED_ACTIVE])#, curses.color_pair(4))
+    #     return
 
-    def draw(self, stdscr):
-        stdscr.addstr(self.height-self.y-1, self.x*2, DISPLAY[LED_ACTIVE])#, curses.color_pair(4))
-        return
+    def get_pos(self):
+        return {'x': self.x, 'y': self.y}

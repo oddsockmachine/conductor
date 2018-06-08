@@ -68,6 +68,7 @@ class Sequencer(object):
         self.get_curr_instrument().touch_note(x, y)
 
     def get_led_grid(self):
+        '''Get led status types for all cells of the grid, to be drawn by the display'''
         note_grid = self.get_curr_instrument().get_curr_page_grid()
         led_grid = []
         for c, column in enumerate(note_grid):  # columnn counter
@@ -75,36 +76,23 @@ class Sequencer(object):
         return led_grid
 
     def get_led_status(self, cell, beat_pos):
-        led = LED_BLANK
+        '''Determine which type of LED should be shown for a given cell'''
+        led = LED_BLANK  # Start with blank / no led
         if beat_pos == self.beat_position:
-            led = LED_BEAT
+            led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
             if cell == NOTE_ON:
-                led = LED_SELECT
+                led = LED_SELECT  # Unless we want a selected + beat cell to be special
         elif cell == NOTE_ON:
-            led = LED_ACTIVE
+            led = LED_ACTIVE  # Otherwise if the cell is active (touched)
         return led
 
-    def draw(self, scr):
-        note_grid = self.get_curr_instrument().get_curr_page_grid()
-        for c, column in enumerate(note_grid):  # row counter
-            for r, cell in enumerate(column):  # column counter
-                led = DISPLAY[LED_BLANK]
-                if c == self.beat_position:
-                    led = DISPLAY[LED_BEAT]
-                    if cell == NOTE_ON:
-                        led = DISPLAY[LED_SELECT]
-                elif cell == NOTE_ON:
-                    led = DISPLAY[LED_ACTIVE]
-                scr.addstr(H-r-1, c*2, led)#, curses.color_pair(4))
-
-
-                # if cell == NOTE_ON:
-                #     scr.addstr(H-r-1, c*2, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
-                # elif c == self.beat_position: # and DISPLAY[y] != LED_ACTIVE:
-                #     scr.addstr(H-r-1, c*2, DISPLAY[LED_SELECT])#, curses.color_pair(4))
-                # else:
-                #     scr.addstr(H-r-1, c*2, DISPLAY[LED_BLANK])#, curses.color_pair(4))
-        return
+    # def draw(self, scr):
+    #     note_grid = self.get_curr_instrument().get_curr_page_grid()
+    #     for c, column in enumerate(note_grid):  # row counter
+    #         for r, cell in enumerate(column):  # column counter
+    #             led = self.get_led_status(cell, c)
+    #             scr.addstr(H-r-1, c*2, DISPLAY[led])#, curses.color_pair(4))
+    #     return
 
 
 import unittest
@@ -156,11 +144,11 @@ class TestInstrument(unittest.TestCase):
         seq.step_beat()  # step to 4th beat, #3
         grid = seq.get_led_grid()
         print(grid)
-        self.assertEqual(grid[0], [0,0,0,0,0,0,0,0,                            0,0,0,0,0,0,0,0])
-        self.assertEqual(grid[1], [0,0,0,0,0,0,0,0,                            0,0,0,0,0,0,0,0])
+        self.assertEqual(grid[0], [0,0,0,0,0,0,0,0,             0,0,0,0,0,0,0,0])
+        self.assertEqual(grid[1], [0,0,0,0,0,0,0,0,             0,0,0,0,0,0,0,0])
         self.assertEqual(grid[2], [0,0,0,LED_ACTIVE,LED_ACTIVE,LED_ACTIVE,0,0, 0,0,0,0,0,0,0,0])
         self.assertEqual(grid[3], [LED_BEAT,LED_BEAT,LED_BEAT,LED_ACTIVE,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT, LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT])
-        self.assertEqual(grid[4], [0,0,0,LED_ACTIVE,0,0,0,0,                    0,0,0,0,0,0,0,0])
+        self.assertEqual(grid[4], [0,0,0,LED_ACTIVE,0,0,0,0,     0,0,0,0,0,0,0,0])
 
 if __name__ == '__main__':
     unittest.main()
