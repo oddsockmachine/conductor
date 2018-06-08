@@ -2,7 +2,7 @@ from constants import *
 
 class Note_Grid(object):
     """A grid of notes, also a page of music."""
-    def __init__(self, bars=4, height=H):
+    def __init__(self, bars=int(W/4), height=H):
         super(Note_Grid, self).__init__()
         self.bars = min(bars, 8)  # Option to reduce number of bars < 4
         self.height = height

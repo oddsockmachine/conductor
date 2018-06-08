@@ -6,10 +6,10 @@ from instrument import Instrument
 
 class Sequencer(object):
     """docstring for Sequencer."""
-    def __init__(self, mport, bars=4):
+    def __init__(self, mport, bars=int(W/4)):
         super(Sequencer, self).__init__()
         self.mport = mport
-        self.instruments = [Instrument(0, self.mport, "a", "major", octave=2, bars=bars)]  # limit to 16 midi channels
+        self.instruments = [Instrument(0, self.mport, "e", "major", octave=2, bars=bars)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         self.max_num_instruments = MAX_INSTRUMENTS
         self.tempo = 20
@@ -34,7 +34,7 @@ class Sequencer(object):
         self.tempo -= amt
         return
 
-    def add_instrument(self, key, scale, octave=2, bars=W/4, height=H):
+    def add_instrument(self, key, scale, octave=2, bars=int(W/4), height=H):
         if len(self.instruments) == 16:
             logging.warning('Already at 16 instruments')
             return False

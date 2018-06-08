@@ -112,7 +112,7 @@ def main(stdscr):
             controller.sequencer.touch_note(3,1)
             controller.sequencer.touch_note(3,4)
             controller.sequencer.touch_note(4,7)
-            controller.sequencer.add_instrument("a", "major", octave=2, bars=4)
+            controller.sequencer.add_instrument("a", "major", octave=2)
             # controller.sequencer.add_instrument("c", "pentatonic", octave=4, bars=4)
             # controller.sequencer.add_instrument("d", "pentatonic", octave=5, bars=4)
             controller.run()
