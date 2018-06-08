@@ -177,23 +177,100 @@ class TestInstrument(unittest.TestCase):
         self.assertTrue(ins.touch_note(2,0))
         ins.inc_curr_page_repeats()
         ins.add_page(1)
-        ins.print_curr_page_notes()
-
         ins.step_beat()
-        ins.get_curr_page_grid()
-        ins.print_curr_page_notes()
-        # ins.inc_curr_page_repeats()
 
-        # for i in range(40):
-        #     ins.step_beat()
-        #     ins.print_curr_page_notes()
+    def test_multi_pages(self):
+        ins = Instrument(8, None, "a", "pentatonic", octave=3, bars=4)
+        self.assertEqual(len(ins.pages), 1)
+        self.assertEqual(ins.curr_page_num, 0)
+        ins.touch_note(0,0)
+        ins.touch_note(0,1)
+        ins.touch_note(0,2)
+        self.assertEqual(ins.get_curr_notes(), [0,1,2])
 
-        # ins.curr_page_num = 1
-        # ins.touch_note(15,15)
-        # ins.print_curr_page_notes()
-        # ins.curr_page_num = 2
-        # ins.print_curr_page_notes()
+        ins.add_page(1)  # Add a page _after_ current page
+        self.assertEqual(ins.curr_page_num, 0)
+        ins.touch_note(0,4)  # Still on first page
+        ins.touch_note(0,5)
+        ins.touch_note(0,6)
+        self.assertEqual(len(ins.pages), 2)
+        self.assertEqual(ins.get_curr_notes(), [0,1,2,4,5,6])
 
+        ins.add_page(0)  # Add a page _before_ current page
+        self.assertEqual(ins.curr_page_num, 0)  # on new page, prev page pushed back
+        self.assertEqual(len(ins.pages), 3)
+        ins.touch_note(0,3)
+        ins.touch_note(0,6)
+        ins.touch_note(0,9)
+        self.assertEqual(ins.get_curr_notes(), [3,6,9])
 
+    def test_stepping_and_pages(self):
+        ins = Instrument(8, None, "a", "pentatonic", octave=3, bars=4)
+        ins.touch_note(0,0)
+        ins.touch_note(0,1)
+        ins.touch_note(0,2)
+        ins.touch_note(1,5)
+        ins.touch_note(1,6)
+        ins.touch_note(1,7)
+        self.assertEqual(ins.get_curr_notes(), [0,1,2])
+        self.assertEqual(ins.beat_position, 0)
+        ins.step_beat()
+        self.assertEqual(ins.get_curr_notes(), [5,6,7])
+        self.assertEqual(ins.beat_position, 1)
+        ins.step_beat()
+        self.assertEqual(ins.get_curr_notes(), [])
+        self.assertEqual(ins.beat_position, 2)
+        self.assertEqual(ins.curr_page_num, 0)  # Still on page 0
+        for i in range(14):
+            ins.step_beat()
+        self.assertEqual(ins.beat_position, 0)
+        self.assertEqual(ins.get_curr_notes(), [0,1,2])
+        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, wrapped around
+        ins.add_page(1)
+        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, new page is next
+        for i in range(17):
+            ins.step_beat()
+        self.assertEqual(ins.beat_position, 1)
+        self.assertEqual(ins.curr_page_num, 1)  # Should still be on same page, wrapped around
+        self.assertEqual(ins.get_curr_notes(), [])
+        for i in range(15):
+            ins.step_beat()
+        self.assertEqual(ins.get_curr_notes(), [0,1,2])
+        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, wrapped around
+        self.assertEqual(ins.beat_position, 0)
+
+    def test_multi_repeats(self):
+        ins = Instrument(8, None, "a", "pentatonic", octave=3, bars=4)
+        ins.touch_note(0,0)
+        ins.touch_note(0,1)
+        ins.touch_note(0,2)
+        self.assertEqual(ins.get_curr_notes(), [0,1,2])
+        ins.add_page(1)
+        for i in range(17):
+            ins.step_beat()
+        self.assertEqual(ins.curr_page_num, 1)
+        self.assertEqual(ins.beat_position, 1)
+        ins.touch_note(1,5)
+        ins.touch_note(1,6)
+        ins.touch_note(1,7)
+        self.assertEqual(ins.get_curr_notes(), [5,6,7])
+        for i in range(16):
+            ins.step_beat()
+        self.assertEqual(ins.curr_page_num, 0) # Back to page 0
+        self.assertEqual(ins.beat_position, 1)
+        ins.inc_curr_page_repeats()
+        self.assertEqual(ins.curr_rept_num, 0)
+        for i in range(15):
+            ins.step_beat()
+        self.assertEqual(ins.get_curr_notes(), [0,1,2])
+        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, 2nd repeat
+        self.assertEqual(ins.beat_position, 0)
+        self.assertEqual(ins.curr_rept_num, 1)
+        for i in range(17):
+            ins.step_beat()
+        self.assertEqual(ins.curr_page_num, 1)
+        self.assertEqual(ins.beat_position, 1)
+        self.assertEqual(ins.get_curr_notes(), [5,6,7])
+        
 if __name__ == '__main__':
     unittest.main()

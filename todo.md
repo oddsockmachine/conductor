@@ -31,6 +31,8 @@ convert everything to asynchronous/event driven
 
 accept midi notes in on all channels, add note to current beat - would allow live playing and editing of an instrument
 
+set random range for page repeats
+
 Show root notes, pentatonic notes, etc in different colors/shades
   Root note for pentatonics
   root and pentatonic for modes
