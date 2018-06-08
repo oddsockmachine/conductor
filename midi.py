@@ -16,12 +16,14 @@ class MockMidiIn(object):
 
 class MockMidiOut(object):
     """docstring for MockMidiIn."""
-    def __init__(self, arg):
-        super(MockMidiIn, self).__init__()
-        self.arg = arg
+    def __init__(self):
+        super(MockMidiOut, self).__init__()
+        self.buffer = []
 
     def send(self, msg):
         self.buffer.append(msg)
 
     def get_output(self):
-        return self.buffer
+        b = self.buffer
+        self.buffer = []
+        return b

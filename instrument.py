@@ -271,6 +271,52 @@ class TestInstrument(unittest.TestCase):
         self.assertEqual(ins.curr_page_num, 1)
         self.assertEqual(ins.beat_position, 1)
         self.assertEqual(ins.get_curr_notes(), [5,6,7])
-        
+
+    def test_cell_to_midi(self):
+        ins1 = Instrument(8, None, "a", "chromatic", octave=3, bars=4)
+        self.assertEqual(ins1.cell_to_midi(0), 57)
+        self.assertEqual(ins1.cell_to_midi(1), 58)
+        self.assertEqual(ins1.cell_to_midi(2), 59)
+        ins2 = Instrument(8, None, "a", "major", octave=3, bars=4)
+        self.assertEqual(ins2.cell_to_midi(0), 57)
+        self.assertEqual(ins2.cell_to_midi(1), 59)
+        self.assertEqual(ins2.cell_to_midi(2), 61)
+        self.assertEqual(ins2.cell_to_midi(3), 62)
+
+    def test_midi_out(self):
+        from midi import MockMidiOut
+        fake_out = MockMidiOut()
+        ins = Instrument(9, fake_out, "a", "chromatic", octave=3, bars=4)
+        ins.touch_note(1,0)
+        ins.touch_note(1,1)
+        ins.touch_note(2,14)
+        ins.touch_note(2,15)
+        ins.step_beat()
+        # print(fake_out.buffer)
+        self.assertEqual(len(fake_out.buffer), 2)
+        notes = fake_out.get_output()
+        self.assertEqual(len(notes), 2)
+        note1 = notes[0]
+        note2 = notes[1]
+        self.assertEqual(len(fake_out.buffer), 0)
+        self.assertEqual(note1.type, 'note_on')
+        self.assertEqual(note1.channel, 9)
+        self.assertEqual(note1.note, 57)
+        self.assertEqual(note2.note, 58)
+        ins.step_beat()
+        notes = fake_out.get_output()
+        note3 = notes[0]
+        note4 = notes[1]
+        note5 = notes[2]
+        note6 = notes[3]
+        self.assertEqual(note3.type, 'note_off')
+        self.assertEqual(note3.note, 57)
+        self.assertEqual(note4.type, 'note_off')
+        self.assertEqual(note4.note, 58)
+        self.assertEqual(note5.type, 'note_on')
+        self.assertEqual(note5.note, 71)
+        self.assertEqual(note6.type, 'note_on')
+        self.assertEqual(note6.note, 72)
+
 if __name__ == '__main__':
     unittest.main()
