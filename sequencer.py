@@ -58,63 +58,109 @@ class Sequencer(object):
     def get_curr_instrument(self):
         return self.instruments[self.current_visible_instrument]
 
+    def get_curr_instrument_num(self):
+        return self.current_visible_instrument + 1
+
+    def get_total_instrument_num(self):
+        return len(self.instruments)
+
     def touch_note(self, x, y):
         self.get_curr_instrument().touch_note(x, y)
 
     def get_led_grid(self):
         note_grid = self.get_curr_instrument().get_curr_page_grid()
         led_grid = []
-        for c in range(self.width):
-            col = []
-            for r in range(self.height):
-                col.append()
-        for c, column in enumerate(note_grid):  # row counter
-            led_col = []
-            for r, cell in enumerate(column):  # column counter
-                if cell == NOTE_ON:
-                    scr.addstr(H-r-1, c*2, DISPLAY[NOTE_ON])#, curses.color_pair(4))
-                elif c == self.beat_position: # and DISPLAY[y] != LED_ACTIVE:
-                    scr.addstr(H-r-1, c*2, DISPLAY[LED_SELECT])#, curses.color_pair(4))
-                else:
-                    scr.addstr(H-r-1, c*2, DISPLAY[LED_BLANK])#, curses.color_pair(4))
-        return
+        for c, column in enumerate(note_grid):  # columnn counter
+            led_grid.append([self.get_led_status(x, c) for x in column])
+        return led_grid
 
+    def get_led_status(self, cell, beat_pos):
+        led = LED_BLANK
+        if beat_pos == self.beat_position:
+            led = LED_BEAT
+            if cell == NOTE_ON:
+                led = LED_SELECT
+        elif cell == NOTE_ON:
+            led = LED_ACTIVE
+        return led
 
     def draw(self, scr):
         note_grid = self.get_curr_instrument().get_curr_page_grid()
         for c, column in enumerate(note_grid):  # row counter
             for r, cell in enumerate(column):  # column counter
-                if cell == NOTE_ON:
-                    scr.addstr(H-r-1, c*2, DISPLAY[NOTE_ON])#, curses.color_pair(4))
-                elif c == self.beat_position: # and DISPLAY[y] != LED_ACTIVE:
-                    scr.addstr(H-r-1, c*2, DISPLAY[LED_SELECT])#, curses.color_pair(4))
-                else:
-                    scr.addstr(H-r-1, c*2, DISPLAY[LED_BLANK])#, curses.color_pair(4))
+                led = DISPLAY[LED_BLANK]
+                if c == self.beat_position:
+                    led = DISPLAY[LED_BEAT]
+                    if cell == NOTE_ON:
+                        led = DISPLAY[LED_SELECT]
+                elif cell == NOTE_ON:
+                    led = DISPLAY[LED_ACTIVE]
+                scr.addstr(H-r-1, c*2, led)#, curses.color_pair(4))
+
+
+                # if cell == NOTE_ON:
+                #     scr.addstr(H-r-1, c*2, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
+                # elif c == self.beat_position: # and DISPLAY[y] != LED_ACTIVE:
+                #     scr.addstr(H-r-1, c*2, DISPLAY[LED_SELECT])#, curses.color_pair(4))
+                # else:
+                #     scr.addstr(H-r-1, c*2, DISPLAY[LED_BLANK])#, curses.color_pair(4))
         return
 
 
+import unittest
+class TestInstrument(unittest.TestCase):
+    def test_instrument_nums(self):
+        seq = Sequencer(None)
+        self.assertEqual(seq.get_curr_instrument_num(), 1)
+        self.assertEqual(seq.get_total_instrument_num(), 1)
+        seq.next_instrument()
+        self.assertEqual(seq.get_curr_instrument_num(), 1)
+        seq.prev_instrument()
+        self.assertEqual(seq.get_curr_instrument_num(), 1)
+        seq.prev_instrument()
+        self.assertEqual(seq.get_curr_instrument_num(), 1)
+        seq.add_instrument("e", "major")
+        self.assertEqual(seq.get_curr_instrument_num(), 1)
+        self.assertEqual(seq.get_total_instrument_num(), 2)
+        seq.next_instrument()
+        self.assertEqual(seq.get_curr_instrument_num(), 2)
+        seq.prev_instrument()
+        self.assertEqual(seq.get_curr_instrument_num(), 1)
 
+    def test_multi_instrument_notes(self):
+        seq = Sequencer(None)
+        seq.add_instrument("e", "major")
+        seq.touch_note(0,3)
+        seq.touch_note(1,4)
+        self.assertEqual(seq.get_curr_instrument_num(), 1)
+        self.assertEqual(seq.get_curr_instrument().get_curr_notes(), [3])
+        seq.next_instrument()
+        seq.touch_note(0,5)
+        seq.touch_note(1,6)
+        self.assertEqual(seq.get_curr_instrument_num(), 2)
+        self.assertEqual(seq.get_curr_instrument().get_curr_notes(), [5])
+        seq.step_beat()
+        self.assertEqual(seq.get_curr_instrument().get_curr_notes(), [6])
+        seq.prev_instrument()
+        self.assertEqual(seq.get_curr_instrument().get_curr_notes(), [4])
+
+    def test_led_grid(self):
+        seq = Sequencer(None)
+        seq.touch_note(2,3)
+        seq.touch_note(2,4)
+        seq.touch_note(2,5)
+        seq.touch_note(3,3)
+        seq.touch_note(4,3)
+        seq.step_beat()
+        seq.step_beat()
+        seq.step_beat()  # step to 4th beat, #3
+        grid = seq.get_led_grid()
+        print(grid)
+        self.assertEqual(grid[0], [0,0,0,0,0,0,0,0,                            0,0,0,0,0,0,0,0])
+        self.assertEqual(grid[1], [0,0,0,0,0,0,0,0,                            0,0,0,0,0,0,0,0])
+        self.assertEqual(grid[2], [0,0,0,LED_ACTIVE,LED_ACTIVE,LED_ACTIVE,0,0, 0,0,0,0,0,0,0,0])
+        self.assertEqual(grid[3], [LED_BEAT,LED_BEAT,LED_BEAT,LED_ACTIVE,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT, LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT])
+        self.assertEqual(grid[4], [0,0,0,LED_ACTIVE,0,0,0,0,                    0,0,0,0,0,0,0,0])
 
 if __name__ == '__main__':
-    seq = Sequencer(None)
-    seq.touch_note(1,3)
-    # seq.run()
-    # try:
-    #     print("foo")
-    #     # sequencer.run()
-    # except KeyboardInterrupt:
-    #     print 'Interrupted'
-    #     # try:
-    #     sequencer.listener.close()
-    #     sys.exit(0)
-    #     # except SystemExit:
-    #     #     os._exit(0)
-
-
-    seq.next_instrument()
-    seq.prev_instrument()
-    seq.prev_instrument()
-    seq.touch_note(3,3)
-    for i in range(20):
-        seq.step_beat()
-        seq.get_curr_instrument().print_curr_page_notes()
+    unittest.main()

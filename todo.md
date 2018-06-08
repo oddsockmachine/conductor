@@ -10,6 +10,8 @@
     borders, dividers (between bars, octaves etc)
     etc
 
+# Controls for adding/changing pages/instruments, setting musical constraints etc
+- When adding instrument, select from helpful presets: eg drums
 
 # convert between standard xy and curses xy - all positions, calculations etc should be done in standard, only convert to curses when it's time to draw
 

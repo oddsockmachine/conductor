@@ -3,17 +3,26 @@ import logging
 logging.basicConfig(filename='sequencer.log',level=logging.DEBUG)
 
 # The ints used to represent the state of leds on an led_grid
-LED_BLANK = 0
-LED_SELECT = 1
-LED_CURSOR = 2
-LED_ACTIVE = 3
+THEME = 0
+if THEME == 0:
+    LED_BLANK = 0
+    LED_SELECT = 3
+    LED_CURSOR = 2
+    LED_ACTIVE = 3
+    LED_BEAT = 1
+else:
+    LED_BLANK = 0
+    LED_CURSOR = 1
+    LED_ACTIVE = 2
+    LED_SELECT = 3
+    LED_BEAT = 1
 
 # The ints used to represent the state of notes on a note_grid
 NOTE_OFF = 0
 NOTE_ON = 3
 
 # The glyphs used to display cell information/states in the CLI
-DISPLAY = {0: '. ', 1:'░░', 2:'▒▒', 3:'▓▓'}
+DISPLAY = {0: '.  ', 1:'░░', 2:'▒▒', 3:'▓▓'}
 
 W = 16  # Width of the display grid
 H = 16  # Width of the display grid
