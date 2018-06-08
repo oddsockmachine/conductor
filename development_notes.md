@@ -38,3 +38,42 @@ This is done to ensure the note_grid always represents _notes_ versus time, not 
 When a note_grid is ready for display, only then do we do the necessary conversion to absolute position.
 Each component should ideally have a print method for debugging its state, which will handle that conversion.
 However, the internal representation of that component's state should be in whatever format is most fitting.
+
+
+
+## Rough class overview
+
+Display
+  Cursor
+    x, y
+    visible
+  Selectors
+    Row
+      y
+      visible
+    Column
+    Box
+    Etc
+  Sequencer
+    current_visible_instrument
+    tempo
+    beat/bar number
+    Instruments
+      A
+        name
+        beat position (position on page, and page repeat num) (page 2, beat 11, repeat 2)
+        Pages
+          1
+            Note_Grid
+              H(16) x W(4 x bars < 16)
+              Repeats
+              Scale
+              Key
+          2
+          3
+      B
+      C
+  Display_Grid
+    Panes
+      full
+      half
