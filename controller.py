@@ -39,7 +39,6 @@ class Controller(object):
             sleep(0.002)
             self.stdscr.refresh()
             # self.draw()  # ??
-
         pass
 
     def get_keys(self):
@@ -77,8 +76,8 @@ class Controller(object):
         for message in self.mportin.iter_pending():
             if message.type == "clock":
                 self.beatclockcount += 1
-        if self.beatclockcount >= 24:
-            self.beatclockcount %= 24
+        if self.beatclockcount >= 6:
+            self.beatclockcount %= 6
             return True
         return False
 
@@ -101,7 +100,8 @@ def main(stdscr):
         with mido.open_input('Flynn_In', autoreset=True, virtual=True) as mportin:
             controller = Controller(stdscr, mport, mportin)
             controller.sequencer.touch_note(3,4)
-            controller.sequencer.add_instrument("a", "major", octave=2)
+            # controller.sequencer.get_curr_instrument().add_page(1)
+            # controller.sequencer.add_instrument("a", "major", octave=2)
             # controller.sequencer.add_instrument("c", "pentatonic", octave=4, bars=4)
             # controller.sequencer.add_instrument("d", "pentatonic", octave=5, bars=4)
             controller.run()

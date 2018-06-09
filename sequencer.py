@@ -9,7 +9,7 @@ class Sequencer(object):
     def __init__(self, mport, bars=int(W/4)):
         super(Sequencer, self).__init__()
         self.mport = mport
-        self.instruments = [Instrument(0, self.mport, "e", "major", octave=2, bars=bars)]  # limit to 16 midi channels
+        self.instruments = [Instrument(0, self.mport, "a#", "pentatonic", octave=2, bars=bars)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         self.max_num_instruments = MAX_INSTRUMENTS
         # self.tempo = 20

@@ -2,6 +2,7 @@
 from constants import *
 
 import curses
+from curses.textpad import rectangle
 import locale
 locale.setlocale(locale.LC_ALL, '')
 
@@ -14,22 +15,35 @@ class Display(object):
         self.stdscr = stdscr
         self.grid_height = h
         self.grid_width = w
+        self.grid_offset_x = 5
+        self.grid_offset_y = 1
 
         return
 
     def draw_gui(self, status):
+        # Box around the grid
+        rectangle(self.stdscr, self.grid_offset_y - 1,
+                               self.grid_offset_x - 1,
+                               self.grid_offset_y+self.grid_height,
+                               self.grid_offset_x+(2 * self.grid_width)+1)
         return
 
     def draw_grid(self, led_grid):
         '''Take a led_grid/array from the sequencer and print it to the screen'''
         for c, column in enumerate(led_grid):  # row counter
             for r, cell in enumerate(column):  # column counter
-                self.stdscr.addstr(H-r-1, c*2, DISPLAY[cell])#, curses.color_pair(4))
+                x = (c*2) + self.grid_offset_x
+                y = (H-r-1) + self.grid_offset_y
+                glyph = DISPLAY[cell]
+                self.stdscr.addstr(y, x, glyph)#, curses.color_pair(4))
         return
 
     def draw_cursor(self, cursor):
         '''Draw the cursor over the grid'''
-        self.stdscr.addstr(self.grid_height-cursor['y']-1, cursor['x']*2, DISPLAY[LED_CURSOR])#, curses.color_pair(4))
+        x = (cursor['x']*2) + self.grid_offset_x
+        y = (self.grid_height-cursor['y']-1) + self.grid_offset_y
+        glyph = DISPLAY[LED_CURSOR]
+        self.stdscr.addstr(y, x, glyph)#, curses.color_pair(4))
         return
 
     def draw_all(self, status, led_grid, cursor_pos):

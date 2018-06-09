@@ -22,7 +22,7 @@ NOTE_OFF = 0
 NOTE_ON = 3
 
 # The glyphs used to display cell information/states in the CLI
-DISPLAY = {0: '.  ', 1:'░░', 2:'▒▒', 3:'▓▓'}
+DISPLAY = {0: '. ', 1:'░░', 2:'▒▒', 3:'▓▓'}
 
 W = 16  # Width of the display grid
 H = 16  # Width of the display grid
