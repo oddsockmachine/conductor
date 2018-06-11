@@ -19,7 +19,7 @@ class Controller(object):
         super(Controller, self).__init__()
         self.mport = mport
         self.mportin = mportin
-        self.sequencer = Sequencer(mport)
+        self.sequencer = Sequencer(mport, key="a#", scale="pentatonic")
         self.last = time()
         self.stdscr = stdscr
         self.cursor = Cursor()
@@ -76,8 +76,8 @@ class Controller(object):
         for message in self.mportin.iter_pending():
             if message.type == "clock":
                 self.beatclockcount += 1
-        if self.beatclockcount >= 6:
-            self.beatclockcount %= 6
+        if self.beatclockcount >= 12:
+            self.beatclockcount %= 12
             return True
         return False
 

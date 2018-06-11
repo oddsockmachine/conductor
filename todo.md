@@ -17,6 +17,9 @@
 
 # Controls for adding/changing pages/instruments, setting musical constraints etc
 - When adding instrument, select from helpful presets: eg drums
+- When adding instrument, select from same scale as sequencer or chromatic/drum - is there any value in selecting a different scale?
+- Change octave of page/instrument at runtime
+- Change key/scale of whole sequencer (or non-drum instruments) at runtime?
 
 # synchronize with Ableton
 - already in time, but are start of bars always the same or offset?

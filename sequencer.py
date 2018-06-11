@@ -2,21 +2,32 @@
 from time import sleep
 from constants import *
 from instrument import Instrument
-# from multiprocessing.connection import Listener
+from note_conversion import *
 
 class Sequencer(object):
     """docstring for Sequencer."""
-    def __init__(self, mport, bars=int(W/4)):
+    # def __init__(self, mport, bars=int(W/4)):
+    def __init__(self, mport, key, scale, octave=2, bars=int(W/4), height=H):
+
         super(Sequencer, self).__init__()
         self.mport = mport
-        self.instruments = [Instrument(0, self.mport, "a#", "pentatonic", octave=2, bars=bars)]  # limit to 16 midi channels
-        self.current_visible_instrument = 0
-        self.max_num_instruments = MAX_INSTRUMENTS
-        # self.tempo = 20
+        if key not in KEYS:
+            print('Requested key {} not known'.format(key))
+            exit()
+        self.key = key
+        if scale not in SCALES.keys():
+            print('Requested scale {} not known'.format(scale))
+            exit()
+        # self.tempo_division = 4
         self.beat_position = 0
         self.height = H
         self.width = bars*4
-        self.mport = mport
+        self.scale = scale
+        self.octave = octave  # Starting octave
+        self.instruments = [Instrument(0, self.mport, key=key, scale=scale, octave=octave, bars=bars)]  # limit to 16 midi channels
+        self.current_visible_instrument = 0
+        self.max_num_instruments = MAX_INSTRUMENTS
+
 
     # def inc_tempo(self, amt):
     #     self.tempo += amt

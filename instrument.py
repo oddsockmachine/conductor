@@ -1,7 +1,7 @@
 #coding=utf-8
 from constants import *
 from note_grid import Note_Grid
-from note_conversion import create_cell_to_midi_note_lookup, scales, keys
+from note_conversion import create_cell_to_midi_note_lookup, SCALES, KEYS
 import mido
 
 class Instrument(object):
@@ -22,11 +22,11 @@ class Instrument(object):
         self.curr_rept_num = 0
         self.beat_position = 0
         self.pages = [Note_Grid(self.bars, self.height)]
-        if key not in keys:
+        if key not in KEYS:
             print('Requested key {} not known'.format(key))
             exit()
         self.key = key
-        if scale not in scales.keys():
+        if scale not in SCALES.keys():
             print('Requested scale {} not known'.format(scale))
             exit()
         self.scale = scale

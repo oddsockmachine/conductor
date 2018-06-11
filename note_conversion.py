@@ -4,24 +4,24 @@
 # m21 = A0 , 1st note on piano
 #
 # scale = list of intervals from root note, of any size
-scales = {
+SCALES = {
     "chromatic": [1,1,1,1,1,1,1,1,1,1,1,1],
     "major": [2,2,1,2,2,2,1],
     "pentatonic": [3,2,3,2,2],
 }
 
-keys = ['a','a#','b','c','c#','d','d#','e','f','f#','g','g#']
+KEYS = ['a','a#','b','c','c#','d','d#','e','f','f#','g','g#']
 
 def get_starting_note(octave, key):
     '''calculate which midi note number is at cell 0. Everything else is an offset from there'''
     # midi21 = A0, first note on piano.
     # This is not perfect, since it actually goes A0,A#0,B0,_C1_, not _C0_
-    cell0 = 21 + (12 * octave) + keys.index(key)
+    cell0 = 21 + (12 * octave) + KEYS.index(key)
     return cell0
 
 def get_full_scale(height, scale_name):
     '''Extend a scale to cover the height of the grid'''
-    scale = scales[scale_name]  # Get the scale intervals
+    scale = SCALES[scale_name]  # Get the scale intervals
     times = int(height/len(scale)) + 1  # How many times to repeat the intervals to fill up the grid height
     return (scale * times)[:height]  # Repeat the intervals, then trim to fit
 
