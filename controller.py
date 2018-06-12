@@ -19,7 +19,7 @@ class Controller(object):
         super(Controller, self).__init__()
         self.mport = mport
         self.mportin = mportin
-        self.sequencer = Sequencer(mport, key="a#", scale="pentatonic")
+        self.sequencer = Sequencer(mport, key="e", scale="pentatonic_maj")
         self.last = time()
         self.stdscr = stdscr
         self.cursor = Cursor()

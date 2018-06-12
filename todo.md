@@ -5,15 +5,16 @@
 # delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc.
 - build out gui, include
     grid relative position
-    different colors for curses glyphs - maybe use all filled boxes, but greyscale
     info, current instrument, page status, key, octave, scale
-    buttons,
+    buttons: new instrument/page, switch instrument, inc/dec repeats
     borders, dividers (between bars, octaves etc)
+    different colors for curses glyphs - maybe use all filled boxes, but greyscale
     etc
 - Switch themes on the fly
 
 # Tempo
 - Select subdivision of tempo - 4ths, 16ths, etc. Do we want slow individual notes, or faster quarter notes?
+- Do this per instrument - drums might be faster/more subdivided, but repeat often - melody might be slower
 
 # Controls for adding/changing pages/instruments, setting musical constraints etc
 - When adding instrument, select from helpful presets: eg drums

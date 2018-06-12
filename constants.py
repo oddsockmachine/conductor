@@ -10,12 +10,16 @@ if THEME == 0:
     LED_CURSOR = 2
     LED_ACTIVE = 3
     LED_BEAT = 1
+    LED_SCALE_PRIMARY = 9  # Primary scale visualizations, eg: root notes
+    LED_SCALE_SECONDARY = 9  # Secondary scale visualizations, eg: scale notes, 5ths, white/black keys
 else:
     LED_BLANK = 0
     LED_CURSOR = 1
     LED_ACTIVE = 2
     LED_SELECT = 3
     LED_BEAT = 1
+    LED_SCALE_PRIMARY = 9  # Primary scale visualizations, eg: root notes
+    LED_SCALE_SECONDARY = 9  # Secondary scale visualizations, eg: scale notes, 5ths, white/black keys
 
 # The ints used to represent the state of notes on a note_grid
 NOTE_OFF = 0

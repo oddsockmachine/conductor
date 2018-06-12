@@ -7,7 +7,8 @@
 SCALES = {
     "chromatic": [1,1,1,1,1,1,1,1,1,1,1,1],
     "major": [2,2,1,2,2,2,1],
-    "pentatonic": [3,2,3,2,2],
+    "pentatonic_min": [3,2,3,2,2],
+    "pentatonic_maj": [2,2,3,2,3],
 }
 
 KEYS = ['a','a#','b','c','c#','d','d#','e','f','f#','g','g#']
