@@ -61,6 +61,8 @@ class Controller(object):
             self.sequencer.next_instrument()
         if c == ord(','):  # < without shift
             self.sequencer.prev_instrument()
+        if c == ord('/'):  # < without shift
+            self.sequencer.add_instrument()
         return str(c)
 
     # def get_clock_tick(self):
@@ -82,15 +84,15 @@ class Controller(object):
         return False
 
     def draw(self):
-        status = {}  # TODO from sequencer?
+        status = self.sequencer.get_status()  # TODO from sequencer?
         led_grid = self.sequencer.get_led_grid()
         cursor_pos = self.cursor.get_pos()
         self.display.draw_all(status, led_grid, cursor_pos)
 
 
-        self.stdscr.addstr(20, 40, "x{}, y{}  ".format(self.cursor.x, self.cursor.y))
+        # self.stdscr.addstr(20, 40, "x{}, y{}  ".format(self.cursor.x, self.cursor.y))
         # self.stdscr.addstr(19, 40, str(self.beatclockcount)+"  ")
-        self.stdscr.addstr(19, 40, str(self.sequencer.current_visible_instrument)+"  ")
+        # self.stdscr.addstr(19, 40, str(self.sequencer.current_visible_instrument)+"  ")
 
 
 

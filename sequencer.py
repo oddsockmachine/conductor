@@ -28,7 +28,19 @@ class Sequencer(object):
         self.current_visible_instrument = 0
         self.max_num_instruments = MAX_INSTRUMENTS
 
-
+    def get_status(self):
+        status = {
+            'ins_num': str(self.get_curr_instrument_num()),
+            'ins_total': str(self.get_total_instrument_num()),
+            'page_num': str(self.get_curr_instrument().curr_page_num+1),
+            'page_total': str(len(self.get_curr_instrument().pages)),
+            'repeat_num': str(self.get_curr_instrument().curr_rept_num),
+            'repeat_total': str(self.get_curr_instrument().get_curr_page().repeats+1),
+            'key': str(self.key),
+            'scale': str(self.scale),
+            'octave': str(self.octave),
+        }
+        return status
     # def inc_tempo(self, amt):
     #     self.tempo += amt
     #     return
@@ -37,7 +49,11 @@ class Sequencer(object):
     #     self.tempo -= amt
     #     return
 
-    def add_instrument(self, key, scale, octave=2, bars=int(W/4), height=H):
+    def add_instrument(self, key=None, scale=None, octave=2, bars=int(W/4), height=H):
+        if not scale:
+            scale = self.scale
+        if not key:
+            key = self.key
         if len(self.instruments) == 16:
             logging.warning('Already at 16 instruments')
             return False
