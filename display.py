@@ -40,11 +40,6 @@ class Display(object):
         status_line_1 = "Instrument: {ins_num}/{ins_tot} Page: {page_num}/{page_tot} Repeat: {repeat_num}/{repeat_tot}  ".format(**status_strs)
         status_line_2 = "Scale: {key} {scale} +{octave}ve".format(**status_strs)
         button_line = "Add Instrument: /?  Switch Instrument:  < >   New Page: :;  +/- Repeats: {[ ]}"
-        # buttons:
-        #   new instrument  /?
-        #   new page    '"
-        #   switch instrument  <,  .>
-        #   inc/dec repeats  {[  ]}
         self.stdscr.addstr(self.grid_height+2, self.grid_offset_x-1, status_line_1)#, curses.color_pair(4))
         self.stdscr.addstr(self.grid_height+3, self.grid_offset_x-1, status_line_2)#, curses.color_pair(4))
         self.stdscr.addstr(self.grid_height+4, self.grid_offset_x-1, button_line)#, curses.color_pair(4))
