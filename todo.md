@@ -1,10 +1,13 @@
+# Sequencer needs to be synchronized!
+- Different instruments are starting at different times!
+- workaround: create all 16 instruments at the same time
+- but ensure instruments with different tempos are synced to start at the same time
 
 # unit tests
 - for cursor, controller, display(?)
 
 # delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc.
 - build out gui, include
-    grid relative position
     info, current instrument, page status, key, octave, scale
     buttons: new instrument/page, switch instrument, inc/dec repeats
     borders, dividers (between bars, octaves etc)
@@ -17,10 +20,13 @@
 - Do this per instrument - drums might be faster/more subdivided, but repeat often - melody might be slower
 
 # Controls for adding/changing pages/instruments, setting musical constraints etc
+- Mouse input for grid - not as awesome as a dedicated instrument, but easier to use than the arrows+enter
 - When adding instrument, select from helpful presets: eg drums
 - When adding instrument, select from same scale as sequencer or chromatic/drum - is there any value in selecting a different scale?
 - Change octave of page/instrument at runtime
 - Change key/scale of whole sequencer (or non-drum instruments) at runtime?
+- Turn off note repeat for an instrumment - adjacent notes sustain instead of retriggering
+- Clear notes from current page / current instrument
 
 # synchronize with Ableton
 - already in time, but are start of bars always the same or offset?
@@ -56,6 +62,8 @@
 # Dual mode
 - How to have one sequencer running/looping live, but have another being built up in the background/cue output?
 - So a "done"/playing song can be left for a short time, while the start of another is built up behind the scenes
+- Probably best to split 16 instruments/channels into 2 sets (since most controllers only handle 8 at a time)
+- Channels/9-16 would mirror 1-8 in Ableton, but when triggered it would be possible to crossfade between them/transfer control
 
 # Transfer to Ableton
 - Button/whatever to trigger transfer currently playing instrument (or all) to ableton clips

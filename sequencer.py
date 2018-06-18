@@ -24,9 +24,9 @@ class Sequencer(object):
         self.width = bars*4
         self.scale = scale
         self.octave = octave  # Starting octave
-        self.instruments = [Instrument(0, self.mport, key=key, scale=scale, octave=octave, bars=bars)]  # limit to 16 midi channels
-        self.current_visible_instrument = 0
         self.max_num_instruments = MAX_INSTRUMENTS
+        self.instruments = [Instrument(0, self.mport, key=key, scale=scale, octave=octave, bars=bars) for x in range(self.max_num_instruments)]  # limit to 16 midi channels
+        self.current_visible_instrument = 0
 
     def get_status(self):
         status = {

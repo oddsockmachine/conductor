@@ -6,7 +6,7 @@ import mido
 
 class Instrument(object):
     """docstring for Instrument."""
-    def __init__(self, ins_num, mport, key, scale, octave=2, bars=W/4, height=H):
+    def __init__(self, ins_num, mport, key, scale, octave=1, bars=W/4, height=H):
         super(Instrument, self).__init__()
         if not isinstance(ins_num, int):
             print("Instrument num {} must be an int".format(ins_num))
@@ -125,7 +125,7 @@ class Instrument(object):
             self.beat_position = 0
             # print("page done")
             self.curr_rept_num += 1
-            if self.curr_rept_num == self.get_curr_page().repeats:
+            if self.curr_rept_num >= self.get_curr_page().repeats:
                 self.curr_rept_num = 0
                 self.curr_page_num += 1
                 # print("next page")
