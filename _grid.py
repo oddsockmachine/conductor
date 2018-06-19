@@ -1,8 +1,8 @@
 #coding=utf-8
 import copy
 import curses
-import locale
-locale.setlocale(locale.LC_ALL, '')
+# import locale
+# locale.setlocale(locale.LC_ALL, '')
 
 # import curses
 # stdscr = curses.initscr()

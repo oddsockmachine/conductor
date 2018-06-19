@@ -30,12 +30,13 @@ class Sequencer(object):
 
     def get_status(self):
         status = {
-            'ins_num': str(self.get_curr_instrument_num()),
-            'ins_total': str(self.get_total_instrument_num()),
-            'page_num': str(self.get_curr_instrument().curr_page_num+1),
-            'page_total': str(len(self.get_curr_instrument().pages)),
-            'repeat_num': str(self.get_curr_instrument().curr_rept_num+1),
-            'repeat_total': str(self.get_curr_instrument().get_curr_page().repeats),
+            'ins_num': self.get_curr_instrument_num(),
+            'ins_total': self.get_total_instrument_num(),
+            'page_num': self.get_curr_instrument().curr_page_num+1,
+            'page_total': len(self.get_curr_instrument().pages),
+            'repeat_num': self.get_curr_instrument().curr_rept_num+1,
+            'repeat_total': self.get_curr_instrument().get_curr_page().repeats,
+            'page_stats': self.get_curr_instrument().get_page_stats(),
             'key': str(self.key),
             'scale': str(self.scale),
             'octave': str(self.octave),

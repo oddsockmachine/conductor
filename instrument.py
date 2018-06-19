@@ -37,6 +37,8 @@ class Instrument(object):
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
 
+    def get_page_stats(self):
+        return [x.repeats for x in self.pages]
 
     def add_page(self, pos=-1):
         '''Add or insert a new blank page into the list of pages'''

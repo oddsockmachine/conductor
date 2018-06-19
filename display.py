@@ -6,7 +6,6 @@ from curses.textpad import rectangle
 import locale
 locale.setlocale(locale.LC_ALL, '')
 
-
 class Display(object):
     """docstring for Display."""
     def __init__(self, stdscr, w=W, h=H):
@@ -28,43 +27,46 @@ class Display(object):
         #                        self.grid_offset_x - 1,
         #                        self.grid_offset_y+self.grid_height,
         #                        self.grid_offset_x+(2 * self.grid_width)+1)
-        status_strs = {
-            'ins_num': status.get('ins_num').rjust(2),
-            'ins_tot': status.get('ins_total').ljust(2),
-            'page_num': status.get('page_num').rjust(2),
-            'page_tot': status.get('page_total').ljust(2),
-            'repeat_num': status.get('repeat_num').rjust(2),
-            'repeat_tot': status.get('repeat_total').ljust(2),
-            'key': status.get('key'),
-            'scale': status.get('scale')[:5].rjust(5),
-            'octave': status.get('octave'),
-        }
-        status_line_1 = "Instrument: {ins_num}/{ins_tot} Page: {page_num}/{page_tot} Repeat: {repeat_num}/{repeat_tot}  ".format(**status_strs)
-        status_line_2 = "Scale: {key} {scale} +{octave}ve".format(**status_strs)
-        button_line = "Add Instrument: /?  Switch Instrument:  < >   New Page: :;  +/- Repeats: {[ ]}"
-        self.stdscr.addstr(self.grid_height+self.grid_offset_y+2, self.grid_offset_x-1, status_line_1)#, curses.color_pair(4))
-        self.stdscr.addstr(self.grid_height+self.grid_offset_y+3, self.grid_offset_x-1, status_line_2)#, curses.color_pair(4))
-        self.stdscr.addstr(self.grid_height+self.grid_offset_y+4, self.grid_offset_x-1, button_line)#, curses.color_pair(4))
-        self.draw_ins_selector(int(status_strs['ins_num']), int(status_strs['ins_tot']))
-        self.draw_pages()
+        # status_strs = {
+        #     'ins_num': status.get('ins_num').rjust(2),
+        #     'ins_tot': status.get('ins_total').ljust(2),
+        #     'page_num': status.get('page_num').rjust(2),
+        #     'page_tot': status.get('page_total').ljust(2),
+        #     'repeat_num': status.get('repeat_num').rjust(2),
+        #     'repeat_tot': status.get('repeat_total').ljust(2),
+        #     'key': status.get('key'),
+        #     'scale': status.get('scale')[:5].rjust(5),
+        #     'octave': status.get('octave'),
+        # }
+        # status_line_1 = "Page: {page_num}/{page_tot} Repeat: {repeat_num}/{repeat_tot}  ".format(**status_strs)
+        # status_line_2 = "Scale: {key} {scale} +{octave}ve".format(**status_strs)
+        button_line = "Switch Instrument:  < >   New Page: :;  +/- Repeats: {[ ]}"
+        # self.stdscr.addstr(self.grid_height+self.grid_offset_y+5, self.grid_offset_x, status_line_1)#, curses.color_pair(4))
+        # self.stdscr.addstr(self.grid_height+self.grid_offset_y+6, self.grid_offset_x, status_line_2)#, curses.color_pair(4))
+        self.stdscr.addstr(self.grid_height+self.grid_offset_y+7, self.grid_offset_x, button_line)#, curses.color_pair(4))
+        self.stdscr.addstr(self.grid_height+self.grid_offset_y+6, self.grid_offset_x, str(status['page_stats']))#, curses.color_pair(4))
+        self.draw_ins_selector(status['ins_num'], status['ins_total'])
+        self.draw_pages(status['page_num'], status['repeat_num'], status['page_stats'])
         return
 
     def draw_ins_selector(self, ins_num, ins_tot):
-        # self.stdscr.addstr(1, self.grid_offset_x+2+(self.grid_width*2)+3, "I")#, curses.color_pair(4))
-        sx = self.grid_offset_x+(self.grid_width*2)+4
+        sx = self.grid_offset_x+(self.grid_width*2)+3
         sy = self.grid_offset_y
         win = curses.newwin(ins_tot+2, 4, sy, sx)
         win.border()
         # Inactive instruments
         for i in range(self.grid_height):
-            win.addstr(i+1, 1, DISPLAY[1])#, curses.color_pair(4))
+            win.addstr(i+1, 1, DISPLAY[1])
         # Active instrument
-        win.addstr(int(ins_num), 1, DISPLAY[3])#, curses.color_pair(4))
+        win.addstr(ins_num, 1, DISPLAY[3])
         win.refresh()
         return
 
-    def draw_pages(self):
-        win = curses.newwin(10, 10, 5, self.grid_offset_x+(self.grid_width*2)+10)
+    def draw_pages(self, page_num, repeat_num, page_repeats):
+        page_tot = len(page_repeats)
+        win = curses.newwin(page_tot+2, 4, self.grid_offset_y, self.grid_offset_x+self.grid_width*2+8)
+        for i in range(page_tot):
+            win.addstr(i+1, 2, str(page_repeats[i]))# DISPLAY[3])
         win.border()
         win.refresh()
 
