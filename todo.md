@@ -7,6 +7,7 @@
 - for cursor, controller, display(?)
 
 # delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc.
+- Use curses windows/panes to deal with window offsets
 - build out gui, include
     info, current instrument, page status, key, octave, scale
     buttons: new instrument/page, switch instrument, inc/dec repeats
