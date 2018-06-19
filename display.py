@@ -48,28 +48,27 @@ class Display(object):
         # for i in range(16):
         #     self.stdscr.addstr(i+1, self.grid_offset_x+(self.grid_width*2)+5, DISPLAY[1])#, curses.color_pair(4))
         # self.stdscr.addstr(int(status_strs['ins_num']), self.grid_offset_x+(self.grid_width*2)+5, DISPLAY[3])#, curses.color_pair(4))
-        self.draw_ins_selector(status_strs['ins_num'])
+        self.draw_ins_selector(int(status_strs['ins_num']), int(status_strs['ins_tot']))
         return
 
-    def draw_ins_selector(self, ins_num):
+    def draw_ins_selector(self, ins_num, ins_tot):
         self.stdscr.addstr(1, self.grid_offset_x+2+(self.grid_width*2)+3, "I")#, curses.color_pair(4))
-
-        rectangle(self.stdscr, self.grid_offset_y - 1,
-                               self.grid_offset_x+(self.grid_width*2)+4,
-                               self.grid_offset_y+self.grid_height,
-                               self.grid_offset_x+(self.grid_width*2)+7)
+        sx = self.grid_offset_x+(self.grid_width*2)+4
+        sy = self.grid_offset_y - 1
+        win = curses.newwin(ins_tot+2, 4, sy, sx)
+        win.border()
         # Inactive instruments
         for i in range(self.grid_height):
-            self.stdscr.addstr(self.grid_offset_y+i, self.grid_offset_x+(self.grid_width*2)+5, DISPLAY[1])#, curses.color_pair(4))
+            win.addstr(i+1, 1, DISPLAY[1])#, curses.color_pair(4))
         # Active instrument
-        self.stdscr.addstr(self.grid_offset_y+int(ins_num)-1, self.grid_offset_x+(self.grid_width*2)+5, DISPLAY[3])#, curses.color_pair(4))
+        win.addstr(int(ins_num), 1, DISPLAY[3])#, curses.color_pair(4))
+        win.refresh()
         return
 
     def draw_pages(self):
-        win = curses.newwin(10, 10, 50, 50)
-        win.addstr(0,0,"hi")
-        win.addstr(5,5,"hi2")
+        win = curses.newwin(10, 10, 5, self.grid_offset_x+(self.grid_width*2)+10)
         win.border()
+        win.refresh()
 
     def draw_grid(self, led_grid):
         '''Take a led_grid/array from the sequencer and print it to the screen'''
