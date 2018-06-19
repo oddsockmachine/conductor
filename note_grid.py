@@ -14,12 +14,16 @@ class Note_Grid(object):
         self.repeats = 1
 
     def inc_repeats(self):
+        if self.repeats == 8:
+            return False
         self.repeats += 1
-        return
+        return True
 
     def dec_repeats(self):
+        if self.repeats == 0:
+            return False
         self.repeats -= 1
-        return
+        return True
 
     def validate_touch(self, x, y):
         if x >= self.width:

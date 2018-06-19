@@ -42,8 +42,10 @@ class Instrument(object):
 
     def add_page(self, pos=-1):
         '''Add or insert a new blank page into the list of pages'''
+        if len(self.pages) == 16:
+            return False
         self.pages.insert(pos, Note_Grid(self.bars, self.height))
-        return
+        return True
 
     def set_next_page(self):
         '''Override and skip to a particular page when the beat reaches the end'''
