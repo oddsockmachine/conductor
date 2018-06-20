@@ -21,6 +21,7 @@ class Instrument(object):
         self.curr_page_num = 0
         self.curr_rept_num = 0
         self.beat_position = 0
+        self.isdrum = False
         self.sustain = False  # TODO don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
         if key not in KEYS:
@@ -41,9 +42,14 @@ class Instrument(object):
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
 
-
     def set_scale(self, scale):
         self.scale = scale
+        # Converter is a cached lookup, we need to regenerate it
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        return True
+
+    def change_octave(self, up_down):
+        self.octave = (self.octave + up_down) % 7
         # Converter is a cached lookup, we need to regenerate it
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True

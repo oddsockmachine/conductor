@@ -5,7 +5,7 @@
 #
 # scale = list of intervals from root note, of any size
 SCALES = {
-    # "chromatic": [1,1,1,1,1,1,1,1,1,1,1,1],
+    "chromatic": [1,1,1,1,1,1,1,1,1,1,1,1],
     "major": [2,2,1,2,2,2,1],
     "pentatonic_min": [3,2,3,2,2],
     "pentatonic_maj": [2,2,3,2,3],

@@ -79,6 +79,12 @@ class Controller(object):
             self.sequencer.cycle_scale(-1)
         if c == ord('b'):
             self.sequencer.cycle_scale(1)
+        if c == ord('c'):
+            self.sequencer.swap_drum_inst()
+        if c == ord('z'):
+            self.sequencer.change_octave(-1)
+        if c == ord('x'):
+            self.sequencer.change_octave(1)
         return str(c)
 
     # def get_clock_tick(self):

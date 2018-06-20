@@ -38,17 +38,32 @@ class Sequencer(object):
         return
 
     def cycle_scale(self, up_down):
-        '''Find current key in master list, move on to prev/next key, set in all modal instruments'''
+        '''Find current scale in master list, move on to prev/next key, set in all modal instruments'''
         curr_scale = list(SCALES.keys()).index(self.scale)
-        logging.warning(curr_scale)
         new_scale = (curr_scale + up_down) % len(SCALES.keys())
         self.scale = list(SCALES.keys())[new_scale]
         for i in self.instruments:
-            i.set_scale(self.scale)
+            if not i.isdrum:
+                i.set_scale(self.scale)
+        return
+
+    def change_octave(self, up_down):
+        '''Find current key in master list, move on to prev/next key, set in all modal instruments'''
+        self.get_curr_instrument().change_octave(up_down)
         return
 
     def swap_drum_inst(self):
         '''Swap the currently selected instrument between drum and instrument modes'''
+        ins = self.get_curr_instrument()
+        if ins.isdrum:
+            ins.octave = self.octave
+            ins.set_scale(self.scale)
+            ins.isdrum = False
+        else:
+            ins.octave = 1
+            ins.set_scale('chromatic')
+            ins.isdrum = True
+
         return
 
     def get_status(self):
@@ -62,7 +77,8 @@ class Sequencer(object):
             'page_stats': self.get_curr_instrument().get_page_stats(),
             'key': str(self.key),
             'scale': str(self.scale),
-            'octave': str(self.octave),
+            'octave': str(self.get_curr_instrument().octave),
+            'isdrum': self.get_curr_instrument().isdrum
         }
         return status
     # def inc_tempo(self, amt):

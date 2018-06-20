@@ -7,23 +7,19 @@
 # delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc.
 - build out gui, include
     borders, dividers (between bars, octaves etc)
-    different colors for curses glyphs - maybe use all filled boxes, but greyscale
-    etc
-- Switch themes on the fly - convert theme constants to dict, lookup is at runtime not startup
+    different colors for curses glyphs
 - Start on converting to Kivy, for raspi/touchscreen solution
 
 # Tempo
 - Select subdivision of tempo - 4ths, 16ths, etc. Do we want slow individual notes, or faster quarter notes?
 - Do this per instrument - drums might be faster/more subdivided, but repeat often - melody might be slower
+- This might mean having a global beat-position that each instrument is synced to, instead of each instrument handling its own position
 
 # Controls for adding/changing pages/instruments, setting musical constraints etc
 - Mouse input for grid - not as awesome as a dedicated instrument, but easier to use than the arrows+enter
-- When adding instrument, select from helpful presets: eg drums
-- When adding instrument, select from same scale as sequencer or chromatic/drum - is there any value in selecting a different scale?
-- Change octave of page/instrument at runtime
-- Change key/scale of whole sequencer (or non-drum instruments) at runtime?
 - Turn off note repeat for an instrument - adjacent notes sustain instead of retriggering
 - Clear notes from current page / current instrument
+- Limit midi notes to within allowed bounds
 
 # synchronize with Ableton
 - already in time, but are start of bars always the same or offset?
