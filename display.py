@@ -27,7 +27,7 @@ class Display(object):
             'octave': status.get('octave'),
             'type': "Drum" if (status.get('isdrum')==True) else "Inst"
         }
-        status_line_2 = "{key} {scale} +{octave}ve  {type}".format(**status_strs)
+        status_line_2 = "{key} {scale} +{octave}ve {type} ".format(**status_strs)
         button_line = "Switch Instrument:  < >   New Page: :;  +/- Repeats: {[ ]}"
         self.stdscr.addstr(self.grid_offset_y-1, self.grid_offset_x+2, status_line_2)#, curses.color_pair(4))
         self.stdscr.addstr(self.grid_height+self.grid_offset_y+2, self.grid_offset_x, button_line)#, curses.color_pair(4))

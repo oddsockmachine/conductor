@@ -85,6 +85,10 @@ class Controller(object):
             self.sequencer.change_octave(-1)
         if c == ord('x'):
             self.sequencer.change_octave(1)
+        if c == curses.KEY_MOUSE:
+            a = curses.getmouse()
+            self.stdscr.addstr(50, 50, str(a))
+
         return str(c)
 
     # def get_clock_tick(self):
@@ -119,6 +123,7 @@ class Controller(object):
 
 
 def main(stdscr):
+    curses.mousemask(1)
     stdscr.nodelay(1)
     with mido.open_output('Flynn', autoreset=True, virtual=True) as mport:
         with mido.open_input('Flynn_In', autoreset=True, virtual=True) as mportin:
