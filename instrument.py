@@ -21,6 +21,7 @@ class Instrument(object):
         self.curr_page_num = 0
         self.curr_rept_num = 0
         self.beat_position = 0
+        self.sustain = False  # TODO don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
         if key not in KEYS:
             print('Requested key {} not known'.format(key))
@@ -40,11 +41,14 @@ class Instrument(object):
     def get_page_stats(self):
         return [x.repeats for x in self.pages]
 
-    def add_page(self, pos=-1):
+    def add_page(self, pos=True):
         '''Add or insert a new blank page into the list of pages'''
         if len(self.pages) == 16:
             return False
-        self.pages.insert(pos, Note_Grid(self.bars, self.height))
+        if pos:
+            self.pages.insert(self.curr_page_num+1, Note_Grid(self.bars, self.height))
+        else:
+            self.pages.append(Note_Grid(self.bars, self.height))
         return True
 
     def set_next_page(self):
