@@ -28,6 +28,29 @@ class Sequencer(object):
         self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, bars=bars) for x in range(self.max_num_instruments)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
 
+    def cycle_key(self, up_down):
+        '''Find current key in master list, move on to prev/next key, set in all modal instruments'''
+        curr_key = KEYS.index(self.key)
+        new_key = (curr_key + up_down) % len(KEYS)
+        self.key = KEYS[new_key]
+        for i in self.instruments:
+            i.set_key(self.key)
+        return
+
+    def cycle_scale(self, up_down):
+        '''Find current key in master list, move on to prev/next key, set in all modal instruments'''
+        curr_scale = list(SCALES.keys()).index(self.scale)
+        logging.warning(curr_scale)
+        new_scale = (curr_scale + up_down) % len(SCALES.keys())
+        self.scale = list(SCALES.keys())[new_scale]
+        for i in self.instruments:
+            i.set_scale(self.scale)
+        return
+
+    def swap_drum_inst(self):
+        '''Swap the currently selected instrument between drum and instrument modes'''
+        return
+
     def get_status(self):
         status = {
             'ins_num': self.get_curr_instrument_num(),

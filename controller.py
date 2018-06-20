@@ -69,6 +69,16 @@ class Controller(object):
             self.sequencer.get_curr_instrument().get_curr_page().dec_repeats()
         if c == ord(']'):
             self.sequencer.get_curr_instrument().get_curr_page().inc_repeats()
+        if c == ord(' '):
+            self.sequencer.step_beat()
+        if c == ord('n'):
+            self.sequencer.cycle_key(-1)
+        if c == ord('m'):
+            self.sequencer.cycle_key(1)
+        if c == ord('v'):
+            self.sequencer.cycle_scale(-1)
+        if c == ord('b'):
+            self.sequencer.cycle_scale(1)
         return str(c)
 
     # def get_clock_tick(self):

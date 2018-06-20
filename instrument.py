@@ -35,6 +35,19 @@ class Instrument(object):
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, height)
 
+    def set_key(self, key):
+        self.key = key
+        # Converter is a cached lookup, we need to regenerate it
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        return True
+
+
+    def set_scale(self, scale):
+        self.scale = scale
+        # Converter is a cached lookup, we need to regenerate it
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        return True
+
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
 

@@ -26,7 +26,7 @@ class Display(object):
             'scale': status.get('scale')[:5].rjust(5),
             'octave': status.get('octave'),
         }
-        status_line_2 = "{key} {scale} +{octave}ve".format(**status_strs)
+        status_line_2 = "{key} {scale} +{octave}ve ".format(**status_strs)
         button_line = "Switch Instrument:  < >   New Page: :;  +/- Repeats: {[ ]}"
         self.stdscr.addstr(self.grid_offset_y-1, self.grid_offset_x+2, status_line_2)#, curses.color_pair(4))
         self.stdscr.addstr(self.grid_height+self.grid_offset_y+2, self.grid_offset_x, button_line)#, curses.color_pair(4))
@@ -49,11 +49,12 @@ class Display(object):
 
     def draw_pages(self, curr_page, repeat_num, page_repeats):
         page_tot = len(page_repeats)
-        win = curses.newwin(18, 5, self.grid_offset_y, self.grid_offset_x+self.grid_width*2+8)
+        win = curses.newwin(18, 7, self.grid_offset_y, self.grid_offset_x+self.grid_width*2+8)
         for i in range(16):
-            win.addstr(i+1, 1, str("   "))# DISPLAY[3])
+            win.addstr(i+1, 1, str("    "))# DISPLAY[3])
         for i in range(page_tot):
-            win.addstr(i+1, 3, str(page_repeats[i]))# DISPLAY[3])
+            win.addstr(i+1, 3, str(str(page_repeats[i]) + "+-"))# DISPLAY[3])
+        win.addstr(page_tot+1, 3, "+")# DISPLAY[3])
         win.addstr(curr_page, 1, str(repeat_num)+"/")# DISPLAY[3])
         win.border()
         win.refresh()
