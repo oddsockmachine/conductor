@@ -1,20 +1,16 @@
 # Sequencer needs to be synchronized!
-- Different instruments are starting at different times!
-- workaround: create all 16 instruments at the same time
-- but ensure instruments with different tempos are synced to start at the same time
+- Ensure instruments with different tempos are synced to start at the same time
 
 # unit tests
 - for cursor, controller, display(?)
 
 # delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc.
-- Use curses windows/panes to deal with window offsets
 - build out gui, include
-    info, current instrument, page status, key, octave, scale
-    buttons: new instrument/page, switch instrument, inc/dec repeats
     borders, dividers (between bars, octaves etc)
     different colors for curses glyphs - maybe use all filled boxes, but greyscale
     etc
-- Switch themes on the fly
+- Switch themes on the fly - convert theme constants to dict, lookup is at runtime not startup
+- Start on converting to Kivy, for raspi/touchscreen solution
 
 # Tempo
 - Select subdivision of tempo - 4ths, 16ths, etc. Do we want slow individual notes, or faster quarter notes?
@@ -26,7 +22,7 @@
 - When adding instrument, select from same scale as sequencer or chromatic/drum - is there any value in selecting a different scale?
 - Change octave of page/instrument at runtime
 - Change key/scale of whole sequencer (or non-drum instruments) at runtime?
-- Turn off note repeat for an instrumment - adjacent notes sustain instead of retriggering
+- Turn off note repeat for an instrument - adjacent notes sustain instead of retriggering
 - Clear notes from current page / current instrument
 
 # synchronize with Ableton

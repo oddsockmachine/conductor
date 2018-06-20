@@ -21,24 +21,11 @@ class Display(object):
 
     def draw_gui(self, status):
         self.stdscr.addstr(1, self.grid_offset_x+2, "S U P E R C E L L")#, curses.color_pair(4))
-
-        # Box around the grid
-        # rectangle(self.stdscr, self.grid_offset_y - 1,
-        #                        self.grid_offset_x - 1,
-        #                        self.grid_offset_y+self.grid_height,
-        #                        self.grid_offset_x+(2 * self.grid_width)+1)
         status_strs = {
-        #     'ins_num': status.get('ins_num').rjust(2),
-        #     'ins_tot': status.get('ins_total').ljust(2),
-        #     'page_num': status.get('page_num').rjust(2),
-        #     'page_tot': status.get('page_total').ljust(2),
-        #     'repeat_num': status.get('repeat_num').rjust(2),
-        #     'repeat_tot': status.get('repeat_total').ljust(2),
             'key': status.get('key'),
             'scale': status.get('scale')[:5].rjust(5),
             'octave': status.get('octave'),
         }
-        # status_line_1 = "Page: {page_num}/{page_tot} Repeat: {repeat_num}/{repeat_tot}  ".format(**status_strs)
         status_line_2 = "{key} {scale} +{octave}ve".format(**status_strs)
         button_line = "Switch Instrument:  < >   New Page: :;  +/- Repeats: {[ ]}"
         self.stdscr.addstr(self.grid_offset_y-1, self.grid_offset_x+2, status_line_2)#, curses.color_pair(4))

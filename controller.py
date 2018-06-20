@@ -61,10 +61,10 @@ class Controller(object):
             self.sequencer.next_instrument()
         if c == ord(','):  # < without shift
             self.sequencer.prev_instrument()
-        # if c == ord('/'):
-        #     self.sequencer.add_instrument()
         if c == ord(';'):
             self.sequencer.get_curr_instrument().add_page()
+        # if c == ord("'"):
+            # self.sequencer.get_curr_instrument().rem_page()
         if c == ord('['):
             self.sequencer.get_curr_instrument().get_curr_page().dec_repeats()
         if c == ord(']'):
