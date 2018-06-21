@@ -22,7 +22,7 @@ class Display(object):
         self.ins_h = MAX_INSTRUMENTS+2
         self.page_x = self.ins_x + self.ins_w + 1
         self.page_y = self.grid_y
-        self.page_w = 7
+        self.page_w = 9
         self.page_h = MAX_INSTRUMENTS+2
 
         return
@@ -41,6 +41,8 @@ class Display(object):
             ins = y - self.ins_y - 1
             return {'zone': 'ins', 'ins': ins}
         # Check for Page controller
+        if x > self.page_x and x < self.page_x+self.page_w and y < self.page_y+self.page_h and y > self.page_y:
+            return {'zone': 'page', 'page': 1}
         # Check for key, scale, octave, drum buttons (still to be drawn)
         return {'zone': None}
 
@@ -79,9 +81,9 @@ class Display(object):
         for i in range(16):
             win.addstr(i+1, 1, str("    "))# DISPLAY[3])
         for i in range(page_tot):
-            win.addstr(i+1, 3, str(str(page_repeats[i]) + "+-"))# DISPLAY[3])
+            win.addstr(i+1, 1, str("-   " + str(page_repeats[i]) + " +"))# DISPLAY[3])
         win.addstr(page_tot+1, 3, "+")# DISPLAY[3])
-        win.addstr(curr_page, 1, str(repeat_num)+"/")# DISPLAY[3])
+        win.addstr(curr_page, 3, str(repeat_num)+"/")# DISPLAY[3])
         win.border()
         win.refresh()
 
