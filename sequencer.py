@@ -115,6 +115,22 @@ class Sequencer(object):
         self.current_visible_instrument -= 1
         return
 
+    def inc_rep(self, page):
+        ins = self.get_curr_instrument()
+        ins.inc_page_repeats(page)
+        pass
+
+    def dec_rep(self, page):
+        ins = self.get_curr_instrument()
+        ins.dec_page_repeats(page)
+        pass
+
+    def add_page(self):
+        ins = self.get_curr_instrument()
+        ins.add_page()
+        pass
+
+
     def step_beat(self):
         self.beat_position += 1
         self.beat_position %= self.width

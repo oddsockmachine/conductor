@@ -42,7 +42,13 @@ class Display(object):
             return {'zone': 'ins', 'ins': ins}
         # Check for Page controller
         if x > self.page_x and x < self.page_x+self.page_w and y < self.page_y+self.page_h and y > self.page_y:
-            return {'zone': 'page', 'page': 1}
+            if x-self.page_x <= 2:
+                return {'zone': 'dec_rep', 'page': y-self.page_y-1}
+            if x-self.page_x >= 6:
+                return {'zone': 'inc_rep', 'page': y-self.page_y-1}
+            if y-self.page_y == 16:
+                return {'zone': 'add_page'}
+
         # Check for key, scale, octave, drum buttons (still to be drawn)
         return {'zone': None}
 
@@ -80,9 +86,9 @@ class Display(object):
         win = curses.newwin(self.page_h, self.page_w, self.page_y, self.page_x)
         for i in range(16):
             win.addstr(i+1, 1, str("    "))# DISPLAY[3])
+        win.addstr(16, 3, "+++")  # Add page button, which will be overwritten when at 16 pages
         for i in range(page_tot):
             win.addstr(i+1, 1, str("-   " + str(page_repeats[i]) + " +"))# DISPLAY[3])
-        win.addstr(page_tot+1, 3, "+")# DISPLAY[3])
         win.addstr(curr_page, 3, str(repeat_num)+"/")# DISPLAY[3])
         win.border()
         win.refresh()

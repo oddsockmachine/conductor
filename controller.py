@@ -38,18 +38,6 @@ class Controller(object):
             return None
         if c == ord('Q'):
             exit()
-        if c == ord('.'):  # > without shift
-            self.sequencer.next_instrument()
-        if c == ord(','):  # < without shift
-            self.sequencer.prev_instrument()
-        if c == ord(";"):  # Add page immediately after current
-            self.sequencer.get_curr_instrument().add_page(True)
-        if c == ord("'"):  # Add page to end of list
-            self.sequencer.get_curr_instrument().add_page(False)
-        if c == ord('['):
-            self.sequencer.get_curr_instrument().get_curr_page().dec_repeats()
-        if c == ord(']'):
-            self.sequencer.get_curr_instrument().get_curr_page().inc_repeats()
         if c == ord(' '):
             self.sequencer.step_beat()
         if c == ord('n'):
@@ -69,11 +57,17 @@ class Controller(object):
         if c == curses.KEY_MOUSE:
             m = curses.getmouse()
             x = self.display.get_mouse_zone(m)
-            self.stdscr.addstr(50, 50, str(x))
+            self.stdscr.addstr(23, 20, str(x))
             if x['zone'] == 'note':
                 self.sequencer.touch_note(x['x'], x['y'])
             elif x['zone'] == 'ins':
                 self.sequencer.current_visible_instrument = x['ins']
+            elif x['zone'] == 'inc_rep':
+                self.sequencer.inc_rep(x['page'])
+            elif x['zone'] == 'dec_rep':
+                self.sequencer.dec_rep(x['page'])
+            elif x['zone'] == 'add_page':
+                self.sequencer.add_page()
 
         return str(c)
 

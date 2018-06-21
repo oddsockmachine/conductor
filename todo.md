@@ -1,5 +1,5 @@
 ## Most Important
-* Mouse input for grid - not as awesome as a dedicated instrument, but easier to use than the arrows+enter
+* Buttons for scale, key, octave, drum controls
 * Global beatpos with subdivisions
 * already in time, but are start of bars always the same or offset?
 * Select subdivision of tempo - 4ths, 16ths, etc. Do we want slow individual notes, or faster quarter notes?
@@ -19,6 +19,7 @@
 ### Subdivision of tempo
 - Do this per instrument - drums might be faster/more subdivided, but repeat often - melody might be slower
 - This might mean having a global beat-position that each instrument is synced to, instead of each instrument handling its own position
+- Page repeat = 0 means we should skip that page when step_beat comes around
 
 ### Controls for adding/changing pages/instruments, setting musical constraints etc
 - Turn off note repeat for an instrument - adjacent notes sustain instead of retriggering
