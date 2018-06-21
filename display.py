@@ -12,16 +12,16 @@ class Display(object):
         super(Display, self).__init__()
         self.stdscr = stdscr
         self.stdscr = stdscr
-        self.grid_height = h
-        self.grid_width = w*2
-        self.grid_offset_x = 5
-        self.grid_offset_y = 3
-        self.ins_x = self.grid_offset_x+self.grid_width+3
-        self.ins_y = self.grid_offset_y
+        self.grid_h = h
+        self.grid_w = w*2
+        self.grid_x = 5
+        self.grid_y = 3
+        self.ins_x = self.grid_x+self.grid_w+3
+        self.ins_y = self.grid_y
         self.ins_w = 4
         self.ins_h = MAX_INSTRUMENTS+2
         self.page_x = self.ins_x + self.ins_w + 1
-        self.page_y = self.grid_offset_y
+        self.page_y = self.grid_y
         self.page_w = 7
         self.page_h = MAX_INSTRUMENTS+2
 
@@ -32,10 +32,10 @@ class Display(object):
         x = m[1]
         y = m[2]
         # Check for LED Grid
-        if x > self.grid_offset_x and x <= self.grid_offset_x+self.grid_width and y > self.grid_offset_y and y <= self.grid_offset_y+self.grid_height:
+        if x > self.grid_x and x <= self.grid_x+self.grid_w and y > self.grid_y and y <= self.grid_y+self.grid_h:
             grid_x = int((x-6)/2)
             grid_y = int(y-4)
-            return {'zone': 'note', 'x': grid_x, 'y': self.grid_height - grid_y -1}
+            return {'zone': 'note', 'x': grid_x, 'y': self.grid_h - grid_y -1}
         # Check for Instrument selector
         if x > self.ins_x and x < self.ins_x+self.ins_w and y < self.ins_y+self.ins_h and y > self.ins_y:
             ins = y - self.ins_y - 1
@@ -45,7 +45,7 @@ class Display(object):
         return {'zone': None}
 
     def draw_gui(self, status):
-        self.stdscr.addstr(1, self.grid_offset_x+2, "S U P E R C E L L")#, curses.color_pair(4))
+        self.stdscr.addstr(1, self.grid_x+2, "S U P E R C E L L")#, curses.color_pair(4))
         status_strs = {
             'key': status.get('key'),
             'scale': status.get('scale')[:5].rjust(5),
@@ -54,8 +54,8 @@ class Display(object):
         }
         status_line_2 = "{key} {scale} +{octave}ve {type} ".format(**status_strs)
         button_line = "New Page: :;  +/- Repeats: {[ ]}"
-        self.stdscr.addstr(self.grid_offset_y-1, self.grid_offset_x+2, status_line_2)#, curses.color_pair(4))
-        self.stdscr.addstr(self.grid_height+self.grid_offset_y+2, self.grid_offset_x, button_line)#, curses.color_pair(4))
+        self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
+        self.stdscr.addstr(self.grid_h+self.grid_y+2, self.grid_x, button_line)#, curses.color_pair(4))
         self.draw_ins_selector(status['ins_num'], status['ins_total'])
         self.draw_pages(status['page_num'], status['repeat_num'], status['page_stats'])
         return
@@ -87,9 +87,9 @@ class Display(object):
 
     def draw_grid(self, led_grid):
         '''Take a led_grid/array from the sequencer and print it to the screen'''
-        sx = self.grid_offset_x
-        sy = self.grid_offset_y
-        win = curses.newwin(self.grid_height+2, (self.grid_width)+2, sy, sx)
+        sx = self.grid_x
+        sy = self.grid_y
+        win = curses.newwin(self.grid_h+2, (self.grid_w)+2, sy, sx)
         win.border()
         for c, column in enumerate(led_grid):  # row counter
             for r, cell in enumerate(column):  # column counter
@@ -104,7 +104,7 @@ class Display(object):
     # def draw_cursor(self, win, cursor):
     #     '''Draw the cursor over the grid'''
     #     x = (cursor['x']*2) + 1
-    #     y = (self.grid_height-cursor['y']-1) + 1
+    #     y = (self.grid_h-cursor['y']-1) + 1
     #     glyph = DISPLAY[LED_CURSOR]
     #     win.addstr(y, x, glyph)#, curses.color_pair(4))
     #     return

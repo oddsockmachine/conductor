@@ -2,27 +2,9 @@
 import logging
 logging.basicConfig(filename='sequencer.log',level=logging.DEBUG)
 
-# The ints used to represent the state of leds on an led_grid
-# THEME = 0
-# if THEME == 0:
-#     LED_BLANK = 0
-#     LED_SELECT = 3
-#     LED_CURSOR = 2
-#     LED_ACTIVE = 3
-#     LED_BEAT = 1
-#     LED_SCALE_PRIMARY = 9  # Primary scale visualizations, eg: root notes
-#     LED_SCALE_SECONDARY = 9  # Secondary scale visualizations, eg: scale notes, 5ths, white/black keys
-# else:
-#     LED_BLANK = 0
-#     LED_CURSOR = 1
-#     LED_ACTIVE = 2
-#     LED_SELECT = 3
-#     LED_BEAT = 1
-#     LED_SCALE_PRIMARY = 9  # Primary scale visualizations, eg: root notes
-#     LED_SCALE_SECONDARY = 9  # Secondary scale visualizations, eg: scale notes, 5ths, white/black keys
 
 THEME = "B"
-
+# The ints used to represent the state of leds on an led_grid
 LED_BLANK = {"A":0, "B": 0,}[THEME]
 LED_CURSOR = {"A":1, "B": 2,}[THEME]
 LED_ACTIVE = {"A":2, "B": 3,}[THEME]
