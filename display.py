@@ -61,9 +61,7 @@ class Display(object):
             'type': "Drum" if (status.get('isdrum')==True) else "Inst"
         }
         status_line_2 = "{key} {scale} +{octave}ve {type} ".format(**status_strs)
-        button_line = "New Page: :;  +/- Repeats: {[ ]}"
         self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
-        self.stdscr.addstr(self.grid_h+self.grid_y+2, self.grid_x, button_line)#, curses.color_pair(4))
         self.draw_ins_selector(status['ins_num'], status['ins_total'])
         self.draw_pages(status['page_num'], status['repeat_num'], status['page_stats'])
         return

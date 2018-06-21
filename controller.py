@@ -19,13 +19,14 @@ class Controller(object):
         self.beatclockcount = 0
 
     def run(self):
+        self.draw()
+        self.stdscr.refresh()    
         while True:
             if self.get_midi_tick():
                 self.sequencer.step_beat()
                 self.draw()
             key = self.get_keys()
             if key:
-                # Deal with key input
                 self.draw()
                 pass
             sleep(0.002)
@@ -90,7 +91,7 @@ class Controller(object):
         return False
 
     def draw(self):
-        status = self.sequencer.get_status()  # TODO from sequencer?
+        status = self.sequencer.get_status()
         led_grid = self.sequencer.get_led_grid()
         self.display.draw_all(status, led_grid)
 
