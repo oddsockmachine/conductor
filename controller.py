@@ -1,16 +1,9 @@
 from sequencer import Sequencer
-from cursor import Cursor
 from display import Display
 from time import sleep, time
 import curses
 from constants import *
 import mido
-mido.get_output_names()
-# TODO
-# Create nice GUI, overlay, buttons, info etc on screen
-# sequencer shouldn't print anything, just provide grid data structure
-# controller converts to symbols, adds cursor, positions grid in center, passes
-# events (button presses etc_ to sequencer
 
 
 class Controller(object):
@@ -22,7 +15,6 @@ class Controller(object):
         self.sequencer = Sequencer(mport, key="e", scale="pentatonic_maj")
         self.last = time()
         self.stdscr = stdscr
-        self.cursor = Cursor()
         self.display = Display(stdscr)
         self.beatclockcount = 0
 
@@ -38,24 +30,13 @@ class Controller(object):
                 pass
             sleep(0.002)
             self.stdscr.refresh()
-            # self.draw()  # ??
         pass
 
     def get_keys(self):
         c = self.stdscr.getch()
         if c == -1:
             return None
-        if c == curses.KEY_DOWN:
-            self.cursor.move(0, -1)
-        elif c == curses.KEY_UP:
-            self.cursor.move(0, 1)
-        elif c == curses.KEY_RIGHT:
-            self.cursor.move(1, 0)
-        elif c == curses.KEY_LEFT:
-            self.cursor.move(-1, 0)
-        if c == 10:
-            self.sequencer.touch_note(self.cursor.x, self.cursor.y)
-        if c == ord('q'):
+        if c == ord('Q'):
             exit()
         if c == ord('.'):  # > without shift
             self.sequencer.next_instrument()
@@ -117,13 +98,7 @@ class Controller(object):
     def draw(self):
         status = self.sequencer.get_status()  # TODO from sequencer?
         led_grid = self.sequencer.get_led_grid()
-        cursor_pos = self.cursor.get_pos()
-        self.display.draw_all(status, led_grid, cursor_pos)
-
-
-        # self.stdscr.addstr(20, 40, "x{}, y{}  ".format(self.cursor.x, self.cursor.y))
-        # self.stdscr.addstr(19, 40, str(self.beatclockcount)+"  ")
-        # self.stdscr.addstr(19, 40, str(self.sequencer.current_visible_instrument)+"  ")
+        self.display.draw_all(status, led_grid)
 
 
 
@@ -133,11 +108,6 @@ def main(stdscr):
     with mido.open_output('Flynn', autoreset=True, virtual=True) as mport:
         with mido.open_input('Flynn_In', autoreset=True, virtual=True) as mportin:
             controller = Controller(stdscr, mport, mportin)
-            controller.sequencer.touch_note(3,4)
-            # controller.sequencer.get_curr_instrument().add_page(1)
-            # controller.sequencer.add_instrument("a", "major", octave=2)
-            # controller.sequencer.add_instrument("c", "pentatonic", octave=4, bars=4)
-            # controller.sequencer.add_instrument("d", "pentatonic", octave=5, bars=4)
             controller.run()
 
 if __name__ == '__main__':

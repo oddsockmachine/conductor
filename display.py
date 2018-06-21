@@ -19,7 +19,11 @@ class Display(object):
         self.ins_x = self.grid_offset_x+self.grid_width+3
         self.ins_y = self.grid_offset_y
         self.ins_w = 4
-        self.ins_h = 18
+        self.ins_h = MAX_INSTRUMENTS+2
+        self.page_x = self.ins_x + self.ins_w + 1
+        self.page_y = self.grid_offset_y
+        self.page_w = 7
+        self.page_h = MAX_INSTRUMENTS+2
 
         return
 
@@ -27,14 +31,17 @@ class Display(object):
         '''Return which zone the mouse clicked on'''
         x = m[1]
         y = m[2]
-        # convert x/y to led_grid coords
+        # Check for LED Grid
         if x > self.grid_offset_x and x <= self.grid_offset_x+self.grid_width and y > self.grid_offset_y and y <= self.grid_offset_y+self.grid_height:
             grid_x = int((x-6)/2)
             grid_y = int(y-4)
             return {'zone': 'note', 'x': grid_x, 'y': self.grid_height - grid_y -1}
+        # Check for Instrument selector
         if x > self.ins_x and x < self.ins_x+self.ins_w and y < self.ins_y+self.ins_h and y > self.ins_y:
             ins = y - self.ins_y - 1
             return {'zone': 'ins', 'ins': ins}
+        # Check for Page controller
+        # Check for key, scale, octave, drum buttons (still to be drawn)
         return {'zone': None}
 
     def draw_gui(self, status):
@@ -46,7 +53,7 @@ class Display(object):
             'type': "Drum" if (status.get('isdrum')==True) else "Inst"
         }
         status_line_2 = "{key} {scale} +{octave}ve {type} ".format(**status_strs)
-        button_line = "Switch Instrument:  < >   New Page: :;  +/- Repeats: {[ ]}"
+        button_line = "New Page: :;  +/- Repeats: {[ ]}"
         self.stdscr.addstr(self.grid_offset_y-1, self.grid_offset_x+2, status_line_2)#, curses.color_pair(4))
         self.stdscr.addstr(self.grid_height+self.grid_offset_y+2, self.grid_offset_x, button_line)#, curses.color_pair(4))
         self.draw_ins_selector(status['ins_num'], status['ins_total'])
@@ -59,7 +66,7 @@ class Display(object):
         win = curses.newwin(self.ins_h, self.ins_w, self.ins_y, self.ins_x)
         win.border()
         # Inactive instruments
-        for i in range(self.grid_height):
+        for i in range(MAX_INSTRUMENTS):
             win.addstr(i+1, 1, DISPLAY[1])
         # Active instrument
         win.addstr(ins_num, 1, DISPLAY[3])
@@ -68,7 +75,7 @@ class Display(object):
 
     def draw_pages(self, curr_page, repeat_num, page_repeats):
         page_tot = len(page_repeats)
-        win = curses.newwin(18, 7, self.grid_offset_y, self.grid_offset_x+self.grid_width+8)
+        win = curses.newwin(self.page_h, self.page_w, self.page_y, self.page_x)
         for i in range(16):
             win.addstr(i+1, 1, str("    "))# DISPLAY[3])
         for i in range(page_tot):
@@ -78,7 +85,7 @@ class Display(object):
         win.border()
         win.refresh()
 
-    def draw_grid(self, led_grid, cursor_pos):
+    def draw_grid(self, led_grid):
         '''Take a led_grid/array from the sequencer and print it to the screen'''
         sx = self.grid_offset_x
         sy = self.grid_offset_y
@@ -90,21 +97,21 @@ class Display(object):
                 y = (H-r-1) + 1
                 glyph = DISPLAY[cell]
                 win.addstr(y, x, glyph)#, curses.color_pair(4))
-        self.draw_cursor(win, cursor_pos)
+        # self.draw_cursor(win, cursor_pos)
         win.refresh()
         return
 
-    def draw_cursor(self, win, cursor):
-        '''Draw the cursor over the grid'''
-        x = (cursor['x']*2) + 1
-        y = (self.grid_height-cursor['y']-1) + 1
-        glyph = DISPLAY[LED_CURSOR]
-        win.addstr(y, x, glyph)#, curses.color_pair(4))
-        return
+    # def draw_cursor(self, win, cursor):
+    #     '''Draw the cursor over the grid'''
+    #     x = (cursor['x']*2) + 1
+    #     y = (self.grid_height-cursor['y']-1) + 1
+    #     glyph = DISPLAY[LED_CURSOR]
+    #     win.addstr(y, x, glyph)#, curses.color_pair(4))
+    #     return
 
-    def draw_all(self, status, led_grid, cursor_pos):
+    def draw_all(self, status, led_grid):
         self.draw_gui(status)
-        self.draw_grid(led_grid, cursor_pos)
+        self.draw_grid(led_grid)
         return
 
 
