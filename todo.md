@@ -1,4 +1,5 @@
 ## Most Important
+* Figure out why everything waits while mouse button pressed!
 * Buttons for scale, key, octave, drum controls
 * Global beatpos with subdivisions
 * already in time, but are start of bars always the same or offset?

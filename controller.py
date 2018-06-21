@@ -20,7 +20,7 @@ class Controller(object):
 
     def run(self):
         self.draw()
-        self.stdscr.refresh()    
+        self.stdscr.refresh()
         while True:
             if self.get_midi_tick():
                 self.sequencer.step_beat()
@@ -98,10 +98,11 @@ class Controller(object):
 
 
 def main(stdscr):
-    curses.mousemask(1)
+    m = curses.mousemask(1)
+    curses.mouseinterval(10)
     stdscr.nodelay(1)
-    with mido.open_output('Flynn', autoreset=True, virtual=True) as mport:
-        with mido.open_input('Flynn_In', autoreset=True, virtual=True) as mportin:
+    with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
+        with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
             controller = Controller(stdscr, mport, mportin)
             controller.run()
 
