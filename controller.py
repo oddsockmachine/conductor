@@ -86,8 +86,13 @@ class Controller(object):
         if c == ord('x'):
             self.sequencer.change_octave(1)
         if c == curses.KEY_MOUSE:
-            a = curses.getmouse()
-            self.stdscr.addstr(50, 50, str(a))
+            m = curses.getmouse()
+            x = self.display.get_mouse_zone(m)
+            self.stdscr.addstr(50, 50, str(x))
+            if x['zone'] == 'note':
+                self.sequencer.touch_note(x['x'], x['y'])
+            elif x['zone'] == 'ins':
+                self.sequencer.current_visible_instrument = x['ins']
 
         return str(c)
 

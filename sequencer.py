@@ -95,7 +95,7 @@ class Sequencer(object):
         if not key:
             key = self.key
         if len(self.instruments) == 16:
-            logging.warning('Already at 16 instruments')
+            # logging.warning('Already at 16 instruments')
             return False
         ins_num = len(self.instruments)
         self.instruments.append(Instrument(ins_num, self.mport, key, scale, octave, bars, height))
@@ -103,14 +103,14 @@ class Sequencer(object):
 
     def next_instrument(self):
         if self.current_visible_instrument == len(self.instruments)-1:
-            logging.warning('Reached end of instruments')
+            # logging.warning('Reached end of instruments')
             return False
         self.current_visible_instrument += 1
         return
 
     def prev_instrument(self):
         if self.current_visible_instrument == 0:
-            logging.warning('Reached start of instruments')
+            # logging.warning('Reached start of instruments')
             return False
         self.current_visible_instrument -= 1
         return

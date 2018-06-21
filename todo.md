@@ -1,5 +1,6 @@
 ## Most Important
 * Mouse input for grid - not as awesome as a dedicated instrument, but easier to use than the arrows+enter
+* Better variables for gui drawing coordinates
 * Global beatpos with subdivisions
 * already in time, but are start of bars always the same or offset?
 * Select subdivision of tempo - 4ths, 16ths, etc. Do we want slow individual notes, or faster quarter notes?
