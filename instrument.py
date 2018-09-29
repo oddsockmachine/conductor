@@ -198,7 +198,14 @@ class Instrument(object):
             for msg in msgs:
                 self.mport.send(msg)
 
-
+    def save(self):
+        saved = {
+          "Octave": self.octave,
+          "Key": self.key,
+          "Scale": self.scale,
+          "Pages": [p.save() for p in self.pages]
+        }
+        return saved
 
 
 

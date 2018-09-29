@@ -169,6 +169,14 @@ class Sequencer(object):
             led = LED_ACTIVE  # Otherwise if the cell is active (touched)
         return led
 
+    def save(self):
+        return {
+            "Height": 16,
+            "Width": 16,
+            "Instruments": [i.save() for i in self.instruments]
+        }
+
+
     # def draw(self, scr):
     #     note_grid = self.get_curr_instrument().get_curr_page_grid()
     #     for c, column in enumerate(note_grid):  # row counter

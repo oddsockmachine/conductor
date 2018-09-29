@@ -5,7 +5,7 @@ from datetime import datetime
 import curses
 from constants import *
 import mido
-
+from json import dump
 
 class Controller(object):
     """docstring for Controller."""
@@ -99,7 +99,10 @@ class Controller(object):
 
     def save(self):
         print("Saving current grid to {}.cell".format(datetime.now()))
-        
+        filename = str(datetime.now()).split('.')[0] + '.json'
+        with open(filename, 'w') as savefile:
+            saved = self.sequencer.save()
+            dump(saved, savefile)
 
 
 def main(stdscr):
