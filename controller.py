@@ -1,6 +1,7 @@
 from sequencer import Sequencer
 from display import Display
 from time import sleep, time
+from datetime import datetime
 import curses
 from constants import *
 import mido
@@ -38,6 +39,7 @@ class Controller(object):
         if c == -1:
             return None
         if c == ord('Q'):
+            self.save()
             exit()
         if c == ord(' '):
             self.sequencer.step_beat()
@@ -95,6 +97,9 @@ class Controller(object):
         led_grid = self.sequencer.get_led_grid()
         self.display.draw_all(status, led_grid)
 
+    def save(self):
+        print("Saving current grid to {}.cell".format(datetime.now()))
+        
 
 
 def main(stdscr):

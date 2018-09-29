@@ -93,7 +93,16 @@ class Note_Grid(object):
             print('')
         print('')
 
-
+    def save(self):
+        saved_grid = []
+        for y in range(self.height):
+            acc = 0
+            for x in range(self.width):
+                n = (self.get_note_by_pitch(x, self.height - y -1) != NOTE_OFF)
+                if n:
+                    acc += 2**x
+            saved_grid.append(acc)
+        return {"Grid": saved_grid, "Repeats": self.repeats}
 
 import unittest
 class TestNoteGrid(unittest.TestCase):
@@ -139,6 +148,21 @@ class TestNoteGrid(unittest.TestCase):
         self.assertEqual(notes.get_note_by_position(0,1), NOTE_OFF)
         self.assertEqual(notes.get_note_by_position(2,10), NOTE_ON)
         self.assertEqual(notes.get_note_by_position(1,4), NOTE_OFF)
+
+    def test_save(self):
+        notes = Note_Grid()
+        self.assertTrue(notes.touch_note(0,15))
+        self.assertTrue(notes.touch_note(0,14))
+        self.assertTrue(notes.touch_note(0,13))
+        self.assertTrue(notes.touch_note(1,13))
+        self.assertTrue(notes.touch_note(2,10))
+        self.assertTrue(notes.touch_note(7,7))
+        self.assertTrue(notes.touch_note(6,6))
+        self.assertTrue(notes.touch_note(5,5))
+        print(notes.print_notes())
+        saved = notes.save()
+        print(saved)
+        self.assertEqual(saved.get('Grid'), [1, 1, 3, 0, 0, 4, 0, 0, 128, 64, 32, 0, 0, 0, 0, 0])
 
 
 if __name__ == '__main__':

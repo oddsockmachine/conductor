@@ -34,7 +34,7 @@ class Instrument(object):
         self.scale = scale
         self.octave = octave  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
-        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, height)
+        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, height)  # Function is cached for convenience
 
     def set_key(self, key):
         self.key = key

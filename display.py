@@ -61,7 +61,7 @@ class Display(object):
             'type': "Drum" if (status.get('isdrum')==True) else "Inst"
         }
         status_line_2 = "{key} {scale} +{octave}ve {type} ".format(**status_strs)
-        self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
+        # self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
         self.draw_ins_selector(status['ins_num'], status['ins_total'])
         self.draw_pages(status['page_num'], status['repeat_num'], status['page_stats'])
         return
@@ -103,17 +103,8 @@ class Display(object):
                 y = (H-r-1) + 1
                 glyph = DISPLAY[cell]
                 win.addstr(y, x, glyph)#, curses.color_pair(4))
-        # self.draw_cursor(win, cursor_pos)
         win.refresh()
         return
-
-    # def draw_cursor(self, win, cursor):
-    #     '''Draw the cursor over the grid'''
-    #     x = (cursor['x']*2) + 1
-    #     y = (self.grid_h-cursor['y']-1) + 1
-    #     glyph = DISPLAY[LED_CURSOR]
-    #     win.addstr(y, x, glyph)#, curses.color_pair(4))
-    #     return
 
     def draw_all(self, status, led_grid):
         self.draw_gui(status)

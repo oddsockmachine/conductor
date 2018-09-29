@@ -4,6 +4,7 @@
 * Global beatpos with subdivisions
 * already in time, but are start of bars always the same or offset?
 * Select subdivision of tempo - 4ths, 16ths, etc. Do we want slow individual notes, or faster quarter notes?
+* Pages with 0 repeats should be skipped when step_beat loops around
 
 ### Sequencer needs to be synchronized!
 - Ensure instruments with different tempos are synced to start at the same time
@@ -62,6 +63,7 @@
 - So a "done"/playing song can be left for a short time, while the start of another is built up behind the scenes
 - Probably best to split 16 instruments/channels into 2 sets (since most controllers only handle 8 at a time)
 - Channels/9-16 would mirror 1-8 in Ableton, but when triggered it would be possible to crossfade between them/transfer control
+- Might just be easiest to do this entirely in Ableton, send 9-16 to cue track and switch over with one slider
 
 ### Transfer to Ableton
 - Button/whatever to trigger transfer currently playing instrument (or all) to ableton clips
