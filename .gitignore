@@ -3,5 +3,5 @@ venv
 sequencer.log
 __pycache__
 Adafruit_Trellis
-2018*.json
+saved/*.json
 experimentation

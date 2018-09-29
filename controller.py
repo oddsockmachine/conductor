@@ -99,7 +99,7 @@ class Controller(object):
 
     def save(self):
         print("Saving current grid to {}.cell".format(datetime.now()))
-        filename = str(datetime.now()).split('.')[0] + '.json'
+        filename = './saved/' + str(datetime.now()).split('.')[0] + '.json'
         with open(filename, 'w') as savefile:
             saved = self.sequencer.save()
             dump(saved, savefile)
