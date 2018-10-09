@@ -6,7 +6,7 @@ import mido
 
 class Instrument(object):
     """docstring for Instrument."""
-    def __init__(self, ins_num, mport, key, scale, octave=1, beat_division=2, bars=W/4, height=H):
+    def __init__(self, ins_num, mport, key, scale, octave=1, speed=1, bars=W/4, height=H):
         super(Instrument, self).__init__()
         if not isinstance(ins_num, int):
             print("Instrument num {} must be an int".format(ins_num))
@@ -20,9 +20,9 @@ class Instrument(object):
         self.width = self.bars * 4
         self.curr_page_num = 0
         self.curr_rept_num = 0
-        self.beat_position = 0
-        self.beat_division = beat_division
-        self.sub_beat_position = 0
+        self.prev_loc_beat = 0
+        self.local_beat_position = 0
+        self.speed = speed
         self.isdrum = False
         self.sustain = False  # TODO don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
@@ -59,6 +59,11 @@ class Instrument(object):
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
 
+    def get_next_page_num(self):
+        '''Return the number of the next page that has a positive number of repeats'''
+
+        return (self.curr_page_num ) % len(self.pages)
+
     def get_page_stats(self):
         return [x.repeats for x in self.pages]
 
@@ -71,10 +76,6 @@ class Instrument(object):
         else:
             self.pages.append(Note_Grid(self.bars, self.height))
         return True
-
-    def set_next_page(self):
-        '''Override and skip to a particular page when the beat reaches the end'''
-        return
 
     def cell_to_midi(self, cell):
         '''convert a cell height to a midi note based on key, scale, octave'''
@@ -91,11 +92,11 @@ class Instrument(object):
 
     def add_note(self, x, y, page=False):
         '''force-on a x/y cell on the current page'''
-        # if not page:
-        #     page = self.get_curr_page()
-        # if page > len(self.pages):
-        #     logging.warning('Requested page {} > {}'.format(page, len(self.pages)))
-        #     return False
+        if not page:
+            page = self.get_curr_page()
+        if page > len(self.pages):
+            logging.warning('Requested page {} > {}'.format(page, len(self.pages)))
+            return False
         page = self.get_curr_page()
         if not page.validate_touch(x, y):
             return False
@@ -110,7 +111,7 @@ class Instrument(object):
         return True
 
     def get_notes_from_curr_beat(self):
-        self.get_curr_page().get_notes_from_beat(self.beat_position)
+        self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
 
     def get_curr_page_leds(self):
@@ -127,23 +128,12 @@ class Instrument(object):
         # display = {0: '. ', 1: '░░', 2:'▒▒', 3:'▓▓'}
         for c, column in enumerate(grid):  # row counter
             for r, cell in enumerate(column):  # column counter
-                if r == self.beat_position: # and display[y] != LED_ACTIVE:
+                if r == self.local_beat_position: # and display[y] != LED_ACTIVE:
                     print(DISPLAY[LED_SELECT], end='')
                 else:
                     print(DISPLAY[cell], end='')
             print('')
         print('')
-
-    # def inc_curr_page_repeats(self):
-    #     '''Increase how many times the current page will loop'''
-    #     self.get_curr_page().inc_repeats()
-    #     return
-    #
-    # def dec_curr_page_repeats(self):
-    #     '''Reduce how many times the current page will loop'''
-    #     self.get_curr_page().dec_repeats()
-    #     return
-    #
 
     def inc_page_repeats(self, page):
         '''Increase how many times the current page will loop'''
@@ -159,63 +149,114 @@ class Instrument(object):
         self.pages[page].dec_repeats()
         return True
 
-    def step_beat(self, global_beat=None):
+
+
+
+
+
+
+
+
+
+
+    def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
-        if global_beat:
-            old_beat_pos = self.beat_position
-            new_beat_pos = int(global_beat/self.beat_division) % self.width
-            # logging.info("old " + str(old_beat_pos))
-            # logging.info("new " + str(new_beat_pos))
-            # logging.info("beat " + str(global_beat))
-            if old_beat_pos == new_beat_pos:
-                return
-            else:
-                self.beat_position = new_beat_pos
-                # logging.info(self.sub_beat_position)
-        #     return
-        # self.sub_beat_position += 1
-        # logging.info(self.sub_beat_position)
-        # if self.sub_beat_position >= self.beat_division:
-        #     logging.info('global_beat')
-        #     self.sub_beat_position = 0
-        #     logging.info(self.sub_beat_position)
+        # logging.info("gb " + str(global_beat))
+        local = self.calc_local_beat(global_beat)
+        # logging.info("lb " + str(local))
+        # print_beat_pos(beat)
+        # print_beat_pos(local)
+        # print(local, end='')
+        # sleep(0.05)
+
+        if not self.has_beat_changed(local):
+            logging.info(".")
+            return
+        logging.info("!!!!!!!!!")
         # else:
-        #     logging.info('skip')
-        #     return
-        # self.beat_position += 1
-        # logging.info(self.beat_position)
-        # logging.info('!!!')
-        if self.beat_position == self.width:
-            self.beat_position = 0
-            # print("page done")
-            self.curr_rept_num += 1
-            if self.curr_rept_num >= self.get_curr_page().repeats:
-                self.curr_rept_num = 0
-                self.curr_page_num += 1
-                # print("next page")
-                self.curr_page_num %= len(self.pages)
-        # print("b{}/{}, p{}/{}, r{}/{}".format(self.beat_position, self.width, self.curr_page_num+1, len(self.pages), self.curr_rept_num+1, self.get_curr_page().repeats))
+        self.local_beat_position = local
+        # Fire notes!
         new_notes = self.get_curr_notes()
+        logging.info(new_notes)
+
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
+
+        self.check_for_repeats()
+        self.get_next_page()
         return
+        #
+        # if global_beat:
+        #     old_beat_pos = self.local_beat_position
+        #     new_beat_pos = int(int(global_beat/self.beat_division) % self.width)
+        #     logging.info("old " + str(old_beat_pos))
+        #     logging.info("new " + str(new_beat_pos))
+        #     logging.info("beat " + str(global_beat))
+        #     if old_beat_pos == new_beat_pos:
+        #         logging.info("-" + str(self.beat_division))
+        #         return
+        #     else:
+        #         logging.info("   -" + str(self.beat_division))
+        #         self.local_beat_position = new_beat_pos
+
+
+
+                                # if self.local_beat_position >= self.width-1:
+                                #     logging.info("reset")
+                                #     self.local_beat_position = 0
+                                #     self.curr_rept_num += 1
+                                #     if self.curr_rept_num >= self.get_curr_page().repeats:
+                                #         self.curr_rept_num = 0
+                                #         self.curr_page_num += 1
+                                #         self.curr_page_num %= len(self.pages)
+                # self.curr_page_num = self.get_next_page_num()
+        # print("b{}/{}, p{}/{}, r{}/{}".format(self.local_beat_position, self.width, self.curr_page_num+1, len(self.pages), self.curr_rept_num+1, self.get_curr_page().repeats))
+        return
+
+    def calc_local_beat(self, global_beat):
+        '''Calc local_beat_pos for this instrument'''
+        div = self.get_beat_division()
+
+        local_beat = int(global_beat / div) % self.width
+        logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
+        return local_beat
+
+    def has_beat_changed(self, local_beat):
+        logging.info("<" + str(self.prev_loc_beat) + "  >" + str(local_beat))
+        if self.prev_loc_beat != local_beat:
+            self.prev_loc_beat = local_beat
+            return True
+        self.prev_loc_beat = local_beat
+        return False
+
+    def check_for_repeats(self):
+        return
+
+    def get_next_page(self):
+        return
+
+    def get_beat_division(self):
+        return 2**self.speed
+
+    def get_beat_division_str(self):
+        return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
 
     def change_division(self, up_down):
         '''Find current instrument, inc or dec its beat division as appropriate'''
         if up_down == 1:
-            if self.beat_division == 2:
+            if self.speed == 0:
                 return
-            self.beat_division /= 2
+            self.speed -= 1
             return
         if up_down == -1:
-            if self.beat_division == 8:
+            if self.speed == 4:
                 return
-            self.beat_division *= 2
+            self.speed += 1
         return
 
     def get_curr_notes(self):
         grid = self.get_curr_page_grid()
-        beat_pos = self.beat_position
+        beat_pos = self.local_beat_position
         # beat_notes = [row[beat_pos] for row in grid][::-1]  # extract column from grid
         beat_notes = grid[beat_pos]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
@@ -253,6 +294,32 @@ class Instrument(object):
             page.load(p)
             self.pages.append(page)
         return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -309,31 +376,31 @@ class TestInstrument(unittest.TestCase):
         ins.touch_note(1,6)
         ins.touch_note(1,7)
         self.assertEqual(ins.get_curr_notes(), [0,1,2])
-        self.assertEqual(ins.beat_position, 0)
+        self.assertEqual(ins.local_beat_position, 0)
         ins.step_beat()
         self.assertEqual(ins.get_curr_notes(), [5,6,7])
-        self.assertEqual(ins.beat_position, 1)
+        self.assertEqual(ins.local_beat_position, 1)
         ins.step_beat()
         self.assertEqual(ins.get_curr_notes(), [])
-        self.assertEqual(ins.beat_position, 2)
+        self.assertEqual(ins.local_beat_position, 2)
         self.assertEqual(ins.curr_page_num, 0)  # Still on page 0
         for i in range(14):
             ins.step_beat()
-        self.assertEqual(ins.beat_position, 0)
+        self.assertEqual(ins.local_beat_position, 0)
         self.assertEqual(ins.get_curr_notes(), [0,1,2])
         self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, wrapped around
         ins.add_page(1)
         self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, new page is next
         for i in range(17):
             ins.step_beat()
-        self.assertEqual(ins.beat_position, 1)
+        self.assertEqual(ins.local_beat_position, 1)
         self.assertEqual(ins.curr_page_num, 1)  # Should still be on same page, wrapped around
         self.assertEqual(ins.get_curr_notes(), [])
         for i in range(15):
             ins.step_beat()
         self.assertEqual(ins.get_curr_notes(), [0,1,2])
         self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, wrapped around
-        self.assertEqual(ins.beat_position, 0)
+        self.assertEqual(ins.local_beat_position, 0)
 
     def test_multi_repeats(self):
         ins = Instrument(8, None, "a", "pentatonic", octave=3, bars=4)
@@ -345,7 +412,7 @@ class TestInstrument(unittest.TestCase):
         for i in range(17):
             ins.step_beat()
         self.assertEqual(ins.curr_page_num, 1)
-        self.assertEqual(ins.beat_position, 1)
+        self.assertEqual(ins.local_beat_position, 1)
         ins.touch_note(1,5)
         ins.touch_note(1,6)
         ins.touch_note(1,7)
@@ -353,19 +420,19 @@ class TestInstrument(unittest.TestCase):
         for i in range(16):
             ins.step_beat()
         self.assertEqual(ins.curr_page_num, 0) # Back to page 0
-        self.assertEqual(ins.beat_position, 1)
+        self.assertEqual(ins.local_beat_position, 1)
         ins.inc_curr_page_repeats()
         self.assertEqual(ins.curr_rept_num, 0)
         for i in range(15):
             ins.step_beat()
         self.assertEqual(ins.get_curr_notes(), [0,1,2])
         self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, 2nd repeat
-        self.assertEqual(ins.beat_position, 0)
+        self.assertEqual(ins.local_beat_position, 0)
         self.assertEqual(ins.curr_rept_num, 1)
         for i in range(17):
             ins.step_beat()
         self.assertEqual(ins.curr_page_num, 1)
-        self.assertEqual(ins.beat_position, 1)
+        self.assertEqual(ins.local_beat_position, 1)
         self.assertEqual(ins.get_curr_notes(), [5,6,7])
 
     def test_cell_to_midi(self):

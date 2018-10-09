@@ -25,7 +25,7 @@ class Sequencer(object):
         self.scale = scale
         self.octave = octave  # Starting octave
         self.max_num_instruments = MAX_INSTRUMENTS
-        self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, beat_division=4, bars=bars) for x in range(self.max_num_instruments)]  # limit to 16 midi channels
+        self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, speed=1, bars=bars) for x in range(1)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         # If we're loading, ignore all this and overwrite with info from file!
         if saved:
@@ -88,7 +88,7 @@ class Sequencer(object):
             'scale': str(self.scale),
             'octave': str(self.get_curr_instrument().octave),
             'isdrum': self.get_curr_instrument().isdrum,
-            'division': {2:'>>>',4:'>>',8:'>',}[int(self.get_curr_instrument().beat_division)],
+            'division': self.get_curr_instrument().get_beat_division_str(),
         }
         return status
     # def inc_tempo(self, amt):
@@ -172,7 +172,7 @@ class Sequencer(object):
     def get_led_status(self, cell, beat_pos):
         '''Determine which type of LED should be shown for a given cell'''
         led = LED_BLANK  # Start with blank / no led
-        if beat_pos == self.get_curr_instrument().beat_position:
+        if beat_pos == self.get_curr_instrument().local_beat_position:
             led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
             if cell == NOTE_ON:
                 led = LED_SELECT  # Unless we want a selected + beat cell to be special
