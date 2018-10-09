@@ -1,13 +1,12 @@
 ## Most Important
 * Figure out why everything waits while mouse button pressed!
 * Buttons for scale, key, octave, drum controls
-* Pages with 0 repeats should be skipped when step_beat loops around
+* Tidy/organize each classes methods
 
+### Convert display to separate service
+- Communicate via messages
 
-### Sequencer needs to be synchronized!
-- Ensure instruments with different tempos are synced to start at the same time
-
-### unit tests
+### unit tests remaining
 - for cursor, controller, display(?)
 
 ### delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc.
@@ -16,25 +15,20 @@
     different colors for curses glyphs
 - Start on converting to Kivy, for raspi/touchscreen solution
 
-### Subdivision of tempo
-- Do this per instrument - drums might be faster/more subdivided, but repeat often - melody might be slower
-- This might mean having a global beat-position that each instrument is synced to, instead of each instrument handling its own position
-- Page repeat = 0 means we should skip that page when step_beat comes around
-
 ### Controls for adding/changing pages/instruments, setting musical constraints etc
 - Turn off note repeat for an instrument - adjacent notes sustain instead of retriggering
 - Clear notes from current page / current instrument
-- Limit midi notes to within allowed bounds
+- Limit midi notes to within allowed bounds - some octaves are too high/low
 
 ### synchronize with Ableton
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 
 ### Save and load
-- Save each piano roll on exit
-- Load in piano roll using command line arg
+- Load in piano roll using command line arg (almost, saved note conversion needs work)
 - load in piano roll using runtime option - might be useful for live, instead of killing and restarting
 - Icon to enable/disable save on exit
 - Key combo to save now without exiting
+- Key combo to exit without saving
 
 ### convert everything to asynchronous/event driven
 

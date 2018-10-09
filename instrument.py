@@ -59,11 +59,6 @@ class Instrument(object):
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
 
-    def get_next_page_num(self):
-        '''Return the number of the next page that has a positive number of repeats'''
-
-        return (self.curr_page_num ) % len(self.pages)
-
     def get_page_stats(self):
         return [x.repeats for x in self.pages]
 
@@ -149,90 +144,57 @@ class Instrument(object):
         self.pages[page].dec_repeats()
         return True
 
-
-
-
-
-
-
-
-
-
-
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
-        # logging.info("gb " + str(global_beat))
         local = self.calc_local_beat(global_beat)
-        # logging.info("lb " + str(local))
-        # print_beat_pos(beat)
-        # print_beat_pos(local)
-        # print(local, end='')
-        # sleep(0.05)
-
         if not self.has_beat_changed(local):
-            logging.info(".")
+            # Intermediate beat for this instrument, do nothing
             return
-        logging.info("!!!!!!!!!")
-        # else:
         self.local_beat_position = local
-        # Fire notes!
-        new_notes = self.get_curr_notes()
-        logging.info(new_notes)
 
+        if self.is_page_end():
+            self.advance_page()
+        new_notes = self.get_curr_notes()
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
-
-        self.check_for_repeats()
-        self.get_next_page()
-        return
-        #
-        # if global_beat:
-        #     old_beat_pos = self.local_beat_position
-        #     new_beat_pos = int(int(global_beat/self.beat_division) % self.width)
-        #     logging.info("old " + str(old_beat_pos))
-        #     logging.info("new " + str(new_beat_pos))
-        #     logging.info("beat " + str(global_beat))
-        #     if old_beat_pos == new_beat_pos:
-        #         logging.info("-" + str(self.beat_division))
-        #         return
-        #     else:
-        #         logging.info("   -" + str(self.beat_division))
-        #         self.local_beat_position = new_beat_pos
-
-
-
-                                # if self.local_beat_position >= self.width-1:
-                                #     logging.info("reset")
-                                #     self.local_beat_position = 0
-                                #     self.curr_rept_num += 1
-                                #     if self.curr_rept_num >= self.get_curr_page().repeats:
-                                #         self.curr_rept_num = 0
-                                #         self.curr_page_num += 1
-                                #         self.curr_page_num %= len(self.pages)
-                # self.curr_page_num = self.get_next_page_num()
-        # print("b{}/{}, p{}/{}, r{}/{}".format(self.local_beat_position, self.width, self.curr_page_num+1, len(self.pages), self.curr_rept_num+1, self.get_curr_page().repeats))
         return
 
     def calc_local_beat(self, global_beat):
         '''Calc local_beat_pos for this instrument'''
         div = self.get_beat_division()
-
         local_beat = int(global_beat / div) % self.width
-        logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
+        # logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
         return local_beat
 
+    def is_page_end(self):
+        return self.local_beat_position == 0
+
     def has_beat_changed(self, local_beat):
-        logging.info("<" + str(self.prev_loc_beat) + "  >" + str(local_beat))
         if self.prev_loc_beat != local_beat:
             self.prev_loc_beat = local_beat
             return True
         self.prev_loc_beat = local_beat
         return False
 
-    def check_for_repeats(self):
-        return
+    def get_next_page_num(self):
+        '''Return the number of the next page that has a positive number of repeats'''
+        for i in range(1, len(self.pages)):
+            # Look through all the upcoming pages
+            next_page_num = (self.curr_page_num + i) % len(self.pages)
+            rpts = self.pages[next_page_num].repeats
+            # logging.info("i{} p{} r{}".format(i, next_page_num, rpts))
+            if rpts > 0:  # This one's good, return it
+                return next_page_num
+        # All pages including curr_page are zero repeats, just stick with this one
+        return self.curr_page_num
 
-    def get_next_page(self):
+    def advance_page(self):
+        '''Go to next repeat or page'''
+        self.curr_rept_num += 1  # inc repeat number
+        if self.curr_rept_num >= self.get_curr_page().repeats:
+        # If we're overfowing repeats, time to go to next available page
+            self.curr_rept_num = 0  # Reset, for this page or next page
+            self.curr_page_num = self.get_next_page_num()
         return
 
     def get_beat_division(self):
