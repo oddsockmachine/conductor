@@ -104,6 +104,14 @@ class Note_Grid(object):
             saved_grid.append(acc)
         return {"Grid": saved_grid, "Repeats": self.repeats}
 
+    def load(self, saved):
+        self.repeats = saved["Repeats"]
+        for g in saved["Grid"]:
+            for i in [int(x) for x in list('{0:0b}'.format(g))]:
+                if i:
+                    self.add_note(g, i)
+        return
+
 import unittest
 class TestNoteGrid(unittest.TestCase):
 

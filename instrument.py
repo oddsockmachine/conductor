@@ -6,7 +6,7 @@ import mido
 
 class Instrument(object):
     """docstring for Instrument."""
-    def __init__(self, ins_num, mport, key, scale, octave=1, bars=W/4, height=H):
+    def __init__(self, ins_num, mport, key, scale, octave=1, beat_division=2, bars=W/4, height=H):
         super(Instrument, self).__init__()
         if not isinstance(ins_num, int):
             print("Instrument num {} must be an int".format(ins_num))
@@ -21,6 +21,8 @@ class Instrument(object):
         self.curr_page_num = 0
         self.curr_rept_num = 0
         self.beat_position = 0
+        self.beat_division = beat_division
+        self.sub_beat_position = 0
         self.isdrum = False
         self.sustain = False  # TODO don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
@@ -62,7 +64,7 @@ class Instrument(object):
 
     def add_page(self, pos=True):
         '''Add or insert a new blank page into the list of pages'''
-        if len(self.pages) == 16:
+        if len(self.pages) == 8:
             return False
         if pos:
             self.pages.insert(self.curr_page_num+1, Note_Grid(self.bars, self.height))
@@ -157,12 +159,32 @@ class Instrument(object):
         self.pages[page].dec_repeats()
         return True
 
-    def step_beat(self, beat=None):
+    def step_beat(self, global_beat=None):
         '''Increment the beat counter, and do the math on pages and repeats'''
-        # if beat:
-        #     self.beat_position = beat
+        if global_beat:
+            old_beat_pos = self.beat_position
+            new_beat_pos = int(global_beat/self.beat_division) % self.width
+            # logging.info("old " + str(old_beat_pos))
+            # logging.info("new " + str(new_beat_pos))
+            # logging.info("beat " + str(global_beat))
+            if old_beat_pos == new_beat_pos:
+                return
+            else:
+                self.beat_position = new_beat_pos
+                # logging.info(self.sub_beat_position)
         #     return
-        self.beat_position += 1
+        # self.sub_beat_position += 1
+        # logging.info(self.sub_beat_position)
+        # if self.sub_beat_position >= self.beat_division:
+        #     logging.info('global_beat')
+        #     self.sub_beat_position = 0
+        #     logging.info(self.sub_beat_position)
+        # else:
+        #     logging.info('skip')
+        #     return
+        # self.beat_position += 1
+        # logging.info(self.beat_position)
+        # logging.info('!!!')
         if self.beat_position == self.width:
             self.beat_position = 0
             # print("page done")
@@ -176,6 +198,19 @@ class Instrument(object):
         new_notes = self.get_curr_notes()
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
+        return
+
+    def change_division(self, up_down):
+        '''Find current instrument, inc or dec its beat division as appropriate'''
+        if up_down == 1:
+            if self.beat_division == 2:
+                return
+            self.beat_division /= 2
+            return
+        if up_down == -1:
+            if self.beat_division == 8:
+                return
+            self.beat_division *= 2
         return
 
     def get_curr_notes(self):
@@ -206,6 +241,18 @@ class Instrument(object):
           "Pages": [p.save() for p in self.pages]
         }
         return saved
+
+    def load(self, saved):
+        self.octave = saved["Octave"]
+        self.key = saved["Key"]
+        self.scale = saved["Scale"]
+        self.pages = []
+        for p in saved["Pages"]:
+            page = Note_Grid(self.bars, self.height)
+            print(p)
+            page.load(p)
+            self.pages.append(page)
+        return
 
 
 

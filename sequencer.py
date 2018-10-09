@@ -7,8 +7,7 @@ from note_conversion import *
 class Sequencer(object):
     """docstring for Sequencer."""
     # def __init__(self, mport, bars=int(W/4)):
-    def __init__(self, mport, key, scale, octave=2, bars=int(W/4), height=H):
-
+    def __init__(self, mport, saved=None, key="e", scale="pentatonic_maj", octave=2, bars=int(W/4), height=H):
         super(Sequencer, self).__init__()
         self.mport = mport
         if key not in KEYS:
@@ -22,11 +21,21 @@ class Sequencer(object):
         self.beat_position = 0
         self.height = H
         self.width = bars*4
+        self.max_beat_division = 8
         self.scale = scale
         self.octave = octave  # Starting octave
         self.max_num_instruments = MAX_INSTRUMENTS
-        self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, bars=bars) for x in range(self.max_num_instruments)]  # limit to 16 midi channels
+        self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, beat_division=4, bars=bars) for x in range(self.max_num_instruments)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
+        # If we're loading, ignore all this and overwrite with info from file!
+        if saved:
+            self.load(saved)
+
+
+    def change_division(self, up_down):
+        '''Find current instrument, inc or dec its beat division as appropriate'''
+        self.get_curr_instrument().change_division(up_down)
+        return
 
     def cycle_key(self, up_down):
         '''Find current key in master list, move on to prev/next key, set in all modal instruments'''
@@ -78,7 +87,8 @@ class Sequencer(object):
             'key': str(self.key),
             'scale': str(self.scale),
             'octave': str(self.get_curr_instrument().octave),
-            'isdrum': self.get_curr_instrument().isdrum
+            'isdrum': self.get_curr_instrument().isdrum,
+            'division': {2:'>>>',4:'>>',8:'>',}[int(self.get_curr_instrument().beat_division)],
         }
         return status
     # def inc_tempo(self, amt):
@@ -133,9 +143,10 @@ class Sequencer(object):
 
     def step_beat(self):
         self.beat_position += 1
-        self.beat_position %= self.width
+        self.beat_position %= self.width * self.max_beat_division
         for ins in self.instruments:
-            ins.step_beat()#self.beat_position)
+            # ins.step_beat()#self.beat_position)
+            ins.step_beat(self.beat_position)
         pass
 
     def get_curr_instrument(self):
@@ -161,7 +172,7 @@ class Sequencer(object):
     def get_led_status(self, cell, beat_pos):
         '''Determine which type of LED should be shown for a given cell'''
         led = LED_BLANK  # Start with blank / no led
-        if beat_pos == self.beat_position:
+        if beat_pos == self.get_curr_instrument().beat_position:
             led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
             if cell == NOTE_ON:
                 led = LED_SELECT  # Unless we want a selected + beat cell to be special
@@ -176,6 +187,14 @@ class Sequencer(object):
             "Instruments": [i.save() for i in self.instruments]
         }
 
+    def load(self, saved):
+        self.height = saved['Height']
+        self.width = saved['Width']
+        self.scale = saved['Instruments'][0]['Scale']
+        self.octave = saved['Instruments'][0]['Octave']
+        self.key = saved['Instruments'][0]['Key']
+        for i in range(len(saved['Instruments'])):
+            self.instruments[i].load(saved['Instruments'][i])
 
     # def draw(self, scr):
     #     note_grid = self.get_curr_instrument().get_curr_page_grid()

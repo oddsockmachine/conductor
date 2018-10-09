@@ -1,10 +1,8 @@
 ## Most Important
 * Figure out why everything waits while mouse button pressed!
 * Buttons for scale, key, octave, drum controls
-* Global beatpos with subdivisions
-* already in time, but are start of bars always the same or offset?
-* Select subdivision of tempo - 4ths, 16ths, etc. Do we want slow individual notes, or faster quarter notes?
 * Pages with 0 repeats should be skipped when step_beat loops around
+
 
 ### Sequencer needs to be synchronized!
 - Ensure instruments with different tempos are synced to start at the same time
@@ -35,6 +33,8 @@
 - Save each piano roll on exit
 - Load in piano roll using command line arg
 - load in piano roll using runtime option - might be useful for live, instead of killing and restarting
+- Icon to enable/disable save on exit
+- Key combo to save now without exiting
 
 ### convert everything to asynchronous/event driven
 

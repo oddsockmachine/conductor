@@ -5,15 +5,29 @@ from datetime import datetime
 import curses
 from constants import *
 import mido
-from json import dump
+from json import dump, load
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--set", help="Filename of previous set to load", type=str)
+args = parser.parse_args()
+print(args.set)
 
 class Controller(object):
     """docstring for Controller."""
     def __init__(self, stdscr, mport, mportin):
         super(Controller, self).__init__()
+
         self.mport = mport
         self.mportin = mportin
-        self.sequencer = Sequencer(mport, key="e", scale="pentatonic_maj")
+        # Check for loading previous set
+        if args.set:
+            saved = args.set
+            with open(saved, 'r') as saved_file:
+                saved_set = load(saved_file)
+            self.sequencer = Sequencer(mport, saved=saved_set)
+        else:
+            self.sequencer = Sequencer(mport, saved=None)
         self.last = time()
         self.stdscr = stdscr
         self.display = Display(stdscr)
@@ -47,6 +61,10 @@ class Controller(object):
             self.sequencer.cycle_key(-1)
         if c == ord('m'):
             self.sequencer.cycle_key(1)
+        if c == ord('['):
+            self.sequencer.change_division(-1)
+        if c == ord(']'):
+            self.sequencer.change_division(1)
         if c == ord('v'):
             self.sequencer.cycle_scale(-1)
         if c == ord('b'):
@@ -71,7 +89,8 @@ class Controller(object):
                 self.sequencer.dec_rep(x['page'])
             elif x['zone'] == 'add_page':
                 self.sequencer.add_page()
-
+            elif x['zone'] == 'change_division':
+                self.sequencer.change_division(x['div'])
         return str(c)
 
     # def get_clock_tick(self):
@@ -87,8 +106,8 @@ class Controller(object):
         for message in self.mportin.iter_pending():
             if message.type == "clock":
                 self.beatclockcount += 1
-        if self.beatclockcount >= 12:
-            self.beatclockcount %= 12
+        if self.beatclockcount >= 3:
+            self.beatclockcount %= 3
             return True
         return False
 

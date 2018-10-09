@@ -42,13 +42,18 @@ class Display(object):
             return {'zone': 'ins', 'ins': ins}
         # Check for Page controller
         if x > self.page_x and x < self.page_x+self.page_w and y < self.page_y+self.page_h and y > self.page_y:
+            if y-self.page_y == 15:
+                return {'zone': 'add_page'}
+            if y-self.page_y == 16:
+                return {'zone': 'change_division', 'div': (-1 if (x-self.page_x <=5) else 1)}
             if x-self.page_x <= 2:
                 return {'zone': 'dec_rep', 'page': y-self.page_y-1}
+            if x-self.page_x >= 10:
+                return {'zone': 'page_down', 'page': y-self.page_y-1}
+            if x-self.page_x >= 8:
+                return {'zone': 'page_up', 'page': y-self.page_y-1}
             if x-self.page_x >= 6:
                 return {'zone': 'inc_rep', 'page': y-self.page_y-1}
-            if y-self.page_y == 16:
-                return {'zone': 'add_page'}
-
         # Check for key, scale, octave, drum buttons (still to be drawn)
         return {'zone': None}
 
@@ -58,10 +63,11 @@ class Display(object):
             'key': status.get('key'),
             'scale': status.get('scale')[:5].rjust(5),
             'octave': status.get('octave'),
-            'type': "Drum" if (status.get('isdrum')==True) else "Inst"
+            'type': "Drum" if (status.get('isdrum')==True) else "Inst",
+            'division': status.get('division')
         }
-        status_line_2 = "{key} {scale} +{octave}ve {type} ".format(**status_strs)
-        # self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
+        status_line_2 = "{key} {scale} +{octave}ve {type} >{division} ".format(**status_strs)
+        self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
         self.draw_ins_selector(status['ins_num'], status['ins_total'])
         self.draw_pages(status['page_num'], status['repeat_num'], status['page_stats'])
         return
@@ -81,12 +87,13 @@ class Display(object):
 
     def draw_pages(self, curr_page, repeat_num, page_repeats):
         page_tot = len(page_repeats)
-        win = curses.newwin(self.page_h, self.page_w, self.page_y, self.page_x)
+        win = curses.newwin(self.page_h, self.page_w+4, self.page_y, self.page_x)
         for i in range(16):
             win.addstr(i+1, 1, str("    "))# DISPLAY[3])
-        win.addstr(16, 3, "+++")  # Add page button, which will be overwritten when at 16 pages
+        win.addstr(15, 3, "+++")  # Add page button, which will be overwritten when at 15 pages
+        win.addstr(16, 3, "<<  >>")  # Add page button, which will be overwritten when at 15 pages
         for i in range(page_tot):
-            win.addstr(i+1, 1, str("-   " + str(page_repeats[i]) + " +"))# DISPLAY[3])
+            win.addstr(i+1, 1, str("-   " + str(page_repeats[i]) + " + ∧ ∨"))# DISPLAY[3])
         win.addstr(curr_page, 3, str(repeat_num)+"/")# DISPLAY[3])
         win.border()
         win.refresh()
