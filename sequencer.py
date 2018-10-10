@@ -25,12 +25,25 @@ class Sequencer(object):
         self.scale = scale
         self.octave = octave  # Starting octave
         self.max_num_instruments = MAX_INSTRUMENTS
-        self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, speed=1, bars=bars) for x in range(1)]  # limit to 16 midi channels
+        self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, speed=1, bars=bars) for x in range(MAX_INSTRUMENTS)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         # If we're loading, ignore all this and overwrite with info from file!
         if saved:
             self.load(saved)
 
+    def add_notes_from_midi(self, notes):
+        '''Take midi notes 48-74 inclusive, map to current grid'''
+        # Map white keys to sequential numbers
+        white_key_lookup = { v:k for k,v in enumerate([1,3,5,6,8,10,12,13,15,17,18,20,22,24,25,27]) }
+        for note in notes:
+            logging.info(note)
+            note = white_key_lookup.get(note-47)
+            if note == None:  # Ugh, 0 is valid but falsey!
+                logging.info('skipped')
+                continue
+            logging.info(note)
+            self.get_curr_instrument().touch_note(self.get_curr_instrument().local_beat_position, note)
+        return
 
     def change_division(self, up_down):
         '''Find current instrument, inc or dec its beat division as appropriate'''

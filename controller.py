@@ -37,7 +37,11 @@ class Controller(object):
         self.draw()
         self.stdscr.refresh()
         while True:
-            if self.get_midi_tick():
+            midi_data = self.process_incoming_midi()
+            if len(midi_data.get('notes')) > 0:
+                logging.info('notes!')
+                self.sequencer.add_notes_from_midi(midi_data.get('notes'))
+            if midi_data.get('tick'):
                 self.sequencer.step_beat()
                 self.draw()
             key = self.get_keys()
@@ -53,8 +57,9 @@ class Controller(object):
         if c == -1:
             return None
         if c == ord('Q'):
-            self.save()
             exit()
+        if c == ord('S'):
+            self.save()
         if c == ord(' '):
             self.sequencer.step_beat()
         if c == ord('n'):
@@ -93,23 +98,36 @@ class Controller(object):
                 self.sequencer.change_division(x['div'])
         return str(c)
 
-    # def get_clock_tick(self):
-    #     return self.get_midi_tick()
-    #     x = time()
-    #     diff = x - self.last
-    #     if diff > 0.3:  # 0.3 ms since last tick
-    #         self.last = x
-    #         return True
-    #     return False
-
-    def get_midi_tick(self):
+    def process_incoming_midi(self):
+        tick = False
+        notes = []
         for message in self.mportin.iter_pending():
             if message.type == "clock":
-                self.beatclockcount += 1
+                tick = self.process_midi_tick()
+            if message.type == "note_on":
+                notes.append(message.note)  # TODO only on notes
+            # if message.type != 'clock':
+            #     logging.info(message.type)
+            #     logging.info(message)
+        if len(notes) > 0:
+            logging.info(notes)
+        return {'tick': tick, 'notes': notes}
+
+    def process_midi_tick(self):
+        self.beatclockcount += 1
         if self.beatclockcount >= 3:
             self.beatclockcount %= 3
             return True
         return False
+
+    # def get_midi_tick(self):
+    #     for message in self.mportin.iter_pending():
+    #         if message.type == "clock":
+    #             self.beatclockcount += 1
+    #     if self.beatclockcount >= 3:
+    #         self.beatclockcount %= 3
+    #         return True
+    #     return False
 
     def draw(self):
         status = self.sequencer.get_status()

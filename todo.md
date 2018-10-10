@@ -2,6 +2,8 @@
 * Figure out why everything waits while mouse button pressed!
 * Buttons for scale, key, octave, drum controls
 * Tidy/organize each classes methods
+* Clear notes from current page / current instrument
+* Limit midi notes to within allowed bounds - some octaves are too high/low
 
 ### Convert display to separate service
 - Communicate via messages
@@ -27,16 +29,8 @@
 - Load in piano roll using command line arg (almost, saved note conversion needs work)
 - load in piano roll using runtime option - might be useful for live, instead of killing and restarting
 - Icon to enable/disable save on exit
-- Key combo to save now without exiting
-- Key combo to exit without saving
 
 ### convert everything to asynchronous/event driven
-
-### is it possible/desirable to edit a page while another page is playing?
-
-### listen for midi notes in on all channels
-- add note to current beat of relevant instrument
-- would allow live playing and editing of an instrument
 
 ### Z-mode
 - normally time moves along the x-axis, pitch on y, instruments on z.
