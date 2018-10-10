@@ -187,7 +187,9 @@ class Sequencer(object):
         ins.add_page()
         pass
 
-
+    def clear_page(self):
+        self.get_curr_instrument().clear_page()
+        return
 
 
 

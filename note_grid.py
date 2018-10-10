@@ -108,6 +108,9 @@ class Note_Grid(object):
                     self.add_note(g, i)
         return
 
+    def clear_page(self):
+        self.note_grid = [[LED_BLANK for y in range(self.height)] for x in range(self.width)]
+        return
 
 
 

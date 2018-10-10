@@ -32,6 +32,7 @@ class Controller(object):
         self.stdscr = stdscr
         self.display = Display(stdscr)
         self.beatclockcount = 0
+        self.save_on_exit = False
 
     def run(self):
         self.draw()
@@ -56,11 +57,18 @@ class Controller(object):
         if c == -1:
             return None
         if c == ord('Q'):
+            if self.save_on_exit:
+                self.save()
             exit()
+        if c == ord('s'):
+            self.save_on_exit = not self.save_on_exit
+            logging.info(self.save_on_exit)
         if c == ord('S'):
             self.save()
         if c == ord(' '):
             self.sequencer.step_beat()
+        if c == ord('`'):
+            self.sequencer.clear_page()
         if c == ord('n'):
             self.sequencer.cycle_key(-1)
         if c == ord('m'):

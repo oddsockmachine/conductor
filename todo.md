@@ -1,15 +1,12 @@
 ## Most Important
-* Figure out why everything waits while mouse button pressed!
-* Buttons for scale, key, octave, drum controls
-* Tidy/organize each classes methods
-* Clear notes from current page / current instrument
-* Limit midi notes to within allowed bounds - some octaves are too high/low
+* Figure out why everything waits while mouse button held!
+* Buttons for scale, key, octave, drum controls, save on exit
 
 ### Convert display to separate service
 - Communicate via messages
 
 ### unit tests remaining
-- for cursor, controller, display(?)
+- for controller, display(?), recent new features
 
 ### delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc.
 - build out gui, include
@@ -19,16 +16,12 @@
 
 ### Controls for adding/changing pages/instruments, setting musical constraints etc
 - Turn off note repeat for an instrument - adjacent notes sustain instead of retriggering
-- Clear notes from current page / current instrument
-- Limit midi notes to within allowed bounds - some octaves are too high/low
 
 ### synchronize with Ableton
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 
 ### Save and load
 - Load in piano roll using command line arg (almost, saved note conversion needs work)
-- load in piano roll using runtime option - might be useful for live, instead of killing and restarting
-- Icon to enable/disable save on exit
 
 ### convert everything to asynchronous/event driven
 
