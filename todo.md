@@ -22,6 +22,7 @@
 
 ### Save and load
 - Load in piano roll using command line arg (almost, saved note conversion needs work)
+- Add beat division/speed to load/save
 
 ### convert everything to asynchronous/event driven
 
