@@ -98,6 +98,7 @@ class Controller(object):
         return str(c)
 
     def process_incoming_midi(self):
+        '''Check for incoming midi messages and categorize so we can do something with them'''
         tick = False
         notes = []
         for message in self.mportin.iter_pending():
@@ -106,10 +107,10 @@ class Controller(object):
             if message.type == "note_on":
                 notes.append(message.note)  # TODO only on notes
             # if message.type != 'clock':
-        if len(notes) > 0:
         return {'tick': tick, 'notes': notes}
 
     def process_midi_tick(self):
+        '''Perform midi tick subdivision so ticks only happen on beats'''
         self.beatclockcount += 1
         if self.beatclockcount >= 3:
             self.beatclockcount %= 3

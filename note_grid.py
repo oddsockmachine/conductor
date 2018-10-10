@@ -44,7 +44,6 @@ class Note_Grid(object):
         '''touch/invert a note status. x = beat/time, y = pitch'''
         if not self.validate_touch(x, y):
             return False
-        # y = (self.height - y) - 1
         curr_note = self.note_grid[x][y]
         if curr_note == NOTE_ON:
             self.note_grid[x][y] = NOTE_OFF
@@ -56,7 +55,6 @@ class Note_Grid(object):
         '''add a note. x = beat/time, y = pitch'''
         if not self.validate_touch(x, y):
             return False
-        # y = (self.height - y) - 1
         self.note_grid[x][y] = NOTE_ON
         return True
 
@@ -64,7 +62,6 @@ class Note_Grid(object):
         '''remove a note. x = beat/time, y = pitch'''
         if not self.validate_touch(x, y):
             return False
-        # y = self.height - y - 1
         self.note_grid[x][y] = NOTE_OFF
         return True
 
@@ -72,7 +69,6 @@ class Note_Grid(object):
         if beat > self.width:
             logging.warning('Beat {} > {}'.format(beat, self.width))
             return
-        # y = self.height - y - 1
         return self.note_grid[beat]
 
     def get_note_by_pitch(self, x, y):
@@ -104,13 +100,25 @@ class Note_Grid(object):
             saved_grid.append(acc)
         return {"Grid": saved_grid, "Repeats": self.repeats}
 
-    def load(self, saved):
+    def load(self, saved):  # TODO fix this
         self.repeats = saved["Repeats"]
         for g in saved["Grid"]:
             for i in [int(x) for x in list('{0:0b}'.format(g))]:
                 if i:
                     self.add_note(g, i)
         return
+
+
+
+
+
+
+
+
+
+
+
+
 
 import unittest
 class TestNoteGrid(unittest.TestCase):

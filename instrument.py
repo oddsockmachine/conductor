@@ -14,7 +14,6 @@ class Instrument(object):
         self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
         self.mport = mport
         logging.info(mport)
-
         self.height = height
         self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
         self.width = self.bars * 4
@@ -85,26 +84,6 @@ class Instrument(object):
         page.touch_note(x, y)
         return True
 
-    def add_note(self, x, y, page=False):
-        '''force-on a x/y cell on the current page'''
-        if not page:
-            page = self.get_curr_page()
-        if page > len(self.pages):
-            logging.warning('Requested page {} > {}'.format(page, len(self.pages)))
-            return False
-        page = self.get_curr_page()
-        if not page.validate_touch(x, y):
-            return False
-        page.add_note(x, y)
-        return True
-
-    def del_note(self, x, y):
-        page = self.get_curr_page()
-        if not page.validate_touch(x, y):
-            return False
-        page.del_note(x, y)
-        return True
-
     def get_notes_from_curr_beat(self):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
@@ -113,22 +92,7 @@ class Instrument(object):
         return
 
     def get_curr_page_grid(self):
-        # page = self.get_curr_page()
         return self.get_curr_page().note_grid
-
-    def print_curr_page_notes(self):
-        self.get_curr_page().print_notes()
-        return
-        grid = self.get_curr_page_grid()
-        # display = {0: '. ', 1: '░░', 2:'▒▒', 3:'▓▓'}
-        for c, column in enumerate(grid):  # row counter
-            for r, cell in enumerate(column):  # column counter
-                if r == self.local_beat_position: # and display[y] != LED_ACTIVE:
-                    print(DISPLAY[LED_SELECT], end='')
-                else:
-                    print(DISPLAY[cell], end='')
-            print('')
-        print('')
 
     def inc_page_repeats(self, page):
         '''Increase how many times the current page will loop'''
@@ -151,7 +115,6 @@ class Instrument(object):
             # Intermediate beat for this instrument, do nothing
             return
         self.local_beat_position = local
-
         if self.is_page_end():
             self.advance_page()
         new_notes = self.get_curr_notes()
@@ -219,11 +182,9 @@ class Instrument(object):
     def get_curr_notes(self):
         grid = self.get_curr_page_grid()
         beat_pos = self.local_beat_position
-        # beat_notes = [row[beat_pos] for row in grid][::-1]  # extract column from grid
         beat_notes = grid[beat_pos]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
-
 
     def output(self, old_notes, new_notes):
         """Return all note-ons from the current beat, and all note-offs from the last"""

@@ -17,14 +17,12 @@ class Sequencer(object):
         if scale not in SCALES.keys():
             print('Requested scale {} not known'.format(scale))
             exit()
-        # self.tempo_division = 4
         self.beat_position = 0
         self.height = H
         self.width = bars*4
         self.max_beat_division = 8
         self.scale = scale
         self.octave = octave  # Starting octave
-        self.max_num_instruments = MAX_INSTRUMENTS
         self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, speed=1, bars=bars) for x in range(MAX_INSTRUMENTS)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         # If we're loading, ignore all this and overwrite with info from file!
@@ -40,49 +38,6 @@ class Sequencer(object):
             if note == None:  # Ugh, 0 is valid but falsey!
                 continue
             self.get_curr_instrument().touch_note(self.get_curr_instrument().local_beat_position, note)
-        return
-
-    def change_division(self, up_down):
-        '''Find current instrument, inc or dec its beat division as appropriate'''
-        self.get_curr_instrument().change_division(up_down)
-        return
-
-    def cycle_key(self, up_down):
-        '''Find current key in master list, move on to prev/next key, set in all modal instruments'''
-        curr_key = KEYS.index(self.key)
-        new_key = (curr_key + up_down) % len(KEYS)
-        self.key = KEYS[new_key]
-        for i in self.instruments:
-            i.set_key(self.key)
-        return
-
-    def cycle_scale(self, up_down):
-        '''Find current scale in master list, move on to prev/next key, set in all modal instruments'''
-        curr_scale = list(SCALES.keys()).index(self.scale)
-        new_scale = (curr_scale + up_down) % len(SCALES.keys())
-        self.scale = list(SCALES.keys())[new_scale]
-        for i in self.instruments:
-            if not i.isdrum:
-                i.set_scale(self.scale)
-        return
-
-    def change_octave(self, up_down):
-        '''Find current key in master list, move on to prev/next key, set in all modal instruments'''
-        self.get_curr_instrument().change_octave(up_down)
-        return
-
-    def swap_drum_inst(self):
-        '''Swap the currently selected instrument between drum and instrument modes'''
-        ins = self.get_curr_instrument()
-        if ins.isdrum:
-            ins.octave = self.octave
-            ins.set_scale(self.scale)
-            ins.isdrum = False
-        else:
-            ins.octave = 1
-            ins.set_scale('chromatic')
-            ins.isdrum = True
-
         return
 
     def get_status(self):
@@ -101,55 +56,6 @@ class Sequencer(object):
             'division': self.get_curr_instrument().get_beat_division_str(),
         }
         return status
-    # def inc_tempo(self, amt):
-    #     self.tempo += amt
-    #     return
-    #
-    # def dec_tempo(self, amt):
-    #     self.tempo -= amt
-    #     return
-
-    def add_instrument(self, key=None, scale=None, octave=2, bars=int(W/4), height=H):
-        if not scale:
-            scale = self.scale
-        if not key:
-            key = self.key
-        if len(self.instruments) == 16:
-            # logging.warning('Already at 16 instruments')
-            return False
-        ins_num = len(self.instruments)
-        self.instruments.append(Instrument(ins_num, self.mport, key, scale, octave, bars, height))
-        return
-
-    def next_instrument(self):
-        if self.current_visible_instrument == len(self.instruments)-1:
-            # logging.warning('Reached end of instruments')
-            return False
-        self.current_visible_instrument += 1
-        return
-
-    def prev_instrument(self):
-        if self.current_visible_instrument == 0:
-            # logging.warning('Reached start of instruments')
-            return False
-        self.current_visible_instrument -= 1
-        return
-
-    def inc_rep(self, page):
-        ins = self.get_curr_instrument()
-        ins.inc_page_repeats(page)
-        pass
-
-    def dec_rep(self, page):
-        ins = self.get_curr_instrument()
-        ins.dec_page_repeats(page)
-        pass
-
-    def add_page(self):
-        ins = self.get_curr_instrument()
-        ins.add_page()
-        pass
-
 
     def step_beat(self):
         self.beat_position += 1
@@ -158,18 +64,6 @@ class Sequencer(object):
             # ins.step_beat()#self.beat_position)
             ins.step_beat(self.beat_position)
         pass
-
-    def get_curr_instrument(self):
-        return self.instruments[self.current_visible_instrument]
-
-    def get_curr_instrument_num(self):
-        return self.current_visible_instrument + 1
-
-    def get_total_instrument_num(self):
-        return len(self.instruments)
-
-    def touch_note(self, x, y):
-        self.get_curr_instrument().touch_note(x, y)
 
     def get_led_grid(self):
         '''Get led status types for all cells of the grid, to be drawn by the display'''
@@ -206,13 +100,106 @@ class Sequencer(object):
         for i in range(len(saved['Instruments'])):
             self.instruments[i].load(saved['Instruments'][i])
 
-    # def draw(self, scr):
-    #     note_grid = self.get_curr_instrument().get_curr_page_grid()
-    #     for c, column in enumerate(note_grid):  # row counter
-    #         for r, cell in enumerate(column):  # column counter
-    #             led = self.get_led_status(cell, c)
-    #             scr.addstr(H-r-1, c*2, DISPLAY[led])#, curses.color_pair(4))
-    #     return
+    ###### GETTERS/SETTERS ######
+
+    def get_curr_instrument(self):
+        return self.instruments[self.current_visible_instrument]
+
+    def get_curr_instrument_num(self):
+        return self.current_visible_instrument + 1
+
+    def get_total_instrument_num(self):
+        return len(self.instruments)
+
+    def cycle_key(self, up_down):
+        '''Find current key in master list, move on to prev/next key, set in all modal instruments'''
+        curr_key = KEYS.index(self.key)
+        new_key = (curr_key + up_down) % len(KEYS)
+        self.key = KEYS[new_key]
+        for i in self.instruments:
+            i.set_key(self.key)
+        return
+
+    def cycle_scale(self, up_down):
+        '''Find current scale in master list, move on to prev/next key, set in all modal instruments'''
+        curr_scale = list(SCALES.keys()).index(self.scale)
+        new_scale = (curr_scale + up_down) % len(SCALES.keys())
+        self.scale = list(SCALES.keys())[new_scale]
+        for i in self.instruments:
+            if not i.isdrum:
+                i.set_scale(self.scale)
+        return
+
+    def swap_drum_inst(self):
+        '''Swap the currently selected instrument between drum and instrument modes'''
+        ins = self.get_curr_instrument()
+        if ins.isdrum:
+            ins.octave = self.octave
+            ins.set_scale(self.scale)
+            ins.isdrum = False
+        else:
+            ins.octave = 1
+            ins.set_scale('chromatic')
+            ins.isdrum = True
+        return
+
+    def next_instrument(self):
+        if self.current_visible_instrument == len(self.instruments)-1:
+            # logging.warning('Reached end of instruments')
+            return False
+        self.current_visible_instrument += 1
+        return
+
+    def prev_instrument(self):
+        if self.current_visible_instrument == 0:
+            # logging.warning('Reached start of instruments')
+            return False
+        self.current_visible_instrument -= 1
+        return
+
+    ###### CONTROL PASSTHROUGH METHODS ######
+
+    def touch_note(self, x, y):
+        self.get_curr_instrument().touch_note(x, y)
+
+    def change_division(self, up_down):
+        '''Find current instrument, inc or dec its beat division as appropriate'''
+        self.get_curr_instrument().change_division(up_down)
+        return
+
+    def change_octave(self, up_down):
+        '''Find current key in master list, move on to prev/next key, set in all modal instruments'''
+        self.get_curr_instrument().change_octave(up_down)
+        return
+
+    def inc_rep(self, page):
+        ins = self.get_curr_instrument()
+        ins.inc_page_repeats(page)
+        pass
+
+    def dec_rep(self, page):
+        ins = self.get_curr_instrument()
+        ins.dec_page_repeats(page)
+        pass
+
+    def add_page(self):
+        ins = self.get_curr_instrument()
+        ins.add_page()
+        pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 import unittest

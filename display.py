@@ -73,8 +73,6 @@ class Display(object):
         return
 
     def draw_ins_selector(self, ins_num, ins_tot):
-        # sx = self.ins_x
-        # sy = self.ins_y
         win = curses.newwin(self.ins_h, self.ins_w, self.ins_y, self.ins_x)
         win.border()
         # Inactive instruments
