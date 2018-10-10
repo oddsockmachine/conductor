@@ -6,7 +6,7 @@
 
 ### Examples
 
-- https://www.youtube.com/watch?v=3huPQ8svOUQ&t=13s
+- https://www.youtube.com/watch?v=3huPQ8svOUQ
 
 - https://www.youtube.com/watch?v=pdu7UI-fMRo
 
