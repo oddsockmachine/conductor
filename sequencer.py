@@ -36,12 +36,9 @@ class Sequencer(object):
         # Map white keys to sequential numbers
         white_key_lookup = { v:k for k,v in enumerate([1,3,5,6,8,10,12,13,15,17,18,20,22,24,25,27]) }
         for note in notes:
-            logging.info(note)
             note = white_key_lookup.get(note-47)
             if note == None:  # Ugh, 0 is valid but falsey!
-                logging.info('skipped')
                 continue
-            logging.info(note)
             self.get_curr_instrument().touch_note(self.get_curr_instrument().local_beat_position, note)
         return
 

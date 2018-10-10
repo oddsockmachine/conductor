@@ -39,7 +39,6 @@ class Controller(object):
         while True:
             midi_data = self.process_incoming_midi()
             if len(midi_data.get('notes')) > 0:
-                logging.info('notes!')
                 self.sequencer.add_notes_from_midi(midi_data.get('notes'))
             if midi_data.get('tick'):
                 self.sequencer.step_beat()
@@ -107,10 +106,7 @@ class Controller(object):
             if message.type == "note_on":
                 notes.append(message.note)  # TODO only on notes
             # if message.type != 'clock':
-            #     logging.info(message.type)
-            #     logging.info(message)
         if len(notes) > 0:
-            logging.info(notes)
         return {'tick': tick, 'notes': notes}
 
     def process_midi_tick(self):
@@ -119,15 +115,6 @@ class Controller(object):
             self.beatclockcount %= 3
             return True
         return False
-
-    # def get_midi_tick(self):
-    #     for message in self.mportin.iter_pending():
-    #         if message.type == "clock":
-    #             self.beatclockcount += 1
-    #     if self.beatclockcount >= 3:
-    #         self.beatclockcount %= 3
-    #         return True
-    #     return False
 
     def draw(self):
         status = self.sequencer.get_status()
