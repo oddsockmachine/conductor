@@ -1,6 +1,12 @@
 ## Most Important
-* Figure out why everything waits while mouse button held!
 * Buttons for scale, key, octave, drum controls, save on exit
+* Figure out why everything waits while mouse button held!
+
+### Hardware
+* Read in button press on grid, show on screen
+* Read in button presses from other controls, show on screen
+* Write display engine on HW - send simple commands to test basic LED color functionality
+* Create led_display lookup to convert 
 
 ### Convert display to separate service
 - Communicate via messages

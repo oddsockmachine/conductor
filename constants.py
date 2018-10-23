@@ -20,6 +20,7 @@ NOTE_ON = 3
 
 # The glyphs used to display cell information/states in the CLI
 DISPLAY = {0: '. ', 1:'░░', 2:'▒▒', 3:'▓▓'}
+LED_DISPLAY = {0:('\x00','\xFF','\x00'), 1:('\xFF','\x00','\x00'), 2:('\x00','\x00','\xFF'), 3:('\xFF','\xFF','\xFF')}
 
 W = 16  # Width of the display grid
 H = 16  # Width of the display grid

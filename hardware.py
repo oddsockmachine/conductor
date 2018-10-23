@@ -8,53 +8,43 @@ locale.setlocale(locale.LC_ALL, '')
 
 class Display(object):
     """docstring for Display."""
-    def __init__(self, stdscr, w=W, h=H):
+    def __init__(self, serialport, w=W, h=H):
         super(Display, self).__init__()
-        self.stdscr = stdscr
+        self.serialport = serialport
         self.grid_h = h
-        self.grid_w = w*2
-        self.grid_x = 5
-        self.grid_y = 3
-        self.ins_x = self.grid_x+self.grid_w+3
-        self.ins_y = self.grid_y
-        self.ins_w = 4
-        self.ins_h = MAX_INSTRUMENTS+2
-        self.page_x = self.ins_x + self.ins_w + 1
-        self.page_y = self.grid_y
-        self.page_w = 9
-        self.page_h = MAX_INSTRUMENTS+2
-
+        self.grid_w = w
         return
 
-    def get_mouse_zone(self, m):
-        '''Return which zone the mouse clicked on'''
-        x = m[1]
-        y = m[2]
-        # Check for LED Grid
-        if x > self.grid_x and x <= self.grid_x+self.grid_w and y > self.grid_y and y <= self.grid_y+self.grid_h:
-            grid_x = int((x-6)/2)
-            grid_y = int(y-4)
-            return {'zone': 'note', 'x': grid_x, 'y': self.grid_h - grid_y -1}
-        # Check for Instrument selector
-        if x > self.ins_x and x < self.ins_x+self.ins_w and y < self.ins_y+self.ins_h and y > self.ins_y:
-            ins = y - self.ins_y - 1
-            return {'zone': 'ins', 'ins': ins}
-        # Check for Page controller
-        if x > self.page_x and x < self.page_x+self.page_w and y < self.page_y+self.page_h and y > self.page_y:
-            if y-self.page_y == 15:
-                return {'zone': 'add_page'}
-            if y-self.page_y == 16:
-                return {'zone': 'change_division', 'div': (-1 if (x-self.page_x <=5) else 1)}
-            if x-self.page_x <= 2:
-                return {'zone': 'dec_rep', 'page': y-self.page_y-1}
-            if x-self.page_x >= 10:
-                return {'zone': 'page_down', 'page': y-self.page_y-1}
-            if x-self.page_x >= 8:
-                return {'zone': 'page_up', 'page': y-self.page_y-1}
-            if x-self.page_x >= 6:
-                return {'zone': 'inc_rep', 'page': y-self.page_y-1}
-        # Check for key, scale, octave, drum buttons (still to be drawn)
+    def get_button_presses(self):
+        """Check serial in port for messages. If commands come in, delegate calls to relevant components"""
         return {'zone': None}
+        return {'zone': 'note', 'x': grid_x, 'y': self.grid_h - grid_y -1}
+        return {'zone': 'ins', 'ins': ins}
+        return {'zone': 'add_page'}
+        return {'zone': 'change_division', 'div': (-1 if (x-self.page_x <=5) else 1)}
+        return {'zone': 'dec_rep', 'page': y-self.page_y-1}
+        return {'zone': 'page_down', 'page': y-self.page_y-1}
+        return {'zone': 'page_up', 'page': y-self.page_y-1}
+        return {'zone': 'inc_rep', 'page': y-self.page_y-1}
+
+    def draw_all(self, status, led_grid):
+        """Send commands to serial out which describe display status:
+        Typically, LED grid data, plus auxillary status of instruments, pages etc.
+        Each RGB pixel's data is 24bit number.
+        24bits*256pixels/1Byte = 768Bytes. Max Bitrate = 14400B/s. Refresh rate, latency = 1/18s.
+        18fps is good, but is 1/18s latency acceptable?
+        We know most of the display state ahead of time, is it possible to compensate for latency?
+        If full LED grid is too much data, only send diffs, but do full refresh every x frames"""
+        buffer = []
+        for c, column in enumerate(led_grid):  # row counter
+            for r, cell in enumerate(column):  # column counter
+                R,G,B = LED_DISPLAY[cell]
+                buffer.append(R,G,B)
+        status_stream = convert_somehow(status)
+        stream.append(status_stream)
+        stream = ''.join(buffer)
+        serial.write(stream)
+        return
 
     def draw_gui(self, status):
         self.stdscr.addstr(1, self.grid_x+2, "S U P E R C E L L")#, curses.color_pair(4))
