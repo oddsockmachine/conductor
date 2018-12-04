@@ -17,11 +17,9 @@ class Controller(object):
     """docstring for Controller."""
     def __init__(self, stdscr, mport, mportin):
         super(Controller, self).__init__()
-
         self.mport = mport
         self.mportin = mportin
         self.mportin.callback = self.process_incoming_midi()
-
         # Check for loading previous set
         if args.set:
             saved = args.set
@@ -40,12 +38,6 @@ class Controller(object):
         self.draw()
         self.stdscr.refresh()
         while True:
-            # midi_data = self.process_incoming_midi()
-            # if len(midi_data.get('notes')) > 0:
-            #     self.sequencer.add_notes_from_midi(midi_data.get('notes'))
-            # if midi_data.get('tick'):
-            #     self.sequencer.step_beat()
-            #     self.draw()
             key = self.get_keys()
             if key:
                 self.draw()
