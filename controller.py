@@ -20,6 +20,8 @@ class Controller(object):
 
         self.mport = mport
         self.mportin = mportin
+        self.mportin.callback = self.process_incoming_midi()
+
         # Check for loading previous set
         if args.set:
             saved = args.set
@@ -38,19 +40,32 @@ class Controller(object):
         self.draw()
         self.stdscr.refresh()
         while True:
-            midi_data = self.process_incoming_midi()
-            if len(midi_data.get('notes')) > 0:
-                self.sequencer.add_notes_from_midi(midi_data.get('notes'))
-            if midi_data.get('tick'):
-                self.sequencer.step_beat()
-                self.draw()
+            # midi_data = self.process_incoming_midi()
+            # if len(midi_data.get('notes')) > 0:
+            #     self.sequencer.add_notes_from_midi(midi_data.get('notes'))
+            # if midi_data.get('tick'):
+            #     self.sequencer.step_beat()
+            #     self.draw()
             key = self.get_keys()
             if key:
                 self.draw()
                 pass
-            sleep(0.002)
+            sleep(0.02)
             self.stdscr.refresh()
         pass
+    def process_incoming_midi(self):
+        def _process_incoming_midi(message, timestamp=0):
+            '''Check for incoming midi messages and categorize so we can do something with them'''
+            tick = False
+            notes = []
+            if message.type == "clock":
+                tick = self.process_midi_tick()
+                if tick:
+                    self.sequencer.step_beat()
+                    self.draw()
+            if message.type == "note_on":
+                self.sequencer.add_notes_from_midi([message.note])
+        return _process_incoming_midi
 
     def get_keys(self):
         c = self.stdscr.getch()
@@ -105,18 +120,6 @@ class Controller(object):
                 self.sequencer.change_division(x['div'])
         return str(c)
 
-    def process_incoming_midi(self):
-        '''Check for incoming midi messages and categorize so we can do something with them'''
-        tick = False
-        notes = []
-        for message in self.mportin.iter_pending():
-            if message.type == "clock":
-                tick = self.process_midi_tick()
-            if message.type == "note_on":
-                notes.append(message.note)  # TODO only on notes
-            # if message.type != 'clock':
-        return {'tick': tick, 'notes': notes}
-
     def process_midi_tick(self):
         '''Perform midi tick subdivision so ticks only happen on beats'''
         self.beatclockcount += 1
@@ -146,6 +149,8 @@ def main(stdscr):
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
             controller = Controller(stdscr, mport, mportin)
             controller.run()
+
+    controller.run()
 
 if __name__ == '__main__':
     curses.wrapper(main)
