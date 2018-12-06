@@ -40,7 +40,7 @@ class Controller(object):
         while True:
             key = self.get_keys()
             if key:
-                self.draw()
+                # self.draw()
                 pass
             sleep(0.02)
             self.stdscr.refresh()
