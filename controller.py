@@ -15,7 +15,7 @@ print(args.set)
 
 class Controller(object):
     """docstring for Controller."""
-    def __init__(self, stdscr, display, mport, mportin):
+    def __init__(self, display, mport, mportin):
         super(Controller, self).__init__()
         self.mport = mport
         self.mportin = mportin
@@ -29,22 +29,17 @@ class Controller(object):
         else:
             self.sequencer = Sequencer(mport, saved=None)
         self.last = time()
-        self.stdscr = stdscr
         self.display = display
         self.beatclockcount = 0
         self.save_on_exit = False
 
     def run(self):
         self.draw()
-        self.stdscr.refresh()
         while True:
-            key = self.get_keys()
-            if key:
-                # self.draw()
-                pass
-            sleep(0.02)
-            self.stdscr.refresh()
+            self.get_keys()
+            sleep(0.05)
         pass
+
     def process_incoming_midi(self):
         def _process_incoming_midi(message, timestamp=0):
             '''Check for incoming midi messages and categorize so we can do something with them'''
@@ -60,7 +55,9 @@ class Controller(object):
         return _process_incoming_midi
 
     def get_keys(self):
-        c = self.stdscr.getch()
+        # TODO Refactor this to generalize command structure
+        # No differentiation between key and mouse events
+        c, m = self.display.getch()
         if c == -1:
             return None
         if c == ord('Q'):
@@ -94,22 +91,20 @@ class Controller(object):
             self.sequencer.change_octave(-1)
         if c == ord('x'):
             self.sequencer.change_octave(1)
-        if c == curses.KEY_MOUSE:
-            m = curses.getmouse()
-            x = self.display.get_mouse_zone(m)
-            self.stdscr.addstr(23, 20, str(x))
-            if x['zone'] == 'note':
-                self.sequencer.touch_note(x['x'], x['y'])
-            elif x['zone'] == 'ins':
-                self.sequencer.current_visible_instrument = x['ins']
-            elif x['zone'] == 'inc_rep':
-                self.sequencer.inc_rep(x['page'])
-            elif x['zone'] == 'dec_rep':
-                self.sequencer.dec_rep(x['page'])
-            elif x['zone'] == 'add_page':
+        if m != None:
+            # x = self.display.get_mouse_zone(m)
+            if m['zone'] == 'note':
+                self.sequencer.touch_note(m['x'], m['y'])
+            elif m['zone'] == 'ins':
+                self.sequencer.current_visible_instrument = m['ins']
+            elif m['zone'] == 'inc_rep':
+                self.sequencer.inc_rep(m['page'])
+            elif m['zone'] == 'dec_rep':
+                self.sequencer.dec_rep(m['page'])
+            elif m['zone'] == 'add_page':
                 self.sequencer.add_page()
-            elif x['zone'] == 'change_division':
-                self.sequencer.change_division(x['div'])
+            elif m['zone'] == 'change_division':
+                self.sequencer.change_division(m['div'])
         return str(c)
 
     def process_midi_tick(self):
@@ -140,7 +135,7 @@ def main(stdscr):
     display = Display(stdscr)
     with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
-            controller = Controller(stdscr, display, mport, mportin)
+            controller = Controller(display, mport, mportin)
             controller.run()
 
     controller.run()

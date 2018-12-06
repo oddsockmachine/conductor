@@ -23,8 +23,17 @@ class Display(object):
         self.page_y = self.grid_y
         self.page_w = 9
         self.page_h = MAX_INSTRUMENTS+2
-
         return
+
+    def getch(self):
+        c = self.stdscr.getch()
+        if c == curses.KEY_MOUSE:
+            m = curses.getmouse()
+            x = self.get_mouse_zone(m)
+            # self.stdscr.addstr(23, 20, str(self.get_mouse_zone(m)))
+            return c, x
+        return c, None
+
 
     def get_mouse_zone(self, m):
         '''Return which zone the mouse clicked on'''
