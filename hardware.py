@@ -1,11 +1,16 @@
-#coding=utf-8
 from constants import *
+# from board import SCL, SDA
+# import busio
+from adafruit_neotrellis.neotrellis import NeoTrellis
 
 class Display(object):
     """docstring for Display."""
     def __init__(self, serialport, w=W, h=H):
         super(Display, self).__init__()
-        self.serialport = serialport
+        # self.serialport = serialport
+        # i2c_bus = busio.I2C(SCL, SDA)
+        # trellis = NeoTrellis(i2c_bus)
+
         self.grid_h = h
         self.grid_w = w
         return
@@ -30,13 +35,14 @@ class Display(object):
         18fps is good, but is 1/18s latency acceptable?
         We know most of the display state ahead of time, is it possible to compensate for latency?
         If full LED grid is too much data, only send diffs, but do full refresh every x frames"""
-        buffer = []
-        for c, column in enumerate(led_grid):  # row counter
-            for r, cell in enumerate(column):  # column counter
-                R,G,B = LED_DISPLAY[cell]
-                buffer.append(R,G,B)
-        status_stream = convert_somehow(status)
-        stream.append(status_stream)
-        stream = ''.join(buffer)
-        serial.write(stream)
+        # buffer = []
+        # for c, column in enumerate(led_grid):  # row counter
+        #     for r, cell in enumerate(column):  # column counter
+        #         R,G,B = LED_DISPLAY[cell]
+        #         buffer.append(R,G,B)
+        # status_stream = convert_somehow(status)
+        # stream.append(status_stream)
+        # stream = ''.join(buffer)
+        # serial.write(stream)
+        # return
         return
