@@ -6,6 +6,8 @@
 
 ### Examples
 
+- https://soundcloud.com/oddsockmachine/droplets
+
 - https://www.youtube.com/watch?v=3huPQ8svOUQ
 
 - https://www.youtube.com/watch?v=pdu7UI-fMRo
@@ -16,7 +18,7 @@
 
 `pip install -r requirements.txt`
 
-`python controller.py`
+`python controller.py [--hw 1]`
 
 ### Usage
 
