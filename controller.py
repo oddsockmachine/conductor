@@ -15,7 +15,7 @@ print(args.set)
 
 class Controller(object):
     """docstring for Controller."""
-    def __init__(self, stdscr, mport, mportin):
+    def __init__(self, stdscr, display, mport, mportin):
         super(Controller, self).__init__()
         self.mport = mport
         self.mportin = mportin
@@ -30,7 +30,7 @@ class Controller(object):
             self.sequencer = Sequencer(mport, saved=None)
         self.last = time()
         self.stdscr = stdscr
-        self.display = Display(stdscr)
+        self.display = display
         self.beatclockcount = 0
         self.save_on_exit = False
 
@@ -137,9 +137,10 @@ def main(stdscr):
     m = curses.mousemask(1)
     curses.mouseinterval(10)
     stdscr.nodelay(1)
+    display = Display(stdscr)
     with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
-            controller = Controller(stdscr, mport, mportin)
+            controller = Controller(stdscr, display, mport, mportin)
             controller.run()
 
     controller.run()
