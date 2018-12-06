@@ -1,21 +1,20 @@
 from sequencer import Sequencer
-from display import Display
+from constants import *
 from time import sleep, time
 from datetime import datetime
-import curses
-from constants import *
 import mido
 from json import dump, load
 import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--set", help="Filename of previous set to load", type=str)
+parser.add_argument("--hw",  help="Use real hardware", type=bool)
 args = parser.parse_args()
-print(args.set)
+print(args)
 
 class Controller(object):
     """docstring for Controller."""
-    def __init__(self, stdscr, mport, mportin):
+    def __init__(self, display, mport, mportin):
         super(Controller, self).__init__()
         self.mport = mport
         self.mportin = mportin
@@ -29,22 +28,17 @@ class Controller(object):
         else:
             self.sequencer = Sequencer(mport, saved=None)
         self.last = time()
-        self.stdscr = stdscr
-        self.display = Display(stdscr)
+        self.display = display
         self.beatclockcount = 0
         self.save_on_exit = False
 
     def run(self):
         self.draw()
-        self.stdscr.refresh()
         while True:
-            key = self.get_keys()
-            if key:
-                # self.draw()
-                pass
-            sleep(0.02)
-            self.stdscr.refresh()
+            self.get_cmds()
+            sleep(0.05)
         pass
+
     def process_incoming_midi(self):
         def _process_incoming_midi(message, timestamp=0):
             '''Check for incoming midi messages and categorize so we can do something with them'''
@@ -59,58 +53,44 @@ class Controller(object):
                 self.sequencer.add_notes_from_midi([message.note])
         return _process_incoming_midi
 
-    def get_keys(self):
-        c = self.stdscr.getch()
-        if c == -1:
+    def get_cmds(self):
+        m = self.display.get_cmds()
+        if m['cmd'] == None:
             return None
-        if c == ord('Q'):
+        if m['cmd'] == 'quit':
             if self.save_on_exit:
                 self.save()
             exit()
-        if c == ord('s'):
+        elif m['cmd'] == 'toggle_save':
             self.save_on_exit = not self.save_on_exit
             logging.info(self.save_on_exit)
-        if c == ord('S'):
+        elif m['cmd'] == 'save':
             self.save()
-        if c == ord(' '):
+        elif m['cmd'] == 'step_beat':
             self.sequencer.step_beat()
-        if c == ord('`'):
+        elif m['cmd'] == 'clear_page':
             self.sequencer.clear_page()
-        if c == ord('n'):
-            self.sequencer.cycle_key(-1)
-        if c == ord('m'):
-            self.sequencer.cycle_key(1)
-        if c == ord('['):
-            self.sequencer.change_division(-1)
-        if c == ord(']'):
-            self.sequencer.change_division(1)
-        if c == ord('v'):
-            self.sequencer.cycle_scale(-1)
-        if c == ord('b'):
-            self.sequencer.cycle_scale(1)
-        if c == ord('c'):
+        elif m['cmd'] == 'cycle_key':
+            self.sequencer.cycle_key(m['dir'])
+        elif m['cmd'] == 'cycle_scale':
+            self.sequencer.cycle_scale(m['dir'])
+        elif m['cmd'] == 'swap_drum_inst':
             self.sequencer.swap_drum_inst()
-        if c == ord('z'):
-            self.sequencer.change_octave(-1)
-        if c == ord('x'):
-            self.sequencer.change_octave(1)
-        if c == curses.KEY_MOUSE:
-            m = curses.getmouse()
-            x = self.display.get_mouse_zone(m)
-            self.stdscr.addstr(23, 20, str(x))
-            if x['zone'] == 'note':
-                self.sequencer.touch_note(x['x'], x['y'])
-            elif x['zone'] == 'ins':
-                self.sequencer.current_visible_instrument = x['ins']
-            elif x['zone'] == 'inc_rep':
-                self.sequencer.inc_rep(x['page'])
-            elif x['zone'] == 'dec_rep':
-                self.sequencer.dec_rep(x['page'])
-            elif x['zone'] == 'add_page':
-                self.sequencer.add_page()
-            elif x['zone'] == 'change_division':
-                self.sequencer.change_division(x['div'])
-        return str(c)
+        elif m['cmd'] == 'change_octave':
+            self.sequencer.change_octave(m['dir'])
+        elif m['cmd'] == 'note':
+            self.sequencer.touch_note(m['x'], m['y'])
+        elif m['cmd'] == 'ins':
+            self.sequencer.current_visible_instrument = m['ins']
+        elif m['cmd'] == 'inc_rep':
+            self.sequencer.inc_rep(m['page'])
+        elif m['cmd'] == 'dec_rep':
+            self.sequencer.dec_rep(m['page'])
+        elif m['cmd'] == 'add_page':
+            self.sequencer.add_page()
+        elif m['cmd'] == 'change_division':
+            self.sequencer.change_division(m['div'])
+        return
 
     def process_midi_tick(self):
         '''Perform midi tick subdivision so ticks only happen on beats'''
@@ -133,16 +113,28 @@ class Controller(object):
             dump(saved, savefile)
 
 
-def main(stdscr):
+def console_main(stdscr):
+    from console import Display
     m = curses.mousemask(1)
     curses.mouseinterval(10)
     stdscr.nodelay(1)
+    display = Display(stdscr)
     with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
-            controller = Controller(stdscr, mport, mportin)
+            controller = Controller(display, mport, mportin)
             controller.run()
 
-    controller.run()
+def hardware_main():
+    from hardware import Display
+    display = Display("123")
+    with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
+        with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
+            controller = Controller(display, mport, mportin)
+            controller.run()
 
 if __name__ == '__main__':
-    curses.wrapper(main)
+    if not args.hw:
+        import curses
+        curses.wrapper(console_main)
+    else:
+        hardware_main()

@@ -23,8 +23,55 @@ class Display(object):
         self.page_y = self.grid_y
         self.page_w = 9
         self.page_h = MAX_INSTRUMENTS+2
-
         return
+
+    def get_cmds(self):
+        m = {'cmd': None}
+        c = self.stdscr.getch()
+        if c == -1:
+            m['cmd'] = None
+        if c == ord('Q'):
+            m['cmd'] = 'quit'
+        if c == ord('s'):
+            m['cmd'] = 'toggle_save'
+        if c == ord('S'):
+            m['cmd'] = 'save'
+        if c == ord(' '):
+            m['cmd'] = 'step_beat'
+        if c == ord('`'):
+            m['cmd'] = 'clear_page'
+        if c == ord('n'):
+            m['cmd'] = 'cycle_key'
+            m['dir'] = -1
+        if c == ord('m'):
+            m['cmd'] = 'cycle_key'
+            m['dir'] = 1
+        # if c == ord('['):
+        #     m['cmd'] = 'change_division'
+        #     m['dir'] = -1
+        # if c == ord(']'):
+        #     m['cmd'] = 'change_division'
+            m['dir'] = 1
+        if c == ord('v'):
+            m['cmd'] = 'cycle_scale'
+            m['dir'] = -1
+        if c == ord('b'):
+            m['cmd'] = 'cycle_scale'
+            m['dir'] = 1
+        if c == ord('c'):
+            m['cmd'] = 'swap_drum_inst'
+        if c == ord('z'):
+            m['cmd'] = 'change_octave'
+            m['dir'] = -1
+        if c == ord('x'):
+            m['cmd'] = 'change_octave'
+            m['dir'] = 1
+        if c == curses.KEY_MOUSE:
+            _m = curses.getmouse()
+            m = self.get_mouse_zone(_m)
+        self.stdscr.addstr(23, 20, str(m))
+        return m
+
 
     def get_mouse_zone(self, m):
         '''Return which zone the mouse clicked on'''
@@ -34,27 +81,27 @@ class Display(object):
         if x > self.grid_x and x <= self.grid_x+self.grid_w and y > self.grid_y and y <= self.grid_y+self.grid_h:
             grid_x = int((x-6)/2)
             grid_y = int(y-4)
-            return {'zone': 'note', 'x': grid_x, 'y': self.grid_h - grid_y -1}
+            return {'cmd': 'note', 'x': grid_x, 'y': self.grid_h - grid_y -1}
         # Check for Instrument selector
         if x > self.ins_x and x < self.ins_x+self.ins_w and y < self.ins_y+self.ins_h and y > self.ins_y:
             ins = y - self.ins_y - 1
-            return {'zone': 'ins', 'ins': ins}
+            return {'cmd': 'ins', 'ins': ins}
         # Check for Page controller
         if x > self.page_x and x < self.page_x+self.page_w and y < self.page_y+self.page_h and y > self.page_y:
             if y-self.page_y == 15:
-                return {'zone': 'add_page'}
+                return {'cmd': 'add_page'}
             if y-self.page_y == 16:
-                return {'zone': 'change_division', 'div': (-1 if (x-self.page_x <=5) else 1)}
+                return {'cmd': 'change_division', 'div': (-1 if (x-self.page_x <=5) else 1)}
             if x-self.page_x <= 2:
-                return {'zone': 'dec_rep', 'page': y-self.page_y-1}
+                return {'cmd': 'dec_rep', 'page': y-self.page_y-1}
             if x-self.page_x >= 10:
-                return {'zone': 'page_down', 'page': y-self.page_y-1}
+                return {'cmd': 'page_down', 'page': y-self.page_y-1}
             if x-self.page_x >= 8:
-                return {'zone': 'page_up', 'page': y-self.page_y-1}
+                return {'cmd': 'page_up', 'page': y-self.page_y-1}
             if x-self.page_x >= 6:
-                return {'zone': 'inc_rep', 'page': y-self.page_y-1}
+                return {'cmd': 'inc_rep', 'page': y-self.page_y-1}
         # Check for key, scale, octave, drum buttons (still to be drawn)
-        return {'zone': None}
+        return {'cmd': None}
 
     def draw_gui(self, status):
         self.stdscr.addstr(1, self.grid_x+2, "S U P E R C E L L")#, curses.color_pair(4))
@@ -114,7 +161,3 @@ class Display(object):
         self.draw_gui(status)
         self.draw_grid(led_grid)
         return
-
-
-if __name__ == '__main__':
-    display = Display()
