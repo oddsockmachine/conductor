@@ -64,11 +64,11 @@ class Display(object):
         #  'scale': 'pentatonic_maj'}
         # pprint(led_grid)
         led_array = [y for x in led_grid for y in x]
-        for i in led_array:
-            if i==1:
-                self.trellis.pixels[i] = PURPLE
-            else:
-                self.trellis.pixels[i] = OFF
+        # for i in led_array:
+        #     if i==1:
+        #         self.trellis.pixels[i] = PURPLE
+        #     else:
+        #         self.trellis.pixels[i] = OFF
         pprint(led_array)
 
         # [[1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
