@@ -1,8 +1,8 @@
 from constants import *
 
-from board import SCL, SDA
-import busio
-from adafruit_neotrellis.neotrellis import NeoTrellis
+# from board import SCL, SDA
+# import busio
+# from adafruit_neotrellis.neotrellis import NeoTrellis
 
 from pprint import pprint
 from time import sleep
@@ -11,8 +11,8 @@ class Display(object):
     """docstring for Display."""
     def __init__(self, w=W, h=H):
         super(Display, self).__init__()
-        i2c_bus = busio.I2C(SCL, SDA)
-        self.trellis = NeoTrellis(i2c_bus)
+        # i2c_bus = busio.I2C(SCL, SDA)
+        # self.trellis = NeoTrellis(i2c_bus)
 
         self.grid_h = h
         self.grid_w = w
