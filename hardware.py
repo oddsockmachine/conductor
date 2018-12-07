@@ -50,7 +50,7 @@ class Display(object):
         # pprint(led_grid)
         for x in range(len(led_grid)):
             for y in range(len(led_grid[x])):
-                col = PURPLE if led_grid[x][y] else OFF
-                self.trellis.color(x, y, colors[y])
+                col = color[y] if led_grid[x][y] else OFF
+                self.trellis.color(x, y, col)
 
         return
