@@ -126,7 +126,7 @@ def console_main(stdscr):
 
 def hardware_main():
     from hardware import Display
-    display = Display("123")
+    display = Display()
     with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
             controller = Controller(display, mport, mportin)

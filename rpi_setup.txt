@@ -1,0 +1,29 @@
+
+# i2c
+sudo apt-get install -y python3-smbus
+sudo apt-get install -y i2c-tools
+echo "interfacing > i2c > enable"
+sleep(10)
+sudo raspi-config 
+
+sudo vim /etc/modules
+	i2c-dev
+	i2c-bcm2708
+
+sudo vim /boot/config.txt
+dtparam=spi=on
+
+
+sudo reboot
+
+sudo i2cdetect -y 1
+
+# spi
+
+ls -l /dev/spidev*
+
+
+ls /dev/i2c* /dev/spi*
+# /dev/i2c-1 /dev/spidev0.0 /dev/spidev0.1
+
+

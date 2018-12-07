@@ -9,9 +9,8 @@ from time import sleep
 
 class Display(object):
     """docstring for Display."""
-    def __init__(self, serialport, w=W, h=H):
+    def __init__(self, w=W, h=H):
         super(Display, self).__init__()
-        # self.serialport = serialport
         i2c_bus = busio.I2C(SCL, SDA)
         self.trellis = NeoTrellis(i2c_bus)
 
@@ -67,10 +66,10 @@ class Display(object):
         led_array = [y for x in led_grid for y in x]
         for i in led_array:
             if i==1:
-                trellis.pixels[i] = PURPLE
+                self.trellis.pixels[i] = PURPLE
             else:
-                trellis.pixels[i] = OFF
-
+                self.trellis.pixels[i] = OFF
+        pprint(led_array)
 
         # [[1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
         # sleep(5)
