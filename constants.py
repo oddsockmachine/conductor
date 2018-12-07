@@ -13,6 +13,14 @@ LED_BEAT = {"A":1, "B": 1,}[THEME]
 LED_SCALE_PRIMARY = {"A":9, "B": 9,}[THEME]
 LED_SCALE_SECONDARY = {"A":9, "B": 9,}[THEME]
 
+OFF = (0, 0, 0)
+RED = (255, 0, 0)
+YELLOW = (255, 150, 0)
+GREEN = (0, 255, 0)
+CYAN = (0, 255, 255)
+BLUE = (0, 0, 255)
+PURPLE = (180, 0, 255)
+
 
 # The ints used to represent the state of notes on a note_grid
 NOTE_OFF = 0
@@ -22,8 +30,8 @@ NOTE_ON = 3
 DISPLAY = {0: '. ', 1:'░░', 2:'▒▒', 3:'▓▓'}
 LED_DISPLAY = {0:('\x00','\xFF','\x00'), 1:('\xFF','\x00','\x00'), 2:('\x00','\x00','\xFF'), 3:('\xFF','\xFF','\xFF')}
 
-W = 16  # Width of the display grid
-H = 16  # Width of the display grid
+W = 4  # Width of the display grid
+H = 4  # Width of the display grid
 
 # Maximum number of instruments - limited by 16 available midi channels,
 # but we may want to run 2 separate sequencers with 8 channels in future

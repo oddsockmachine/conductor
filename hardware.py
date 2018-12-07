@@ -1,15 +1,19 @@
 from constants import *
-# from board import SCL, SDA
-# import busio
+
+from board import SCL, SDA
+import busio
 from adafruit_neotrellis.neotrellis import NeoTrellis
+
+from pprint import pprint
+from time import sleep
 
 class Display(object):
     """docstring for Display."""
     def __init__(self, serialport, w=W, h=H):
         super(Display, self).__init__()
         # self.serialport = serialport
-        # i2c_bus = busio.I2C(SCL, SDA)
-        # trellis = NeoTrellis(i2c_bus)
+        i2c_bus = busio.I2C(SCL, SDA)
+        self.trellis = NeoTrellis(i2c_bus)
 
         self.grid_h = h
         self.grid_w = w
@@ -45,4 +49,29 @@ class Display(object):
         # stream = ''.join(buffer)
         # serial.write(stream)
         # return
+
+        # pprint(status)
+        # {'division': '>>',
+        #  'ins_num': 1,
+        #  'ins_total': 16,
+        #  'isdrum': False,
+        #  'key': 'e',
+        #  'octave': '2',
+        #  'page_num': 1,
+        #  'page_stats': [1],
+        #  'page_total': 1,
+        #  'repeat_num': 1,
+        #  'repeat_total': 1,
+        #  'scale': 'pentatonic_maj'}
+        # pprint(led_grid)
+        led_array = [y for x in led_grid for y in x]
+        for i in led_array:
+            if i==1:
+                trellis.pixels[i] = PURPLE
+            else:
+                trellis.pixels[i] = OFF
+
+
+        # [[1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+        # sleep(5)
         return
