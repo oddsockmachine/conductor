@@ -36,7 +36,8 @@ class Controller(object):
         self.draw()
         while True:
             self.get_cmds()
-            sleep(0.05)
+            sleep(1)
+            self.sequencer.step_beat()
         pass
 
     def process_incoming_midi(self):
