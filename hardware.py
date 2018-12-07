@@ -3,16 +3,18 @@ from constants import *
 from board import SCL, SDA
 import busio
 from adafruit_neotrellis.neotrellis import NeoTrellis
-
-from pprint import pprint
-from time import sleep
+from adafruit_neotrellis.multitrellis import MultiTrellis
 
 class Display(object):
     """docstring for Display."""
     def __init__(self, w=W, h=H):
         super(Display, self).__init__()
         i2c_bus = busio.I2C(SCL, SDA)
-        self.trellis = NeoTrellis(i2c_bus)
+        trelli = [
+            [NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x31)],
+            [NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30)]
+            ]
+        self.trellis = MultiTrellis(trelli)
 
         self.grid_h = h
         self.grid_w = w
@@ -31,23 +33,6 @@ class Display(object):
         return {'cmd': 'inc_rep', 'page': y-self.page_y-1}
 
     def draw_all(self, status, led_grid):
-        """Send commands to serial out which describe display status:
-        Typically, LED grid data, plus auxillary status of instruments, pages etc.
-        Each RGB pixel's data is 24bit number.
-        24bits*256pixels/1Byte = 768Bytes. Max Bitrate = 14400B/s. Refresh rate, latency = 1/18s.
-        18fps is good, but is 1/18s latency acceptable?
-        We know most of the display state ahead of time, is it possible to compensate for latency?
-        If full LED grid is too much data, only send diffs, but do full refresh every x frames"""
-        # buffer = []
-        # for c, column in enumerate(led_grid):  # row counter
-        #     for r, cell in enumerate(column):  # column counter
-        #         R,G,B = LED_DISPLAY[cell]
-        #         buffer.append(R,G,B)
-        # status_stream = convert_somehow(status)
-        # stream.append(status_stream)
-        # stream = ''.join(buffer)
-        # serial.write(stream)
-        # return
 
         # pprint(status)
         # {'division': '>>',
@@ -63,14 +48,9 @@ class Display(object):
         #  'repeat_total': 1,
         #  'scale': 'pentatonic_maj'}
         # pprint(led_grid)
-        led_array = [y for x in led_grid for y in x]
-        for i, l in enumerate(led_array):
-            if l==1:
-                self.trellis.pixels[i] = PURPLE
-            else:
-                self.trellis.pixels[i] = OFF
-        pprint(led_array)
+        for x in range(len(led_grid)):
+            for y in range(len(led_grid[x])):
+                col = PURPLE if led_grid[x][y] else OFF
+                self.trellis.color(x, y, colors[y])
 
-        # [[1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-        # sleep(5)
         return

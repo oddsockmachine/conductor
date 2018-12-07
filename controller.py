@@ -36,9 +36,9 @@ class Controller(object):
         self.draw()
         while True:
             self.get_cmds()
-            sleep(0.5)
-            self.sequencer.step_beat()
-            self.draw()
+            sleep(0.5)  # TODO REMOVE TODO
+            self.sequencer.step_beat()  # TODO REMOVE TODO
+            self.draw()  # TODO REMOVE TODO
         pass
 
     def process_incoming_midi(self):

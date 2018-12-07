@@ -15,13 +15,15 @@ LED_SCALE_SECONDARY = {"A":9, "B": 9,}[THEME]
 
 OFF = (0, 0, 0)
 RED = (255, 0, 0)
+ORANGE = (255, 125, 125)
 YELLOW = (255, 150, 0)
 GREEN = (0, 255, 0)
 CYAN = (0, 255, 255)
 BLUE = (0, 0, 255)
-PURPLE = (180, 0, 255)
+INDIGO = (180, 0, 255)
+PURPLE = (255, 0, 255)
 
-
+colors  =[RED, ORANGE,YELLOW, GREEN,CYAN,BLUE,INDIGO,PURPLE]
 # The ints used to represent the state of notes on a note_grid
 NOTE_OFF = 0
 NOTE_ON = 3
