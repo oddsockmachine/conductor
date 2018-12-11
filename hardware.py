@@ -64,7 +64,7 @@ class Display(object):
         self.redraw_diff()
         return
 
-    def redraw_diff():
+    def redraw_diff(self):
         # diff = []
         for x in range(len(self.led_matrix)):
             for y in range(len(self.led_matrix[x])):
