@@ -56,7 +56,7 @@ class Controller(object):
                 self.sequencer.add_notes_from_midi([message.note])
         return _process_incoming_midi
 
-    def command_cb(m):
+    def command_cb(self, m):
         if m['cmd'] == 'note':
             self.sequencer.touch_note(m['x'], m['y'])
         return

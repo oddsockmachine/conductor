@@ -24,7 +24,7 @@ class Display(object):
         self.led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         self.button = None
-        self.command_cb = command_cb
+        # self.command_cb = command_cb
         button_cb = self.make_cb()
         print("Initializing Trellis")
         for y in range(h):
