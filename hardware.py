@@ -99,8 +99,8 @@ class Display(object):
         for i in range(status['page_total']):
             self.led_matrix[0][i] = RED
         for i in range(status['repeat_total']):
-            self.led_matrix[i][status['page_num']] = YELLOW
-        self.led_matrix[status['repeat_total']][status['page_num']] = GREEN
+            self.led_matrix[i][status['page_num']-1] = YELLOW
+        self.led_matrix[status['repeat_total']-1][status['page_num']-1] = GREEN
 
         return
 
