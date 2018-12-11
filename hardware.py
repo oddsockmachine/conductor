@@ -18,6 +18,8 @@ class Display(object):
 
         self.grid_h = h
         self.grid_w = w
+        self.led_matrix = [[(0,0,0) for x  in w] for y in h]
+        self.old_led_matrix = [[(0,0,0) for x  in w] for y in h]
         return
 
     def get_cmds(self):
@@ -48,9 +50,23 @@ class Display(object):
         #  'repeat_total': 1,
         #  'scale': 'pentatonic_maj'}
         # pprint(led_grid)
+
+        #TODO updating whole grid over i2c takes time, use python to diff screen status, then write out to hardware
+
         for x in range(len(led_grid)):
             for y in range(len(led_grid[x])):
                 col = colors[y] if led_grid[x][y] else OFF
-                self.trellis.color(x, y, col)
+                self.led_matrix[x][y] = col
+                # self.trellis.color(x, y, col)
+        self.redraw_diff()
+        return
 
+    def get_redraw_diff():
+        # diff = []
+        for x in range(len(self.led_matrix)):
+            for y in range(len(self.led_matrix[x])):
+                if self.led_matrix[x][y] != self.old_led_matrix[x][y]:
+                    # diff.append()
+                    self.trellis.color(x, y, led_matrix[x][y])
+                self.old_led_matrix[x][y] = self.led_matrix[x][y]
         return
