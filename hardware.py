@@ -70,6 +70,6 @@ class Display(object):
             for y in range(len(self.led_matrix[x])):
                 if self.led_matrix[x][y] != self.old_led_matrix[x][y]:
                     # diff.append()
-                    self.trellis.color(x, y, led_matrix[x][y])
+                    self.trellis.color(x, y, self.led_matrix[x][y])
                 self.old_led_matrix[x][y] = self.led_matrix[x][y]
         return
