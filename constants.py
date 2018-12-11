@@ -39,4 +39,4 @@ H = 8  # Width of the display grid
 
 # Maximum number of instruments - limited by 16 available midi channels,
 # but we may want to run 2 separate sequencers with 8 channels in future
-MAX_INSTRUMENTS = 16
+MAX_INSTRUMENTS = 8
