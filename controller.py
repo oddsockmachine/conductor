@@ -28,7 +28,8 @@ class Controller(object):
         else:
             self.sequencer = Sequencer(mport, saved=None)
         self.last = time()
-        self.display = display(command_cb=self.command_cb)
+        self.display = display
+        self.display.command_cb = self.command_cb
         self.beatclockcount = 0
         self.save_on_exit = False
 
