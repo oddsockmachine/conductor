@@ -60,7 +60,7 @@ class Display(object):
         # pprint(led_grid)
 
         #TODO updating whole grid over i2c takes time, use python to diff screen status, then write out to hardware
-        if self.switch:
+        if self.switch.value:
             print("!")
             self.led_matrix[0][0] = RED
             self.led_matrix[1][1] = RED
