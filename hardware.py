@@ -28,10 +28,10 @@ class Display(object):
         for y in range(h):
             for x in range(w):
                 #activate rising edge events on all keys
-                trellis.activate_key(x, y, NeoTrellis.EDGE_RISING)
+                self.trellis.activate_key(x, y, NeoTrellis.EDGE_RISING)
                 #activate falling edge events on all keys
-                # trellis.activate_key(x, y, NeoTrellis.EDGE_FALLING)
-                trellis.set_callback(x, y, self.button)
+                # self.trellis.activate_key(x, y, NeoTrellis.EDGE_FALLING)
+                self.trellis.set_callback(x, y, self.button)
         return
 
     def get_cmds(self):
