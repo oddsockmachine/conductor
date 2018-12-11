@@ -8,7 +8,7 @@ print("Done")
 
 class Display(object):
     """docstring for Display."""
-    def __init__(self, w=W, h=H):
+    def __init__(self, w=W, h=H, command_cb=None):
         super(Display, self).__init__()
         print("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
@@ -24,14 +24,15 @@ class Display(object):
         self.led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         self.button = None
-        cb = self.make_cb()
+        self.command_cb = command_cb
+        button_cb = self.make_cb()
+        print("Initializing Trellis")
         for y in range(h):
             for x in range(w):
-                #activate rising edge events on all keys
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_RISING)
-                #activate falling edge events on all keys
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_FALLING)
-                self.trellis.set_callback(x, y, cb)
+                self.trellis.set_callback(x, y, button_cb)
+        print("Done")
         return
 
     def get_cmds(self):
@@ -98,5 +99,16 @@ class Display(object):
     def make_cb(self):
         def button_cb(xcoord, ycoord, edge):
             if edge == NeoTrellis.EDGE_RISING:
-                self.button = (xcoord, ycoord)
+                self.command_cb({'cmd': 'note', 'x': xcoord, 'y': ycoord})
+            return
+            # return {'cmd': None}
+            # return {'cmd': 'note', 'x': grid_x, 'y': self.grid_h - grid_y -1}
+            # return {'cmd': 'ins', 'ins': ins}
+            # return {'cmd': 'add_page'}
+            # return {'cmd': 'change_division', 'div': (-1 if (x-self.page_x <=5) else 1)}
+            # return {'cmd': 'dec_rep', 'page': y-self.page_y-1}
+            # return {'cmd': 'page_down', 'page': y-self.page_y-1}
+            # return {'cmd': 'page_up', 'page': y-self.page_y-1}
+            # return {'cmd': 'inc_rep', 'page': y-self.page_y-1}
+
         return button_cb

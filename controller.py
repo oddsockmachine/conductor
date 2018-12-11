@@ -28,7 +28,7 @@ class Controller(object):
         else:
             self.sequencer = Sequencer(mport, saved=None)
         self.last = time()
-        self.display = display
+        self.display = display(command_cb=self.command_cb)
         self.beatclockcount = 0
         self.save_on_exit = False
 
@@ -54,6 +54,12 @@ class Controller(object):
             if message.type == "note_on":
                 self.sequencer.add_notes_from_midi([message.note])
         return _process_incoming_midi
+
+    def command_cb(m):
+        if m['cmd'] == 'note':
+            self.sequencer.touch_note(m['x'], m['y'])
+        return
+
 
     def get_cmds(self):
         m = self.display.get_cmds()
