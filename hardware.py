@@ -35,6 +35,7 @@ class Display(object):
         return
 
     def get_cmds(self):
+        self.trellis.sync()
         """Check serial in port for messages. If commands come in, delegate calls to relevant components"""
         if self.button:
             print("!")
