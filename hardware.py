@@ -58,7 +58,7 @@ class Display(object):
 
         for x in range(len(led_grid)):
             for y in range(len(led_grid[x])):
-                col = colors[y] if led_grid[x][y] else OFF
+                col = LOW if led_grid[x][y] else OFF
                 self.led_matrix[x][y] = col
                 # self.trellis.color(x, y, col)
         self.redraw_diff()
@@ -69,9 +69,10 @@ class Display(object):
         for x in range(len(self.led_matrix)):
             for y in range(len(self.led_matrix[x])):
                 if self.led_matrix[x][y] != self.old_led_matrix[x][y]:
-                    diffs.append((x, y, self.led_matrix[x][y]))
+                    # diffs.append((x, y, self.led_matrix[x][y]))
                     self.trellis.color(x, y, self.led_matrix[x][y])
                 self.old_led_matrix[x][y] = self.led_matrix[x][y]
+        # This method might be better once the grid is much bigger
         # for diff in diffs:
         #     self.trellis.color(diff[0],diff[1],diff[2])
         return
