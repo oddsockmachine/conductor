@@ -2,6 +2,7 @@ from constants import *
 print("Importing hardware connections")
 from board import SCL, SDA
 import busio
+import digitalio
 from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 print("Done")
@@ -32,26 +33,13 @@ class Display(object):
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_RISING)
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_FALLING)
                 self.trellis.set_callback(x, y, button_cb)
+        self.switch = digitalio.DigitalInOut(D13)
         print("Done")
         return
 
     def get_cmds(self):
         self.trellis.sync()
-        """Check serial in port for messages. If commands come in, delegate calls to relevant components"""
-        if self.button:
-            x,  y = self.button
-            self.button = None
-            return {'cmd': 'note', 'x': x, 'y': y}
 
-        return {'cmd': None}
-        return {'cmd': 'note', 'x': grid_x, 'y': self.grid_h - grid_y -1}
-        return {'cmd': 'ins', 'ins': ins}
-        return {'cmd': 'add_page'}
-        return {'cmd': 'change_division', 'div': (-1 if (x-self.page_x <=5) else 1)}
-        return {'cmd': 'dec_rep', 'page': y-self.page_y-1}
-        return {'cmd': 'page_down', 'page': y-self.page_y-1}
-        return {'cmd': 'page_up', 'page': y-self.page_y-1}
-        return {'cmd': 'inc_rep', 'page': y-self.page_y-1}
 
     def draw_all(self, status, led_grid):
 
@@ -71,14 +59,17 @@ class Display(object):
         # pprint(led_grid)
 
         #TODO updating whole grid over i2c takes time, use python to diff screen status, then write out to hardware
-
-        for x in range(len(led_grid)):
-            for y in range(len(led_grid[x])):
-                # col = LOW if led_grid[x][y] else OFF
-                col = PALLETE[led_grid[x][y]]
-
-                self.led_matrix[x][y] = col
-                # self.trellis.color(x, y, col)
+        if self.switch:
+            self.led_matrix[0][0] = RED
+            self.led_matrix[1][1] = RED
+            self.led_matrix[2][2] = RED
+            self.led_matrix[3][3] = RED
+            self.led_matrix[4][4] = RED
+        else:
+            for x in range(len(led_grid)):
+                for y in range(len(led_grid[x])):
+                    col = PALLETE[led_grid[x][y]]
+                    self.led_matrix[x][y] = col
         self.redraw_diff()
         return
 
