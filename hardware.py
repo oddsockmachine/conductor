@@ -1,5 +1,5 @@
 from constants import *
-print("Importing hardware connections)
+print("Importing hardware connections")
 from board import SCL, SDA
 import busio
 from adafruit_neotrellis.neotrellis import NeoTrellis
