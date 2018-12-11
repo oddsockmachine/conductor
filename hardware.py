@@ -23,10 +23,24 @@ class Display(object):
         self.grid_w = w
         self.led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
+        self.button = None
+
+        for y in range(h):
+            for x in range(w):
+                #activate rising edge events on all keys
+                trellis.activate_key(x, y, NeoTrellis.EDGE_RISING)
+                #activate falling edge events on all keys
+                # trellis.activate_key(x, y, NeoTrellis.EDGE_FALLING)
+                trellis.set_callback(x, y, self.button)
         return
 
     def get_cmds(self):
         """Check serial in port for messages. If commands come in, delegate calls to relevant components"""
+        if self.button:
+            x,  y = self.button
+            self.button = None
+            return {'cmd': 'note', 'x': x, 'y': y}
+
         return {'cmd': None}
         return {'cmd': 'note', 'x': grid_x, 'y': self.grid_h - grid_y -1}
         return {'cmd': 'ins', 'ins': ins}
@@ -76,3 +90,11 @@ class Display(object):
         # for diff in diffs:
         #     self.trellis.color(diff[0],diff[1],diff[2])
         return
+
+
+
+    def button_cb(xcoord, ycoord, edge):
+        """Called when button events are received"""
+        if edge == NeoTrellis.EDGE_RISING:
+            # trellis.color(xcoord, ycoord, BLUE)
+            self.button = (xcoord, ycoord)
