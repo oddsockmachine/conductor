@@ -3,7 +3,7 @@ import logging
 logging.basicConfig(filename='sequencer.log',level=logging.DEBUG)
 
 
-THEME = "B"
+THEME = "A"
 # The ints used to represent the state of leds on an led_grid
 LED_BLANK = {"A":0, "B": 0,}[THEME]
 LED_CURSOR = {"A":1, "B": 2,}[THEME]
@@ -32,7 +32,7 @@ NOTE_ON = 3
 
 # The glyphs used to display cell information/states in the CLI
 DISPLAY = {0: '. ', 1:'░░', 2:'▒▒', 3:'▓▓'}
-PALLETE = {0:(1,1,1), 1:(18,7,0), 2:(30,14,0), 3:(30,14,0)}
+PALLETE = {0:(1,1,1), 1:(18,7,0), 2:(40,14,0), 3:(40,0,14)}
 
 W = 8  # Width of the display grid
 H = 8  # Width of the display grid
