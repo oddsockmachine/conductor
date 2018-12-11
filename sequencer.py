@@ -23,7 +23,7 @@ class Sequencer(object):
         self.max_beat_division = 8
         self.scale = scale
         self.octave = octave  # Starting octave
-        self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, speed=1, bars=bars) for x in range(MAX_INSTRUMENTS)]  # limit to 16 midi channels
+        self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, speed=0, bars=bars) for x in range(MAX_INSTRUMENTS)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         # If we're loading, ignore all this and overwrite with info from file!
         if saved:
