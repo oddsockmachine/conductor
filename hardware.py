@@ -1,15 +1,18 @@
 from constants import *
-
+print("Importing hardware connections)
 from board import SCL, SDA
 import busio
 from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
+print("Done")
 
 class Display(object):
     """docstring for Display."""
     def __init__(self, w=W, h=H):
         super(Display, self).__init__()
+        print("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
+        print("Done")
         trelli = [
             [NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x31)],
             [NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30)]
@@ -61,7 +64,7 @@ class Display(object):
         self.redraw_diff()
         return
 
-    def get_redraw_diff():
+    def redraw_diff():
         # diff = []
         for x in range(len(self.led_matrix)):
             for y in range(len(self.led_matrix[x])):
