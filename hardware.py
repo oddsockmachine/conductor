@@ -1,6 +1,6 @@
 from constants import *
 print("Importing hardware connections")
-from board import SCL, SDA, D13
+from board import SCL, SDA, D13, D6
 import busio
 import digitalio
 from adafruit_neotrellis.neotrellis import NeoTrellis
@@ -24,7 +24,6 @@ class Display(object):
         self.grid_w = w
         self.led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
-        self.button = None
         # self.command_cb = command_cb
         button_cb = self.make_cb()
         print("Initializing Trellis")
@@ -33,7 +32,8 @@ class Display(object):
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_RISING)
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_FALLING)
                 self.trellis.set_callback(x, y, button_cb)
-        self.switch = digitalio.DigitalInOut(D13)
+        self.seq_button = digitalio.DigitalInOut(D13)
+        self.ins_button = digitalio.DigitalInOut(D6)
         print("Done")
         return
 
@@ -60,13 +60,10 @@ class Display(object):
         # pprint(led_grid)
 
         #TODO updating whole grid over i2c takes time, use python to diff screen status, then write out to hardware
-        if self.switch.value:
-            print("!")
-            self.led_matrix[0][0] = RED
-            self.led_matrix[1][1] = RED
-            self.led_matrix[2][2] = RED
-            self.led_matrix[3][3] = RED
-            self.led_matrix[4][4] = RED
+        if self.ins_button.value:
+            self.draw_ins_menu(status)
+        elif self.seq_button.value:
+            self.draw_seq_menu(status)
         else:
             for x in range(len(led_grid)):
                 for y in range(len(led_grid[x])):
@@ -88,11 +85,50 @@ class Display(object):
         #     self.trellis.color(diff[0],diff[1],diff[2])
         return
 
+    def draw_seq_menu(self):
+        # Remember to blank all cells
+        # menu for sequencer: instrument num on right column, pages on left, repeats pointing right
+        # #O##  #
+        # ##    #
+        # ###   O
+        # ###   #
+        page_stats = status['page_stats']
+        for i in range(status['ins_total']):
+            self.led_matrix[self.w][i] = RED
+        self.led_matrix[self.w][status['ins_num']] = GREEN
+        for i in range(status['page_total']):
+            self.led_matrix[0][i] = RED
+        for i in range(status['repeat_total']):
+            self.led_matrix[i][status['page_num']] = YELLOW
+        self.led_matrix[status['repeat_total']][status['page_num']] = GREEN
+
+        return
+
+    def draw_ins_menu(self):
+        self.led_matrix[0][0] = RED
+        self.led_matrix[1][1] = RED
+        # Remember to blank all cells
+        # menu for instrument settings (key, scale, octave, speed) spelled out
+
+        # >>>>
+        # ____#___
+        #
+        # ###    X
+        # #      O
+        # ### #  X
+        # #   ## X
+        # ### ## X
+
+
+        return
 
     def make_cb(self):
         def button_cb(xcoord, ycoord, edge):
             if edge == NeoTrellis.EDGE_RISING:
-                self.command_cb({'cmd': 'note', 'x': xcoord, 'y': ycoord})
+                if not self.seq_button.value: # Normal mode
+                    self.command_cb({'cmd': 'note', 'x': xcoord, 'y': ycoord})
+                else: # Menu mode - look up location of press and return cmd
+                    {'cmd': None}
             return
             # return {'cmd': None}
             # return {'cmd': 'note', 'x': grid_x, 'y': self.grid_h - grid_y -1}
