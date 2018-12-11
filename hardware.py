@@ -18,8 +18,8 @@ class Display(object):
 
         self.grid_h = h
         self.grid_w = w
-        self.led_matrix = [[(0,0,0) for x  in range(len(w))] for y in range(len(h))]
-        self.old_led_matrix = [[(0,0,0) for x  in range(len(w))] for y in range(len(h))]
+        self.led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
+        self.old_led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         return
 
     def get_cmds(self):
