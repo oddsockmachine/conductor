@@ -27,7 +27,6 @@ class Display(object):
         cb = self.make_cb()
         for y in range(h):
             for x in range(w):
-                print(x, y)
                 #activate rising edge events on all keys
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_RISING)
                 #activate falling edge events on all keys
@@ -36,12 +35,9 @@ class Display(object):
         return
 
     def get_cmds(self):
-        # print(".")
         self.trellis.sync()
-        # print(",")
         """Check serial in port for messages. If commands come in, delegate calls to relevant components"""
         if self.button:
-            print("!")
             x,  y = self.button
             self.button = None
             return {'cmd': 'note', 'x': x, 'y': y}
@@ -101,7 +97,6 @@ class Display(object):
 
     def make_cb(self):
         def button_cb(xcoord, ycoord, edge):
-            print("!!!")
             if edge == NeoTrellis.EDGE_RISING:
                 # trellis.color(xcoord, ycoord, BLUE)
                 self.button = (xcoord, ycoord)
