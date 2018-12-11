@@ -23,7 +23,7 @@ BLUE = (0, 0, 255)
 INDIGO = (180, 0, 255)
 PURPLE = (255, 0, 255)
 PURPLE = (10, 0, 10)
-LOW = (10, 5 0)
+LOW = (18, 7, 0)
 colors  =[RED, ORANGE,YELLOW, GREEN,CYAN,BLUE,INDIGO,PURPLE]
 
 # The ints used to represent the state of notes on a note_grid
