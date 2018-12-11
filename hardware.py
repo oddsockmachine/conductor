@@ -98,7 +98,5 @@ class Display(object):
     def make_cb(self):
         def button_cb(xcoord, ycoord, edge):
             if edge == NeoTrellis.EDGE_RISING:
-                # trellis.color(xcoord, ycoord, BLUE)
                 self.button = (xcoord, ycoord)
-                print(str(self.button), "pressed")
         return button_cb
