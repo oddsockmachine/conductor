@@ -85,7 +85,7 @@ class Display(object):
         #     self.trellis.color(diff[0],diff[1],diff[2])
         return
 
-    def draw_seq_menu(self):
+    def draw_seq_menu(self, status):
         # Remember to blank all cells
         # menu for sequencer: instrument num on right column, pages on left, repeats pointing right
         # #O##  #
@@ -104,7 +104,7 @@ class Display(object):
 
         return
 
-    def draw_ins_menu(self):
+    def draw_ins_menu(self, status):
         self.led_matrix[0][0] = RED
         self.led_matrix[1][1] = RED
         # Remember to blank all cells
