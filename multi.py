@@ -50,7 +50,7 @@ for y in range(8):
         trellis.color(x, y, OFF)
         time.sleep(.05)
 
- while True:
+while True:
     #the trellis can only be read every 17 millisecons or so
     trellis.sync()
     time.sleep(.02)

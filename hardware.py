@@ -35,7 +35,9 @@ class Display(object):
         return
 
     def get_cmds(self):
+        print(".")
         self.trellis.sync()
+        print(",")
         """Check serial in port for messages. If commands come in, delegate calls to relevant components"""
         if self.button:
             print("!")
@@ -97,6 +99,7 @@ class Display(object):
 
     def button_cb(xcoord, ycoord, edge):
         """Called when button events are received"""
+        print("!!!")
         if edge == NeoTrellis.EDGE_RISING:
             # trellis.color(xcoord, ycoord, BLUE)
             self.button = (xcoord, ycoord)

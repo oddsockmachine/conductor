@@ -36,7 +36,7 @@ class Controller(object):
         self.draw()
         while True:
             self.get_cmds()
-            sleep(0.1)  # TODO REMOVE TODO
+            sleep(0.3)  # TODO REMOVE TODO
             self.sequencer.step_beat()  # TODO REMOVE TODO
             self.draw()  # TODO REMOVE TODO
         pass
