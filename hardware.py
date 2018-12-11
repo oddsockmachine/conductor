@@ -24,7 +24,7 @@ class Display(object):
         self.led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         self.button = None
-
+        cb = self.make_cb()
         for y in range(h):
             for x in range(w):
                 print(x, y)
@@ -32,13 +32,13 @@ class Display(object):
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_RISING)
                 #activate falling edge events on all keys
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_FALLING)
-                self.trellis.set_callback(x, y, blink)
+                self.trellis.set_callback(x, y, cb)
         return
 
     def get_cmds(self):
-        print(".")
+        # print(".")
         self.trellis.sync()
-        print(",")
+        # print(",")
         """Check serial in port for messages. If commands come in, delegate calls to relevant components"""
         if self.button:
             print("!")
@@ -97,14 +97,11 @@ class Display(object):
         return
 
 
-
-    def button_cb(xcoord, ycoord, edge):
-        """Called when button events are received"""
-        print("!!!")
-        if edge == NeoTrellis.EDGE_RISING:
-            # trellis.color(xcoord, ycoord, BLUE)
-            self.button = (xcoord, ycoord)
-            print(str(self.button), "pressed")
-
-def blink(xcoord, ycoord, edge):
-    print("XXX")
+    def make_cb(self):
+        def button_cb(xcoord, ycoord, edge):
+            print("!!!")
+            if edge == NeoTrellis.EDGE_RISING:
+                # trellis.color(xcoord, ycoord, BLUE)
+                self.button = (xcoord, ycoord)
+                print(str(self.button), "pressed")
+        return button_cb
