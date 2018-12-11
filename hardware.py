@@ -37,6 +37,7 @@ class Display(object):
     def get_cmds(self):
         """Check serial in port for messages. If commands come in, delegate calls to relevant components"""
         if self.button:
+            print("!")
             x,  y = self.button
             self.button = None
             return {'cmd': 'note', 'x': x, 'y': y}
@@ -98,3 +99,4 @@ class Display(object):
         if edge == NeoTrellis.EDGE_RISING:
             # trellis.color(xcoord, ycoord, BLUE)
             self.button = (xcoord, ycoord)
+            print(str(self.button), "pressed")
