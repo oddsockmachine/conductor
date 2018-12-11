@@ -1,6 +1,6 @@
 from constants import *
 print("Importing hardware connections")
-from board import SCL, SDA
+from board import SCL, SDA, D13
 import busio
 import digitalio
 from adafruit_neotrellis.neotrellis import NeoTrellis
@@ -60,6 +60,7 @@ class Display(object):
 
         #TODO updating whole grid over i2c takes time, use python to diff screen status, then write out to hardware
         if self.switch:
+            print("!")
             self.led_matrix[0][0] = RED
             self.led_matrix[1][1] = RED
             self.led_matrix[2][2] = RED
