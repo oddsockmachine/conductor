@@ -77,7 +77,9 @@ class Display(object):
 
         for x in range(len(led_grid)):
             for y in range(len(led_grid[x])):
-                col = LOW if led_grid[x][y] else OFF
+                # col = LOW if led_grid[x][y] else OFF
+                col = PALLETE[led_grid[x][y]]
+
                 self.led_matrix[x][y] = col
                 # self.trellis.color(x, y, col)
         self.redraw_diff()
