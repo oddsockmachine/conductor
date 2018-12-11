@@ -65,11 +65,13 @@ class Display(object):
         return
 
     def redraw_diff(self):
-        # diff = []
+        diffs = []
         for x in range(len(self.led_matrix)):
             for y in range(len(self.led_matrix[x])):
                 if self.led_matrix[x][y] != self.old_led_matrix[x][y]:
-                    # diff.append()
-                    self.trellis.color(x, y, self.led_matrix[x][y])
+                    diffs.append((x, y, self.led_matrix[x][y]))
+                    # self.trellis.color(x, y, self.led_matrix[x][y])
                 self.old_led_matrix[x][y] = self.led_matrix[x][y]
+        for diff in diffs:
+            self.trellis.color(diff[0],diff[1],diff[2])
         return
