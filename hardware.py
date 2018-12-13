@@ -1,4 +1,5 @@
 from constants import *
+from note_conversion import SCALES
 print("Importing hardware connections")
 from board import SCL, SDA, D13, D6
 import busio
@@ -109,13 +110,20 @@ class Display(object):
         for x in range(len(self.led_matrix)):
             for y in range(len(self.led_matrix[x])):
                 self.led_matrix[x][y] = OFF
-        # Speed
+        # Speed:
         speed = len(status['division'])
         print("Speed:", speed)
         for i in range(5):
             self.led_matrix[i][0] = RED
         for i in range(speed):
             self.led_matrix[i][0] = GREEN
+        # Scale:
+        scale = status['scale']
+        scale_i = SCALES.index(scale)
+        for i in range(len(SCALES)):
+            self.led_matrix[i][1] = CYAN
+        self.led_matrix[scale_i][1] = BLUE
+
 
         # menu for instrument settings (key, scale, octave, speed) spelled out
 
