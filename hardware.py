@@ -88,16 +88,19 @@ class Display(object):
 #  'page_total': 1,
 #  'repeat_num': 1,
 #  'repeat_total': 1,
-        page_stats = status['page_stats']
-        print(page_stats)
+        # Draw instrument selector
         for i in range(status['ins_total']):
             self.led_matrix[self.grid_w-1][i] = RED
         self.led_matrix[self.grid_w-1][status['ins_num']-1] = GREEN
-        for i in range(status['page_total']):
-            self.led_matrix[0][i] = RED
-        for i in range(status['repeat_total']):
-            self.led_matrix[i][status['page_num']-1] = YELLOW
-        self.led_matrix[status['repeat_total']-1][status['page_num']-1] = GREEN
+        # Draw page/repeats info
+        page_stats = status['page_stats']
+        for i, page_reps in enumerate(page_stats):
+            for rep in len(page_reps):
+                self.led_matrix[rep][i] = RED
+        for i in range(repeat_total):
+            self.led_matrix[i][page_num] = YELLOW
+        self.led_matrix[repeat_num][page_num] = GREEN
+        # self.led_matrix[status['repeat_total']-1][status['page_num']-1] = GREEN
 
         return
 
