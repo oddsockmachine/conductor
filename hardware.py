@@ -127,8 +127,8 @@ class Display(object):
         # Key
         key = status['key']
         letter = LETTERS[key]
-        for r, row in letter:
-            for c, col in row:
+        for r, row in enumerate(letter):
+            for c, col in enumerate(row):
                 if letter[r][c] == 1:
                     self.led_matrix[4+r][c] = INDIGO
 
