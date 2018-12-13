@@ -13,6 +13,7 @@ LED_BEAT = {"A":1, "B": 1,}[THEME]
 LED_SCALE_PRIMARY = {"A":9, "B": 9,}[THEME]
 LED_SCALE_SECONDARY = {"A":9, "B": 9,}[THEME]
 
+# TODO calculate and return color tuples based on brightness setting
 OFF = (0, 0, 0)
 RED = (255, 0, 0)
 ORANGE = (255, 125, 125)

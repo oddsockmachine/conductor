@@ -124,6 +124,13 @@ class Display(object):
         for i in range(len(scales)):
             self.led_matrix[i][1] = BLUE
         self.led_matrix[scale_i][1] = CYAN
+        # Key
+        key = status['key']
+        letter = LETTERS[key]
+        for row in letter:
+            for col in row:
+                if letter == 1:
+                    self.led_matrix[4+row][col] = INDIGO
 
 
         # menu for instrument settings (key, scale, octave, speed) spelled out
