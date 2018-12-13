@@ -144,7 +144,6 @@ class Display(object):
             self.led_matrix[4][4] = INDIGO
         # Octave:
         octave = int(status['octave'])
-        print(octave)
         for i in range(7):
             self.led_matrix[7][self.grid_w-1-i] = ORANGE
         self.led_matrix[7][self.grid_w-1-octave] = RED
