@@ -105,9 +105,18 @@ class Display(object):
         return
 
     def draw_ins_menu(self, status):
-        self.led_matrix[0][0] = RED
-        self.led_matrix[1][1] = RED
         # Remember to blank all cells
+        for x in range(len(self.led_matrix)):
+            for y in range(len(self.led_matrix[x])):
+                self.led_matrix[x][y] = OFF
+        # Speed
+        speed = len(status['division'])
+        print("Speed:", speed)
+        for i in range(5):
+            self.led_matrix[i][0] = RED
+        for i in range(speed):
+            self.led_matrix[i][0] = GREEN
+
         # menu for instrument settings (key, scale, octave, speed) spelled out
 
         # >>>>
@@ -118,6 +127,13 @@ class Display(object):
         # ### #  X
         # #   ## X
         # ### ## X
+
+        # {'division': '>>',
+        #  'isdrum': False,
+        #  'key': 'e',
+        #  'octave': '2',
+        #  'scale': 'pentatonic_maj'}
+
 
 
         return

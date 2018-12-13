@@ -40,3 +40,55 @@ H = 8  # Width of the display grid
 # Maximum number of instruments - limited by 16 available midi channels,
 # but we may want to run 2 separate sequencers with 8 channels in future
 MAX_INSTRUMENTS = 8
+
+# Note letters
+A = [
+[1,1,1],
+[1,0,1],
+[1,1,1],
+[1,0,1],
+[1,0,1],
+]
+B = [
+[1,0,0],
+[1,0,0],
+[1,1,1],
+[1,0,1],
+[1,1,1],
+]
+C = [
+[1,1,1],
+[1,0,0],
+[1,0,0],
+[1,0,0],
+[1,1,1],
+]
+D = [
+[0,0,1],
+[0,0,1],
+[1,1,1],
+[1,0,1],
+[1,1,1],
+]
+E = [
+[1,1,1],
+[1,0,0],
+[1,1,0],
+[1,0,0],
+[1,1,1],
+]
+F = [
+[1,1,1],
+[1,0,0],
+[1,1,0],
+[1,0,0],
+[1,0,0],
+]
+G = [
+[1,1,1],
+[1,0,1],
+[1,1,1],
+[0,0,1],
+[1,1,1],
+]
+LETTERS = {'a':A,'b':B,'c':C,'d':D,'e':E,'f':F,'g':G,}
