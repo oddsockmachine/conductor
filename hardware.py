@@ -119,8 +119,9 @@ class Display(object):
             self.led_matrix[i][0] = GREEN
         # Scale:
         scale = status['scale']
-        scale_i = SCALES.keys().index(scale)
-        for i in range(len(SCALES.keys())):
+        scales = list(SCALES.keys())
+        scale_i = scales.index(scale)
+        for i in range(len(scales)):
             self.led_matrix[i][1] = CYAN
         self.led_matrix[scale_i][1] = BLUE
 
