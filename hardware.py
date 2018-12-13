@@ -112,7 +112,6 @@ class Display(object):
                 self.led_matrix[x][y] = OFF
         # Speed:
         speed = len(status['division'])
-        print("Speed:", speed)
         for i in range(5):
             self.led_matrix[i][0] = RED
         for i in range(speed):
@@ -121,9 +120,10 @@ class Display(object):
         scale = status['scale']
         scales = list(SCALES.keys())
         scale_i = scales.index(scale)
+        print(scale, scale_i)
         for i in range(len(scales)):
-            self.led_matrix[i][1] = CYAN
-        self.led_matrix[scale_i][1] = BLUE
+            self.led_matrix[i][1] = BLUE
+        self.led_matrix[scale_i][1] = CYAN
 
 
         # menu for instrument settings (key, scale, octave, speed) spelled out
