@@ -106,6 +106,7 @@ class Display(object):
         return
 
     def draw_ins_menu(self, status):
+        # Menu for instrument settings (key, scale, octave, speed) spelled out
         # Remember to blank all cells
         for x in range(len(self.led_matrix)):
             for y in range(len(self.led_matrix[x])):
@@ -116,24 +117,32 @@ class Display(object):
             self.led_matrix[i][0] = RED
         for i in range(speed):
             self.led_matrix[i][0] = GREEN
-        # Scale:
+        # Scale:  # TODO may have to wrap around to second line
         scale = status['scale']
         scales = list(SCALES.keys())
         scale_i = scales.index(scale)
-        print(scale, scale_i)
         for i in range(len(scales)):
             self.led_matrix[i][1] = BLUE
         self.led_matrix[scale_i][1] = CYAN
         # Key
         key = status['key']
+        sharp = "#" in key
+        key = key.replace('#','')
         letter = LETTERS[key]
         for r, row in enumerate(letter):
             for c, col in enumerate(row):
                 if letter[r][c] == 1:
                     self.led_matrix[c][3+r] = INDIGO
+        if sharp:
+            self.led_matrix[4][3] = INDIGO
+            self.led_matrix[4][4] = INDIGO
+        # Octave:
+        octave = int(status['octave'])
+        print(octave)
+        for i in range(7):
+            self.led_matrix[7][self.grid_w-i] = ORANGE
+        self.led_matrix[7][0-self.grid_w-octave] = ORANGE
 
-
-        # menu for instrument settings (key, scale, octave, speed) spelled out
 
         # >>>>
         # ____#___
@@ -143,12 +152,6 @@ class Display(object):
         # ### #  X
         # #   ## X
         # ### ## X
-
-        # {'division': '>>',
-        #  'isdrum': False,
-        #  'key': 'e',
-        #  'octave': '2',
-        #  'scale': 'pentatonic_maj'}
 
 
 
