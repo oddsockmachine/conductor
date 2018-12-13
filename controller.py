@@ -57,7 +57,7 @@ class Controller(object):
         return _process_incoming_midi
 
     def command_cb(self, m):
-        process_cmds(m)
+        self.process_cmds(m)
         # if m['cmd'] == 'note':
         #     self.sequencer.touch_note(m['x'], m['y'])
         return
@@ -66,7 +66,7 @@ class Controller(object):
 
     def get_cmds(self):
         m = self.display.get_cmds()
-        process_cmds(m)
+        self.process_cmds(m)
 
     def process_cmds(self, m):
         if m['cmd'] == None:
