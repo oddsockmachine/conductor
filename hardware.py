@@ -148,7 +148,7 @@ class Display(object):
                     if xcoord == 7:  # Octave
                         new_oct = self.grid_w-1-ycoord
                         print(new_oct)
-                        self.command_cb({'change_octave': new_oct})
+                        self.command_cb({'cmd':'change_octave', 'octave': new_oct})
                 elif self.seq_button.value: # Normal mode
                     # Button from sequencer menu
                     self.command_cb({'cmd': None})

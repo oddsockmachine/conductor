@@ -86,7 +86,7 @@ class Controller(object):
         elif m['cmd'] == 'swap_drum_inst':
             self.sequencer.swap_drum_inst()
         elif m['cmd'] == 'change_octave':
-            self.sequencer.change_octave(m['dir'])
+            self.sequencer.change_octave(m['octave'])
         elif m['cmd'] == 'note':
             self.sequencer.touch_note(m['x'], m['y'])
         elif m['cmd'] == 'ins':
