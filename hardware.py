@@ -99,10 +99,10 @@ class Display(object):
         repeat_num = status['repeat_num']
         for i, page_reps in enumerate(page_stats):
             for rep in range(page_reps):
-                self.led_matrix[rep][i] = RED
+                self.led_matrix[rep-1][i] = RED
         for i in range(repeat_total):
-            self.led_matrix[i][page_num] = YELLOW
-        self.led_matrix[repeat_num][page_num] = GREEN
+            self.led_matrix[i][page_num-1] = YELLOW
+        self.led_matrix[repeat_num-1][page_num-1] = GREEN
         # self.led_matrix[status['repeat_total']-1][status['page_num']-1] = GREEN
 
         return
