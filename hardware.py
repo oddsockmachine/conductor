@@ -95,7 +95,7 @@ class Display(object):
         # Draw page/repeats info
         page_stats = status['page_stats']
         for i, page_reps in enumerate(page_stats):
-            for rep in len(page_reps):
+            for rep in range(page_reps):
                 self.led_matrix[rep][i] = RED
         for i in range(repeat_total):
             self.led_matrix[i][page_num] = YELLOW
