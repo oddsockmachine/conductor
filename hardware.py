@@ -130,7 +130,7 @@ class Display(object):
         for r, row in enumerate(letter):
             for c, col in enumerate(row):
                 if letter[r][c] == 1:
-                    self.led_matrix[4+r][c] = INDIGO
+                    self.led_matrix[3+r][c] = INDIGO
 
 
         # menu for instrument settings (key, scale, octave, speed) spelled out
