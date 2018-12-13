@@ -94,6 +94,9 @@ class Display(object):
         self.led_matrix[self.grid_w-1][status['ins_num']-1] = GREEN
         # Draw page/repeats info
         page_stats = status['page_stats']
+        page_num = status['page_num']
+        repeat_total = status['repeat_total']
+        repeat_num = status['repeat_num']
         for i, page_reps in enumerate(page_stats):
             for rep in range(page_reps):
                 self.led_matrix[rep][i] = RED
