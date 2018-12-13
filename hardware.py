@@ -142,7 +142,7 @@ class Display(object):
         for i in range(7):
             print(self.grid_w, i)
             self.led_matrix[7][self.grid_w-1-i] = ORANGE
-        self.led_matrix[7][0-self.grid_w-octave] = ORANGE
+        self.led_matrix[7][self.grid_w-1-octave] = RED
 
 
         # >>>>
