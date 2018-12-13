@@ -152,9 +152,9 @@ class Display(object):
                     if ycoord == 1 and xcoord <= 1:  # Scale
                         self.command_cb({'cmd':'cycle_scale', 'dir': {0:-1,1:1}[xcoord]})
                     if ycoord == 7 and xcoord == 0:  # key
-                        self.command_cb({'cmd':'cycle_key', 'dir': -1)
+                        self.command_cb({'cmd':'cycle_key', 'dir': -1})
                     if ycoord == 3 and xcoord == 0:  # key
-                        self.command_cb({'cmd':'cycle_key', 'dir': 1)
+                        self.command_cb({'cmd':'cycle_key', 'dir': 1})
 
                 elif self.seq_button.value: # Normal mode
                     # Button from sequencer menu
