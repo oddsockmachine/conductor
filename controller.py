@@ -144,16 +144,16 @@ def hardware_main():
     with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
             controller = Controller(display, mport, mportin)
-            controller.instruments[0].add_page(0)
-            controller.instruments[0].add_page(1)
-            controller.instruments[0].inc_curr_page_repeats()
-            controller.instruments[0].inc_curr_page_repeats()
-            controller.instruments[0].add_page(1)
-            controller.instruments[0].inc_curr_page_repeats()
-            controller.instruments[0].inc_curr_page_repeats()
-            controller.instruments[3].add_page(1)
-            controller.instruments[3].add_page(1)
-            controller.instruments[3].inc_curr_page_repeats()
+            controller.sequencer.instruments[0].add_page(0)
+            controller.sequencer.instruments[0].add_page(1)
+            controller.sequencer.instruments[0].inc_curr_page_repeats()
+            controller.sequencer.instruments[0].inc_curr_page_repeats()
+            controller.sequencer.instruments[0].add_page(1)
+            controller.sequencer.instruments[0].inc_curr_page_repeats()
+            controller.sequencer.instruments[0].inc_curr_page_repeats()
+            controller.sequencer.instruments[3].add_page(1)
+            controller.sequencer.instruments[3].add_page(1)
+            controller.sequencer.instruments[3].inc_curr_page_repeats()
             controller.run()
 
 if __name__ == '__main__':
