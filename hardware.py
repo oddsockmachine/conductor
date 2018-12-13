@@ -89,6 +89,7 @@ class Display(object):
 #  'repeat_num': 1,
 #  'repeat_total': 1,
         page_stats = status['page_stats']
+        print(page_stats)
         for i in range(status['ins_total']):
             self.led_matrix[self.grid_w-1][i] = RED
         self.led_matrix[self.grid_w-1][status['ins_num']-1] = GREEN
