@@ -146,7 +146,7 @@ class Display(object):
                 if self.ins_button.value:
                     # Button from instrument menu
                     if xcoord == 7:  # Octave
-                        new_oct = grid_w-1-ycoord
+                        new_oct = self.grid_w-1-ycoord
                         print(new_oct)
                         self.command_cb({'change_octave': new_oct})
                 elif self.seq_button.value: # Normal mode
