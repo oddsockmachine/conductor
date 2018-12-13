@@ -172,7 +172,6 @@ class Instrument(object):
     def change_division(self, up_down):
         '''Find current instrument, inc or dec its beat division as appropriate'''
         self.speed = up_down
-        print(self.speed)
         return  # TODO handle direct set and up_down
         if up_down == 1:
             if self.speed == 0:

@@ -110,7 +110,6 @@ class Display(object):
                 self.led_matrix[x][y] = OFF
         # Speed:
         speed = status['division']
-        print("Speed ", status['division'])
         for i in range(5):
             self.led_matrix[i][0] = RED
         for i in range(speed):
