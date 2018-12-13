@@ -48,6 +48,11 @@ class Display(object):
         self.redraw_diff()
         return
 
+    def blank_screen(self):
+        for x in range(len(self.led_matrix)):
+            for y in range(len(self.led_matrix[x])):
+                self.led_matrix[x][y] = OFF
+
     def redraw_diff(self):
         diffs = []
         for x in range(len(self.led_matrix)):
@@ -69,12 +74,13 @@ class Display(object):
         return
 
     def draw_seq_menu(self, status):
-        # Remember to blank all cells
         # menu for sequencer: instrument num on right column, pages on left, repeats pointing right
         # #O##  #
         # ##    #
         # ###   O
         # ###   #
+        self.blank_screen()
+
 #  'ins_num': 1,
 #  'ins_total': 16,
 #  'page_num': 1,
@@ -85,7 +91,7 @@ class Display(object):
         page_stats = status['page_stats']
         for i in range(status['ins_total']):
             self.led_matrix[self.grid_w-1][i] = RED
-        self.led_matrix[self.grid_w-1][status['ins_num']] = GREEN
+        self.led_matrix[self.grid_w-1][status['ins_num']-1] = GREEN
         for i in range(status['page_total']):
             self.led_matrix[0][i] = RED
         for i in range(status['repeat_total']):
@@ -99,15 +105,12 @@ class Display(object):
                 # >>>>
                 # ____#___
                 #
-                # ###    X
-                # #      O
                 # ### #  X
-                # #   ## X
-                # ### ## X
-        # Remember to blank all cells
-        for x in range(len(self.led_matrix)):
-            for y in range(len(self.led_matrix[x])):
-                self.led_matrix[x][y] = OFF
+                # #   #  O
+                # ### #  X
+                # #      X
+                # ###    X
+        self.blank_screen()
         # Speed:
         speed = status['division']
         for i in range(5):
@@ -161,14 +164,4 @@ class Display(object):
                 else: # Menu mode - look up location of press and return cmd
                     self.command_cb({'cmd': 'note', 'x': xcoord, 'y': ycoord})
             return
-            # return {'cmd': None}
-            # return {'cmd': 'note', 'x': grid_x, 'y': self.grid_h - grid_y -1}
-            # return {'cmd': 'ins', 'ins': ins}
-            # return {'cmd': 'add_page'}
-            # return {'cmd': 'change_division', 'div': (-1 if (x-self.page_x <=5) else 1)}
-            # return {'cmd': 'dec_rep', 'page': y-self.page_y-1}
-            # return {'cmd': 'page_down', 'page': y-self.page_y-1}
-            # return {'cmd': 'page_up', 'page': y-self.page_y-1}
-            # return {'cmd': 'inc_rep', 'page': y-self.page_y-1}
-
         return button_cb
