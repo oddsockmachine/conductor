@@ -110,6 +110,7 @@ class Display(object):
                 self.led_matrix[x][y] = OFF
         # Speed:
         speed = len(status['division'])
+        print("Speed ", status['division'])
         for i in range(5):
             self.led_matrix[i][0] = RED
         for i in range(speed):
@@ -146,9 +147,9 @@ class Display(object):
                 if self.ins_button.value:  # Button from instrument menu
                     if xcoord == 7:  # Octave
                         self.command_cb({'cmd':'change_octave', 'octave': self.grid_w-1-ycoord})
-                    if ycoord == 0 and xcoord <= 4:
-                        self.command_cb({'cmd':'change_division', 'div': ycoord})
-                    if ycoord == 1 and xcoord <= 1:
+                    if ycoord == 0 and xcoord <= 4:  # Divison/speed
+                        self.command_cb({'cmd':'change_division', 'div': xcoord})
+                    if ycoord == 1 and xcoord <= 1:  # Scale
                         self.command_cb({'cmd':'cycle_scale', 'dir': {0:-1,1:1}[xcoord]})
 
                 elif self.seq_button.value: # Normal mode
