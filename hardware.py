@@ -143,12 +143,14 @@ class Display(object):
     def make_cb(self):
         def button_cb(xcoord, ycoord, edge):
             if edge == NeoTrellis.EDGE_RISING:
-                if self.ins_button.value:
-                    # Button from instrument menu
+                if self.ins_button.value:  # Button from instrument menu
                     if xcoord == 7:  # Octave
-                        new_oct = self.grid_w-1-ycoord
-                        print(new_oct)
-                        self.command_cb({'cmd':'change_octave', 'octave': new_oct})
+                        self.command_cb({'cmd':'change_octave', 'octave': self.grid_w-1-ycoord})
+                    if ycoord == 0 && xcoord <= 4:
+                        self.command_cb({'cmd':'change_division', 'div': self.grid_w-1-ycoord})
+                    if ycoord == 1 && xcoord <= 1:
+                        self.command_cb({'cmd':'cycle_scale', 'dir': xcoord})
+
                 elif self.seq_button.value: # Normal mode
                     # Button from sequencer menu
                     self.command_cb({'cmd': None})

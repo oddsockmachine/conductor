@@ -51,8 +51,7 @@ class Instrument(object):
 
     def change_octave(self, up_down):
 
-        self.octave = up_down
-        print(self.octave)
+        self.octave = up_down  #TODO handle up and down as well as octave number
         # self.octave = (self.octave + up_down) % 7
         # Converter is a cached lookup, we need to regenerate it
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
@@ -171,6 +170,8 @@ class Instrument(object):
 
     def change_division(self, up_down):
         '''Find current instrument, inc or dec its beat division as appropriate'''
+        self.speed = up_down
+        return  # TODO handle direct set and up_down
         if up_down == 1:
             if self.speed == 0:
                 return
