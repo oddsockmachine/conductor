@@ -129,7 +129,7 @@ class Display(object):
         letter = LETTERS[key]
         for row in letter:
             for col in row:
-                if letter == 1:
+                if letter[row][col] == 1:
                     self.led_matrix[4+row][col] = INDIGO
 
 
