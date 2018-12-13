@@ -44,32 +44,16 @@ class Display(object):
 
 
     def draw_all(self, status, led_grid):
-
-        # pprint(status)
-        # {'division': '>>',
-        #  'ins_num': 1,
-        #  'ins_total': 16,
-        #  'isdrum': False,
-        #  'key': 'e',
-        #  'octave': '2',
-        #  'page_num': 1,
-        #  'page_stats': [1],
-        #  'page_total': 1,
-        #  'repeat_num': 1,
-        #  'repeat_total': 1,
-        #  'scale': 'pentatonic_maj'}
-        # pprint(led_grid)
-
-        #TODO updating whole grid over i2c takes time, use python to diff screen status, then write out to hardware
         if self.ins_button.value:
             self.draw_ins_menu(status)
         elif self.seq_button.value:
             self.draw_seq_menu(status)
         else:
-            for x in range(len(led_grid)):
-                for y in range(len(led_grid[x])):
-                    col = PALLETE[led_grid[x][y]]
-                    self.led_matrix[x][y] = col
+            self.draw_note_grid(led_grid)
+            # for x in range(len(led_grid)):
+            #     for y in range(len(led_grid[x])):
+            #         col = PALLETE[led_grid[x][y]]
+            #         self.led_matrix[x][y] = col
         self.redraw_diff()
         return
 
@@ -86,6 +70,13 @@ class Display(object):
         #     self.trellis.color(diff[0],diff[1],diff[2])
         return
 
+    def draw_note_grid(self, led_grid):
+        for x in range(len(led_grid)):
+            for y in range(len(led_grid[x])):
+                col = PALLETE[led_grid[x][y]]
+                self.led_matrix[x][y] = col
+        return
+
     def draw_seq_menu(self, status):
         # Remember to blank all cells
         # menu for sequencer: instrument num on right column, pages on left, repeats pointing right
@@ -93,6 +84,13 @@ class Display(object):
         # ##    #
         # ###   O
         # ###   #
+#  'ins_num': 1,
+#  'ins_total': 16,
+#  'page_num': 1,
+#  'page_stats': [1],
+#  'page_total': 1,
+#  'repeat_num': 1,
+#  'repeat_total': 1,
         page_stats = status['page_stats']
         for i in range(status['ins_total']):
             self.led_matrix[self.grid_w-1][i] = RED
@@ -107,6 +105,14 @@ class Display(object):
 
     def draw_ins_menu(self, status):
         # Menu for instrument settings (key, scale, octave, speed) spelled out
+                # >>>>
+                # ____#___
+                #
+                # ###    X
+                # #      O
+                # ### #  X
+                # #   ## X
+                # ### ## X
         # Remember to blank all cells
         for x in range(len(self.led_matrix)):
             for y in range(len(self.led_matrix[x])):
@@ -140,22 +146,8 @@ class Display(object):
         octave = int(status['octave'])
         print(octave)
         for i in range(7):
-            print(self.grid_w, i)
             self.led_matrix[7][self.grid_w-1-i] = ORANGE
         self.led_matrix[7][self.grid_w-1-octave] = RED
-
-
-        # >>>>
-        # ____#___
-        #
-        # ###    X
-        # #      O
-        # ### #  X
-        # #   ## X
-        # ### ## X
-
-
-
         return
 
     def make_cb(self):
