@@ -109,7 +109,7 @@ class Display(object):
             for y in range(len(self.led_matrix[x])):
                 self.led_matrix[x][y] = OFF
         # Speed:
-        speed = len(status['division'])
+        speed = status['division']
         print("Speed ", status['division'])
         for i in range(5):
             self.led_matrix[i][0] = RED

@@ -166,6 +166,7 @@ class Instrument(object):
         return 2**self.speed
 
     def get_beat_division_str(self):
+        return self.speed
         return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
 
     def change_division(self, up_down):
