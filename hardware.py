@@ -15,17 +15,13 @@ class Display(object):
         print("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
         print("Done")
-        trelli = [
-            [NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x31)],
-            [NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30)]
-            ]
+        trelli = [[NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x31)],
+                  [NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30)],]
         self.trellis = MultiTrellis(trelli)
-
         self.grid_h = h
         self.grid_w = w
         self.led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
-        # self.command_cb = command_cb
         button_cb = self.make_cb()
         print("Initializing Trellis")
         for y in range(h):
@@ -42,7 +38,6 @@ class Display(object):
         self.trellis.sync()
         return {'cmd': None}
 
-
     def draw_all(self, status, led_grid):
         if self.ins_button.value:
             self.draw_ins_menu(status)
@@ -50,10 +45,6 @@ class Display(object):
             self.draw_seq_menu(status)
         else:
             self.draw_note_grid(led_grid)
-            # for x in range(len(led_grid)):
-            #     for y in range(len(led_grid[x])):
-            #         col = PALLETE[led_grid[x][y]]
-            #         self.led_matrix[x][y] = col
         self.redraw_diff()
         return
 
@@ -152,10 +143,17 @@ class Display(object):
     def make_cb(self):
         def button_cb(xcoord, ycoord, edge):
             if edge == NeoTrellis.EDGE_RISING:
-                if not self.seq_button.value: # Normal mode
-                    self.command_cb({'cmd': 'note', 'x': xcoord, 'y': ycoord})
+                if self.ins_button.value:
+                    # Button from instrument menu
+                    if xcoord == 7:  # Octave
+                        new_oct = grid_w-1-ycoord
+                        print(new_oct)
+                        self.command_cb({'change_octave': new_oct})
+                elif self.seq_button.value: # Normal mode
+                    # Button from sequencer menu
+                    self.command_cb({'cmd': None})
                 else: # Menu mode - look up location of press and return cmd
-                    {'cmd': None}
+                    self.command_cb({'cmd': 'note', 'x': xcoord, 'y': ycoord})
             return
             # return {'cmd': None}
             # return {'cmd': 'note', 'x': grid_x, 'y': self.grid_h - grid_y -1}

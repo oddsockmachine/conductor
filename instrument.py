@@ -50,7 +50,9 @@ class Instrument(object):
         return True
 
     def change_octave(self, up_down):
-        self.octave = (self.octave + up_down) % 7
+
+        self.octave = up_down
+        # self.octave = (self.octave + up_down) % 7
         # Converter is a cached lookup, we need to regenerate it
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
