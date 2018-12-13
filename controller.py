@@ -146,6 +146,7 @@ def hardware_main():
             controller = Controller(display, mport, mportin)
             controller.sequencer.instruments[0].add_page(0)
             controller.sequencer.instruments[0].add_page(1)
+            controller.sequencer.instruments[0].add_page(1)
             controller.sequencer.instruments[0].inc_page_repeats(0)
             controller.sequencer.instruments[0].inc_page_repeats(0)
             controller.sequencer.instruments[0].add_page(1)
@@ -154,6 +155,7 @@ def hardware_main():
             controller.sequencer.instruments[3].add_page(1)
             controller.sequencer.instruments[3].add_page(1)
             controller.sequencer.instruments[3].inc_page_repeats(0)
+            controller.sequencer.instruments[6].add_page(1)
             controller.run()
 
 if __name__ == '__main__':
