@@ -141,8 +141,12 @@ def console_main(stdscr):
 def hardware_main():
     from hardware import Display
     display = Display()
-    with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
-        with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
+    print(mido.get_input_names())
+    print(mido.get_output_names())
+    with mido.open_output('f_midi:f_midi 16:0') as mport:
+        with mido.open_input('f_midi:f_midi 16:0') as mportin:
+            print(mportin)
+            print(mport)
             controller = Controller(display, mport, mportin)
             controller.sequencer.instruments[0].add_page(0)
             controller.sequencer.instruments[0].add_page(1)
