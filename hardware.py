@@ -70,7 +70,7 @@ class Display(object):
         for x in range(len(led_grid)):
             for y in range(len(led_grid[x])):
                 col = PALLETE[led_grid[x][y]]
-                self.led_matrix[x][y] = col
+                self.led_matrix[x][self.grid_h-1-y] = col
         return
 
     def draw_seq_menu(self, status):
@@ -169,6 +169,6 @@ class Display(object):
                     # Button from sequencer menu
                     self.command_cb({'cmd': None})
                 else: # Menu mode - look up location of press and return cmd
-                    self.command_cb({'cmd': 'note', 'x': xcoord, 'y': self.grid_w-1-ycoord})
+                    self.command_cb({'cmd': 'note', 'x': xcoord, 'y': ycoord})
             return
         return button_cb
