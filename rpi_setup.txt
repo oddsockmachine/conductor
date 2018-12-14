@@ -27,3 +27,14 @@ ls /dev/i2c* /dev/spi*
 # /dev/i2c-1 /dev/spidev0.0 /dev/spidev0.1
 
 
+
+
+echo "dtoverlay=dwc2" | sudo tee -a /boot/config.txt
+echo "dwc2" | sudo tee -a /etc/modules
+echo "g_midi" | sudo tee -a /etc/modules
+sudo modprobe g_midi
+sudo reboot
+ls /dev/snd/midi*
+git clone  https://github.com/TaylorTMusic/MIDI2GPIO.git
+
+

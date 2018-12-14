@@ -1,24 +1,11 @@
-## Most Important
-* Buttons for scale, key, octave, drum controls, save on exit
-* Figure out why everything waits while mouse button held!
-
 ### Hardware
 * Read in button press on grid, show on screen
 * Read in button presses from other controls, show on screen
 * Write display engine on HW - send simple commands to test basic LED color functionality
-* Create led_display lookup to convert 
-
-### Convert display to separate service
-- Communicate via messages
+* Create led_display lookup to convert
 
 ### unit tests remaining
 - for controller, display(?), recent new features
-
-### delegate drawing to a Display component - which can be switched out for eg LEDs, GUI, etc.
-- build out gui, include
-    borders, dividers (between bars, octaves etc)
-    different colors for curses glyphs
-- Start on converting to Kivy, for raspi/touchscreen solution
 
 ### Controls for adding/changing pages/instruments, setting musical constraints etc
 - Turn off note repeat for an instrument - adjacent notes sustain instead of retriggering
@@ -31,6 +18,7 @@
 - Add beat division/speed to load/save
 
 ### convert everything to asynchronous/event driven
+- midi time and button pressed events kind of already are, can we do better?
 
 ### Z-mode
 - normally time moves along the x-axis, pitch on y, instruments on z.
