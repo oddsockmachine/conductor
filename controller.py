@@ -37,9 +37,9 @@ class Controller(object):
         self.draw()
         while True:
             self.get_cmds()
-            # sleep(0.3)  # TODO REMOVE TODO
+            sleep(0.3)  # TODO REMOVE TODO
             # self.sequencer.step_beat()  # TODO REMOVE TODO
-            # self.draw()  # TODO REMOVE TODO
+            self.draw()  # TODO REMOVE TODO
         pass
 
     def process_incoming_midi(self):
@@ -51,7 +51,7 @@ class Controller(object):
                 tick = self.process_midi_tick()
                 if tick:
                     self.sequencer.step_beat()
-                    self.draw()
+                    # self.draw()
             if message.type == "note_on":
                 self.sequencer.add_notes_from_midi([message.note])
         return _process_incoming_midi
