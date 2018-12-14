@@ -18,6 +18,7 @@ class Controller(object):
         super(Controller, self).__init__()
         self.mport = mport
         self.mportin = mportin
+        self.beatclockcount = 0
         self.mportin.callback = self.process_incoming_midi()
         # Check for loading previous set
         if args.set:
@@ -30,16 +31,15 @@ class Controller(object):
         self.last = time()
         self.display = display
         self.display.command_cb = self.command_cb
-        self.beatclockcount = 0
         self.save_on_exit = False
 
     def run(self):
         self.draw()
         while True:
             self.get_cmds()
-            sleep(0.3)  # TODO REMOVE TODO
-            self.sequencer.step_beat()  # TODO REMOVE TODO
-            self.draw()  # TODO REMOVE TODO
+            # sleep(0.3)  # TODO REMOVE TODO
+            # self.sequencer.step_beat()  # TODO REMOVE TODO
+            # self.draw()  # TODO REMOVE TODO
         pass
 
     def process_incoming_midi(self):
