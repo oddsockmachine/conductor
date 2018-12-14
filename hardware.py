@@ -169,6 +169,6 @@ class Display(object):
                     # Button from sequencer menu
                     self.command_cb({'cmd': None})
                 else: # Menu mode - look up location of press and return cmd
-                    self.command_cb({'cmd': 'note', 'x': xcoord, 'y': grid_w-1-ycoord})
+                    self.command_cb({'cmd': 'note', 'x': xcoord, 'y': self.grid_w-1-ycoord})
             return
         return button_cb
