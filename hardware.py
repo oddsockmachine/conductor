@@ -80,14 +80,6 @@ class Display(object):
         # ###   O
         # ###   #
         self.blank_screen()
-
-#  'ins_num': 1,
-#  'ins_total': 16,
-#  'page_num': 1,
-#  'page_stats': [1],
-#  'page_total': 1,
-#  'repeat_num': 1,
-#  'repeat_total': 1,
         # Draw instrument selector
         for i in range(status['ins_total']):
             self.led_matrix[self.grid_w-1][i] = RED
@@ -97,6 +89,10 @@ class Display(object):
         page_num = status['page_num']
         repeat_total = status['repeat_total']
         repeat_num = status['repeat_num']
+        if status['random_rpt']:
+            self.led_matrix[0][7] = RED
+        else:
+            self.led_matrix[0][7] = GREEN
         for i, page_reps in enumerate(page_stats):
             for rep in range(page_reps):
                 self.led_matrix[rep][i] = RED
@@ -104,7 +100,6 @@ class Display(object):
             self.led_matrix[i][page_num-1] = YELLOW
         self.led_matrix[repeat_num-1][page_num-1] = GREEN
         # self.led_matrix[status['repeat_total']-1][status['page_num']-1] = GREEN
-
         return
 
     def draw_ins_menu(self, status):
@@ -164,6 +159,8 @@ class Display(object):
                         self.command_cb({'cmd':'cycle_key', 'dir': -1})
                     if ycoord == 3 and xcoord == 0:  # key
                         self.command_cb({'cmd':'cycle_key', 'dir': 1})
+                    if ycoord == 0 and xcoord == 7:  # key
+                        self.command_cb({'cmd':'random_rpt'})
 
                 elif self.seq_button.value: # Normal mode
                     # Button from sequencer menu

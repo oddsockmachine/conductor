@@ -3,6 +3,7 @@ from constants import *
 from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, SCALES, KEYS
 import mido
+from random import choice
 
 class Instrument(object):
     """docstring for Instrument."""
@@ -24,6 +25,7 @@ class Instrument(object):
         self.speed = speed
         self.isdrum = False
         self.sustain = False  # TODO don't retrigger notes if this is True
+        self.random_pages = True
         self.pages = [Note_Grid(self.bars, self.height)]
         if key not in KEYS:
             print('Requested key {} not known'.format(key))
@@ -142,7 +144,16 @@ class Instrument(object):
         return False
 
     def get_next_page_num(self):
-        '''Return the number of the next page that has a positive number of repeats'''
+        '''Return the number of the next page that has a positive number of repeats
+        or return a random page if wanted'''
+        if self.random_pages:
+            # Create a distribution of the pages and their repeats, pick one at random
+            dist = []
+            for index, page in enumerate(self.pages):
+                for r in range(page.repeats):
+                    dist.append(index)
+            next_page_num = choice(dist)
+            return next_page_num
         for i in range(1, len(self.pages)):
             # Look through all the upcoming pages
             next_page_num = (self.curr_page_num + i) % len(self.pages)
@@ -155,6 +166,16 @@ class Instrument(object):
 
     def advance_page(self):
         '''Go to next repeat or page'''
+        if self.random_pages:
+            # Create a distribution of the pages and their repeats, pick one at random
+            dist = []
+            for index, page in enumerate(self.pages):
+                for r in range(page.repeats):
+                    dist.append(index)
+            next_page_num = choice(dist)
+            self.curr_page_num = next_page_num
+            self.curr_rept_num = 0  # Reset, for this page or next page
+            return
         self.curr_rept_num += 1  # inc repeat number
         if self.curr_rept_num >= self.get_curr_page().repeats:
         # If we're overfowing repeats, time to go to next available page

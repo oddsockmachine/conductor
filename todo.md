@@ -44,3 +44,7 @@
 - Button/whatever to trigger transfer currently playing instrument (or all) to ableton clips
 - Send cmds to start recording at start of page/bar for each active instrument/channel, then stop recording once page(s) completed
 - Could do the same thing in reverse to import and manipulate live midi
+
+### Controlled randomness
+- Variables to control randomness on each note of an instrument (particularly drum tracks)
+- Note normally has its default value, but has a x% chance of changing each time a page is played

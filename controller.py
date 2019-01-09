@@ -104,6 +104,8 @@ class Controller(object):
             self.sequencer.add_page()
         elif m['cmd'] == 'change_division':
             self.sequencer.change_division(m['div'])
+        elif m['cmd'] == 'random_rpt':
+            self.sequencer.get_curr_instrument().random_pages = False if self.sequencer.get_curr_instrument().random_pages else True
         return
 
     def process_midi_tick(self):

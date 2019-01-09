@@ -66,6 +66,8 @@ class Display(object):
         if c == ord('x'):
             m['cmd'] = 'change_octave'
             m['dir'] = 1
+        if c == ord('r'):
+            m['cmd'] = 'random_rpt'
         if c == curses.KEY_MOUSE:
             _m = curses.getmouse()
             m = self.get_mouse_zone(_m)
