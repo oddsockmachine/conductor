@@ -25,7 +25,8 @@ class Instrument(object):
         self.speed = speed
         self.isdrum = False
         self.sustain = False  # TODO don't retrigger notes if this is True
-        self.random_pages = True
+        self.random_pages = False
+        self.sustain = True
         self.pages = [Note_Grid(self.bars, self.height)]
         if key not in KEYS:
             print('Requested key {} not known'.format(key))
@@ -216,6 +217,11 @@ class Instrument(object):
         """Return all note-ons from the current beat, and all note-offs from the last"""
         notes_off = [self.cell_to_midi(c) for c in old_notes]
         notes_on = [self.cell_to_midi(c) for c in new_notes]
+        if self.sustain:
+            _notes_off = [n for n in notes_off if n not in notes_on]
+            _notes_on = [n for n in notes_on if n not in notes_off]
+            notes_off = _notes_off
+            notes_on = _notes_on
         notes_off = [n for n in notes_off if n<128 and n>0]
         notes_on = [n for n in notes_on if n<128 and n>0]
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]

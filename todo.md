@@ -1,8 +1,7 @@
 ## Top
 - create color engine, for different themes, brightnesses etc
 - Show root notes, pentatonic notes, etc in different colors/shades
-- Turn off note repeat for an instrument - adjacent notes sustain instead of retriggering
-- set random range for page repeats
+  - Turn off note repeat for an instrument - adjacent notes sustain instead of retriggering
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 - Live performance mode with instruments along x, pitch on y, time steps through z.
 
@@ -30,9 +29,6 @@
 - normally time moves along the x-axis, pitch on y, instruments on z.
 - Live performance mode with instruments along x, pitch on y, time steps through z.
 - In other words, the ability to play all 16 instruments in real time
-
-### set random range for page repeats
-- to keep things interesting, good for ambient music
 
 ### Handle LED colors better
 - Show root notes, pentatonic notes, etc in different colors/shades
