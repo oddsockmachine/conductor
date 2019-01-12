@@ -108,6 +108,8 @@ class Controller(object):
             self.sequencer.get_curr_instrument().random_pages = False if self.sequencer.get_curr_instrument().random_pages else True
         elif m['cmd'] == 'sustain':
             self.sequencer.get_curr_instrument().sustain = False if self.sequencer.get_curr_instrument().sustain else True
+        elif m['cmd'] == 'chaos':
+            self.sequencer.get_curr_instrument().update_chaos(m['dir'])
         return
 
     def process_midi_tick(self):

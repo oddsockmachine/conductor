@@ -70,6 +70,12 @@ class Display(object):
             m['cmd'] = 'random_rpt'
         if c == ord('t'):
             m['cmd'] = 'sustain'
+        if c == ord('o'):
+            m['cmd'] = 'chaos'
+            m['dir'] = +1
+        if c == ord('p'):
+            m['dir'] = -1
+            m['cmd'] = 'chaos'
         if c == curses.KEY_MOUSE:
             _m = curses.getmouse()
             m = self.get_mouse_zone(_m)

@@ -1,18 +1,11 @@
 ## Top
 - create color engine, for different themes, brightnesses etc
 - Show root notes, pentatonic notes, etc in different colors/shades
-  - Turn off note repeat for an instrument - adjacent notes sustain instead of retriggering
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 - Live performance mode with instruments along x, pitch on y, time steps through z.
 
 ### Hardware
 - create color engine, for different themes, brightnesses etc
-
-### unit tests remaining
-- for controller, display(?), recent new features
-
-### Controls for adding/changing pages/instruments, setting musical constraints etc
-- Turn off note repeat for an instrument - adjacent notes sustain instead of retriggering
 
 ### synchronize with Ableton
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
@@ -44,3 +37,6 @@
 ### Controlled randomness
 - Variables to control randomness on each note of an instrument (particularly drum tracks)
 - Note normally has its default value, but has a x% chance of changing each time a page is played
+
+### unit tests remaining
+- for controller, display(?), recent new features
