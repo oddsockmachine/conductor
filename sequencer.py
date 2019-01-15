@@ -25,6 +25,7 @@ class Sequencer(object):
         self.octave = octave  # Starting octave
         self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, speed=0, bars=bars) for x in range(MAX_INSTRUMENTS)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
+        self.z_mode = False
         # If we're loading, ignore all this and overwrite with info from file!
         if saved:
             self.load(saved)
@@ -42,7 +43,7 @@ class Sequencer(object):
 
     def get_status(self):
         status = {
-            'ins_num': self.get_curr_instrument_num(),
+            'ins_num': self.get_curr_instrument_num() if not self.z_mode else self.get_curr_instrument().local_beat_position,
             'ins_total': self.get_total_instrument_num(),
             'page_num': self.get_curr_instrument().curr_page_num+1,
             'page_total': len(self.get_curr_instrument().pages),
@@ -68,10 +69,10 @@ class Sequencer(object):
             ins.step_beat(self.beat_position)
         pass
 
-    def get_led_grid(self, z):
+    def get_led_grid(self):
         '''Get led status types for all cells of the grid, to be drawn by the display'''
         led_grid = []
-        if not z:
+        if not self.z_mode:
             note_grid = self.get_curr_instrument().get_curr_page_grid()
             for c, column in enumerate(note_grid):  # columnn counter
                 led_grid.append([self.get_led_status(x, c) for x in column])
@@ -83,6 +84,11 @@ class Sequencer(object):
                 for n in notes:
                     led_grid[i][n] = LED_ACTIVE
             return led_grid
+
+    def toggle_z_mode(self):
+        '''Do we want to operate in z-mode'''
+        self.z_mode = not self.z_mode
+        return
 
     def get_led_status(self, cell, beat_pos):
         '''Determine which type of LED should be shown for a given cell'''
@@ -171,7 +177,10 @@ class Sequencer(object):
     ###### CONTROL PASSTHROUGH METHODS ######
 
     def touch_note(self, x, y):
-        self.get_curr_instrument().touch_note(x, y)
+        if not self.z_mode:
+            self.get_curr_instrument().touch_note(x, y)
+        else:
+            self.instruments[x].touch_note(self.get_curr_instrument().local_beat_position, y)
 
     def change_division(self, up_down):
         '''Find current instrument, inc or dec its beat division as appropriate'''

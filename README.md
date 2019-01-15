@@ -53,3 +53,4 @@ The grid is a piano-roll style input for the sequencer
 - t sustain
 - o chaos +1
 - p -1 chaos
+- / toggle z mode

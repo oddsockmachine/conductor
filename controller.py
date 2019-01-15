@@ -91,7 +91,7 @@ class Controller(object):
         elif m['cmd'] == 'swap_drum_inst':
             self.sequencer.swap_drum_inst()
         elif m['cmd'] == 'change_octave':
-            self.sequencer.change_octave(m['octave'])
+            self.sequencer.change_octave(m['dir'])
         elif m['cmd'] == 'note':
             self.sequencer.touch_note(m['x'], m['y'])
         elif m['cmd'] == 'ins':
@@ -110,6 +110,8 @@ class Controller(object):
             self.sequencer.get_curr_instrument().sustain = False if self.sequencer.get_curr_instrument().sustain else True
         elif m['cmd'] == 'chaos':
             self.sequencer.get_curr_instrument().update_chaos(m['dir'])
+        elif m['cmd'] == 'z_mode':
+            self.sequencer.toggle_z_mode()
         return
 
     def process_midi_tick(self):
@@ -122,7 +124,7 @@ class Controller(object):
 
     def draw(self):
         status = self.sequencer.get_status()
-        led_grid = self.sequencer.get_led_grid("z")
+        led_grid = self.sequencer.get_led_grid()
         self.display.draw_all(status, led_grid)
 
     def save(self):

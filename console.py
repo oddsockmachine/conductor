@@ -74,8 +74,10 @@ class Display(object):
             m['cmd'] = 'chaos'
             m['dir'] = +1
         if c == ord('p'):
-            m['dir'] = -1
             m['cmd'] = 'chaos'
+            m['dir'] = -1
+        if c == ord('/'):
+            m['cmd'] = 'z_mode'
         if c == curses.KEY_MOUSE:
             _m = curses.getmouse()
             m = self.get_mouse_zone(_m)
