@@ -43,7 +43,7 @@ class Sequencer(object):
 
     def get_status(self):
         status = {
-            'ins_num': self.get_curr_instrument_num() if not self.z_mode else self.get_curr_instrument().local_beat_position,
+            'ins_num': self.get_curr_instrument_num(),
             'ins_total': self.get_total_instrument_num(),
             'page_num': self.get_curr_instrument().curr_page_num+1,
             'page_total': len(self.get_curr_instrument().pages),
@@ -80,7 +80,9 @@ class Sequencer(object):
         else:
             for i, ins in enumerate(self.instruments):
                 notes = ins.get_curr_notes()
+                beat = ins.local_beat_position
                 led_grid.append([NOTE_OFF for x in range(self.height)])
+                led_grid[i][beat] = LED_BEAT
                 for n in notes:
                     led_grid[i][n] = LED_ACTIVE
             return led_grid

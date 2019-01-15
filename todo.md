@@ -17,10 +17,7 @@
 - midi time and button pressed events kind of already are, can it be better?
 
 ### Z-mode
-- normally time moves along the x-axis, pitch on y, instruments on z.
-- Live performance mode with instruments along x, pitch on y, time steps through z.
-- In other words, the ability to play all 16 instruments in real time
-- Display is easy, input is harder
+- Usability tweaks, like instrument speed etc
 
 ### Handle LED colors better
 - Show root notes, pentatonic notes, etc in different colors/shades

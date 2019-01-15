@@ -33,6 +33,11 @@ The instrument's layout is divided into four major sections:
 
 The grid is a piano-roll style input for the sequencer
 
+#### Z-mode
+- normally time moves along the x-axis, pitch on y, instruments on z.
+- Live performance mode with instruments along x, pitch on y, time steps through z.
+- In other words, the ability to play all 16 instruments in real time
+
 #### Controls
 
 - Q quit
