@@ -55,6 +55,8 @@ class Sequencer(object):
             'isdrum': self.get_curr_instrument().isdrum,
             'division': self.get_curr_instrument().get_beat_division_str(),
             'random_rpt': self.get_curr_instrument().random_pages,
+            'sustain': self.get_curr_instrument().sustain,
+            'chaos': self.get_curr_instrument().chaos,
         }
         return status
 

@@ -67,7 +67,7 @@ class Display(object):
         for diff in diffs:
             self.trellis.color(diff[0],diff[1],diff[2])
         t_stop = perf_counter_ns()
-        logger.info("%.1f" % (t1_stop-t1_start))
+        logger.info(str(t1_stop-t1_start))
         return
 
     def draw_note_grid(self, led_grid):

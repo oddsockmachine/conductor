@@ -219,12 +219,9 @@ class Instrument(object):
         if self.chaos > 0:  # If using chaos, switch up some notes
             if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
                 if random() < self.chaos:
-                    logging.info(beat_notes)
                     rand_note = randint(0, self.height-1)
-                    logging.info(rand_note)
                     beat_notes[rand_note] = NOTE_ON if beat_notes[rand_note] != NOTE_ON else NOTE_OFF
                     # beat_notes = [n if random() < self.chaos else (NOTE_ON if n==NOTE_OFF else NOTE_OFF) for n in beat_notes]
-                    logging.info(beat_notes)
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
 
@@ -251,7 +248,12 @@ class Instrument(object):
           "Octave": self.octave,
           "Key": self.key,
           "Scale": self.scale,
-          "Pages": [p.save() for p in self.pages]
+          "Pages": [p.save() for p in self.pages],
+          "Speed": self.speed,
+          "IsDrum": self.isdrum,
+          "Sustain": self.sustain,
+          "Chaos": self.chaos,
+          "RandomRpt": self.random_pages,
         }
         return saved
 
@@ -259,6 +261,11 @@ class Instrument(object):
         self.octave = saved["Octave"]
         self.key = saved["Key"]
         self.scale = saved["Scale"]
+        self.speed = saved["Speed"]
+        self.isdrum = saved["IsDrum"]
+        self.sustain = saved["Sustain"]
+        self.chaos = saved["Chaos"],
+        self.random_pages = saved["RandomRpt"],
         self.pages = []
         for p in saved["Pages"]:
             page = Note_Grid(self.bars, self.height)

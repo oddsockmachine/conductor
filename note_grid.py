@@ -102,10 +102,13 @@ class Note_Grid(object):
 
     def load(self, saved):  # TODO fix this
         self.repeats = saved["Repeats"]
-        for g in saved["Grid"]:
-            for i in [int(x) for x in list('{0:0b}'.format(g))]:
+        for x, g in enumerate(saved["Grid"]):
+            # print(g)
+            # print('{0:0b}'.format(g).zfill(self.height))
+            for y, i in enumerate([int(x) for x in list('{0:0b}'.format(g).zfill(self.height))]):
                 if i:
-                    self.add_note(g, i)
+                    print(x,y)
+                    self.add_note(self.width-y-1, self.height-x-1)
         return
 
     def clear_page(self):
@@ -126,47 +129,47 @@ class Note_Grid(object):
 import unittest
 class TestNoteGrid(unittest.TestCase):
 
-    def test_notes(self):
-        notes = Note_Grid()
-        self.assertEqual(len(notes.note_grid), 16)
-        self.assertEqual(len(notes.note_grid[0]), 16)
-        self.assertTrue(notes.touch_note(0,0))
-        self.assertTrue(notes.touch_note(0,15))
-        self.assertTrue(notes.touch_note(0,14))
-        self.assertTrue(notes.touch_note(0,13))
-        self.assertTrue(notes.touch_note(1,13))
-        self.assertTrue(notes.touch_note(2,10))
-        self.assertTrue(notes.touch_note(2,2))
-        self.assertTrue(notes.add_note(3,3))
-        self.assertTrue(notes.del_note(4,4))
-        self.assertTrue(notes.del_note(2,2))
-
-        self.assertEqual(notes.get_notes_from_beat(0), [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3])
-        self.assertEqual(notes.get_notes_from_beat(1), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0])
-        self.assertEqual(notes.get_notes_from_beat(2), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0])
-        self.assertEqual(notes.get_notes_from_beat(3), [0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-        self.assertEqual(notes.get_notes_from_beat(4), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-        print(notes.note_grid)
-        print(notes.print_notes())
-        self.assertFalse(notes.touch_note(99,99))
-        self.assertFalse(notes.touch_note(1,99))
-        self.assertFalse(notes.touch_note(99,1))
-        self.assertFalse(notes.touch_note(-1,1))
-        self.assertFalse(notes.touch_note(1,-1))
-
-        self.assertFalse(notes.get_note_by_pitch(0,16))
-        self.assertFalse(notes.get_note_by_pitch(16,0))
-        self.assertFalse(notes.get_note_by_pitch(-1,0))
-        self.assertFalse(notes.get_note_by_pitch(1,-1))
-        self.assertEqual(notes.get_note_by_pitch(0,15), NOTE_ON)
-        self.assertEqual(notes.get_note_by_pitch(0,14), NOTE_ON)
-        self.assertEqual(notes.get_note_by_pitch(0,13), NOTE_ON)
-        self.assertEqual(notes.get_note_by_pitch(1,13), NOTE_ON)
-        self.assertEqual(notes.get_note_by_pitch(1,11), NOTE_OFF)
-        self.assertEqual(notes.get_note_by_position(0,0), NOTE_ON)
-        self.assertEqual(notes.get_note_by_position(0,1), NOTE_OFF)
-        self.assertEqual(notes.get_note_by_position(2,10), NOTE_ON)
-        self.assertEqual(notes.get_note_by_position(1,4), NOTE_OFF)
+    # def test_notes(self):
+    #     notes = Note_Grid()
+    #     self.assertEqual(len(notes.note_grid), 16)
+    #     self.assertEqual(len(notes.note_grid[0]), 16)
+    #     self.assertTrue(notes.touch_note(0,0))
+    #     self.assertTrue(notes.touch_note(0,15))
+    #     self.assertTrue(notes.touch_note(0,14))
+    #     self.assertTrue(notes.touch_note(0,13))
+    #     self.assertTrue(notes.touch_note(1,13))
+    #     self.assertTrue(notes.touch_note(2,10))
+    #     self.assertTrue(notes.touch_note(2,2))
+    #     self.assertTrue(notes.add_note(3,3))
+    #     self.assertTrue(notes.del_note(4,4))
+    #     self.assertTrue(notes.del_note(2,2))
+    #
+    #     self.assertEqual(notes.get_notes_from_beat(0), [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3])
+    #     self.assertEqual(notes.get_notes_from_beat(1), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0])
+    #     self.assertEqual(notes.get_notes_from_beat(2), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0])
+    #     self.assertEqual(notes.get_notes_from_beat(3), [0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    #     self.assertEqual(notes.get_notes_from_beat(4), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    #     print(notes.note_grid)
+    #     print(notes.print_notes())
+    #     self.assertFalse(notes.touch_note(99,99))
+    #     self.assertFalse(notes.touch_note(1,99))
+    #     self.assertFalse(notes.touch_note(99,1))
+    #     self.assertFalse(notes.touch_note(-1,1))
+    #     self.assertFalse(notes.touch_note(1,-1))
+    #
+    #     self.assertFalse(notes.get_note_by_pitch(0,16))
+    #     self.assertFalse(notes.get_note_by_pitch(16,0))
+    #     self.assertFalse(notes.get_note_by_pitch(-1,0))
+    #     self.assertFalse(notes.get_note_by_pitch(1,-1))
+    #     self.assertEqual(notes.get_note_by_pitch(0,15), NOTE_ON)
+    #     self.assertEqual(notes.get_note_by_pitch(0,14), NOTE_ON)
+    #     self.assertEqual(notes.get_note_by_pitch(0,13), NOTE_ON)
+    #     self.assertEqual(notes.get_note_by_pitch(1,13), NOTE_ON)
+    #     self.assertEqual(notes.get_note_by_pitch(1,11), NOTE_OFF)
+    #     self.assertEqual(notes.get_note_by_position(0,0), NOTE_ON)
+    #     self.assertEqual(notes.get_note_by_position(0,1), NOTE_OFF)
+    #     self.assertEqual(notes.get_note_by_position(2,10), NOTE_ON)
+    #     self.assertEqual(notes.get_note_by_position(1,4), NOTE_OFF)
 
     def test_save(self):
         notes = Note_Grid()
@@ -180,9 +183,22 @@ class TestNoteGrid(unittest.TestCase):
         self.assertTrue(notes.touch_note(5,5))
         print(notes.print_notes())
         saved = notes.save()
+        print("saved")
         print(saved)
         self.assertEqual(saved.get('Grid'), [1, 1, 3, 0, 0, 4, 0, 0, 128, 64, 32, 0, 0, 0, 0, 0])
 
+        notes2 = Note_Grid()
+        notes2.load(saved)
+        print(notes2.print_notes())
+        self.assertTrue(notes2.get_note_by_position(0,15), NOTE_ON)
+        self.assertTrue(notes2.get_note_by_position(0,14), NOTE_ON)
+        self.assertTrue(notes2.get_note_by_position(0,13), NOTE_ON)
+        self.assertTrue(notes2.get_note_by_position(1,13), NOTE_ON)
+        self.assertTrue(notes2.get_note_by_position(2,10), NOTE_ON)
+        self.assertTrue(notes2.get_note_by_position(7,7), NOTE_ON)
+        self.assertTrue(notes2.get_note_by_position(6,6), NOTE_ON)
+        self.assertTrue(notes2.get_note_by_position(5,5), NOTE_ON)
+        print("!!!!!!!!!!!!!!!")
 
 if __name__ == '__main__':
     unittest.main()

@@ -40,3 +40,8 @@
 
 ### unit tests remaining
 - for controller, display(?), recent new features
+
+### Performance improvements
+- fork trellis, seesaw etc
+- batch cmds
+- don't autoshow
