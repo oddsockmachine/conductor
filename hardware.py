@@ -1,5 +1,6 @@
 from constants import *
 from note_conversion import SCALES
+from time import perf_counter_ns
 print("Importing hardware connections")
 from board import SCL, SDA, D13, D6
 import busio
@@ -58,12 +59,15 @@ class Display(object):
         for x in range(len(self.led_matrix)):
             for y in range(len(self.led_matrix[x])):
                 if self.led_matrix[x][y] != self.old_led_matrix[x][y]:
-                    # diffs.append((x, y, self.led_matrix[x][y]))
-                    self.trellis.color(x, y, self.led_matrix[x][y])
+                    diffs.append((x, y, self.led_matrix[x][y]))
+                    # self.trellis.color(x, y, self.led_matrix[x][y])
                 self.old_led_matrix[x][y] = self.led_matrix[x][y]
         # This method might be better once the grid is much bigger
-        # for diff in diffs:
-        #     self.trellis.color(diff[0],diff[1],diff[2])
+        t_start = perf_counter_ns()
+        for diff in diffs:
+            self.trellis.color(diff[0],diff[1],diff[2])
+        t_stop = perf_counter_ns()
+        logger.info("%.1f" % (t1_stop-t1_start))
         return
 
     def draw_note_grid(self, led_grid):
