@@ -68,13 +68,21 @@ class Sequencer(object):
             ins.step_beat(self.beat_position)
         pass
 
-    def get_led_grid(self):
+    def get_led_grid(self, z):
         '''Get led status types for all cells of the grid, to be drawn by the display'''
-        note_grid = self.get_curr_instrument().get_curr_page_grid()
         led_grid = []
-        for c, column in enumerate(note_grid):  # columnn counter
-            led_grid.append([self.get_led_status(x, c) for x in column])
-        return led_grid
+        if not z:
+            note_grid = self.get_curr_instrument().get_curr_page_grid()
+            for c, column in enumerate(note_grid):  # columnn counter
+                led_grid.append([self.get_led_status(x, c) for x in column])
+            return led_grid
+        else:
+            for i, ins in enumerate(self.instruments):
+                notes = ins.get_curr_notes()
+                led_grid.append([NOTE_OFF for x in range(self.height)])
+                for n in notes:
+                    led_grid[i][n] = LED_ACTIVE
+            return led_grid
 
     def get_led_status(self, cell, beat_pos):
         '''Determine which type of LED should be shown for a given cell'''

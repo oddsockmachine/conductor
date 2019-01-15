@@ -122,7 +122,7 @@ class Controller(object):
 
     def draw(self):
         status = self.sequencer.get_status()
-        led_grid = self.sequencer.get_led_grid()
+        led_grid = self.sequencer.get_led_grid("z")
         self.display.draw_all(status, led_grid)
 
     def save(self):
