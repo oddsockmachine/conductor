@@ -46,11 +46,11 @@ class Display(object):
         if c == ord('m'):
             m['cmd'] = 'cycle_key'
             m['dir'] = 1
-        # if c == ord('['):
-        #     m['cmd'] = 'change_division'
-        #     m['dir'] = -1
-        # if c == ord(']'):
-        #     m['cmd'] = 'change_division'
+        if c == ord('['):
+            m['cmd'] = 'change_division'
+            m['dir'] = -1
+        if c == ord(']'):
+            m['cmd'] = 'change_division'
             m['dir'] = 1
         if c == ord('v'):
             m['cmd'] = 'cycle_scale'

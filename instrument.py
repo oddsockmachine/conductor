@@ -216,6 +216,7 @@ class Instrument(object):
         grid = self.get_curr_page_grid()
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
+        logging.info(self.chaos)
         if self.chaos > 0:  # If using chaos, switch up some notes
             if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
                 if random() < self.chaos:
@@ -264,8 +265,8 @@ class Instrument(object):
         self.speed = saved["Speed"]
         self.isdrum = saved["IsDrum"]
         self.sustain = saved["Sustain"]
-        self.chaos = saved["Chaos"],
-        self.random_pages = saved["RandomRpt"],
+        self.chaos = saved["Chaos"]
+        self.random_pages = saved["RandomRpt"]
         self.pages = []
         for p in saved["Pages"]:
             page = Note_Grid(self.bars, self.height)

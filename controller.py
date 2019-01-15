@@ -103,7 +103,7 @@ class Controller(object):
         elif m['cmd'] == 'add_page':
             self.sequencer.add_page()
         elif m['cmd'] == 'change_division':
-            self.sequencer.change_division(m['div'])
+            self.sequencer.change_division(m['dir'])
         elif m['cmd'] == 'random_rpt':
             self.sequencer.get_curr_instrument().random_pages = False if self.sequencer.get_curr_instrument().random_pages else True
         elif m['cmd'] == 'sustain':

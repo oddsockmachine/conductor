@@ -11,7 +11,6 @@
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 
 ### Save and load
-- Load in piano roll using command line arg (almost, saved note conversion needs work)
 - Add beat division/speed to load/save
 - How to do that when running on external hardware? Startup menu? Probably only viable via ssh connection
 
