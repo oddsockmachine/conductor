@@ -5,6 +5,29 @@ from note_conversion import create_cell_to_midi_note_lookup, SCALES, KEYS
 import mido
 from random import choice, random, randint
 
+class GenericInstrument(object):
+    """docstring for GenericInstrument."""
+    def __init__(self, ins_num, mport, speed=1, bars=W/4, height=H):
+        super(Instrument, self).__init__()
+        if not isinstance(ins_num, int):
+            print("Instrument num {} must be an int".format(ins_num))
+            exit()
+        self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
+        self.mport = mport
+        self.channel_num = ins_num
+        self.height = height
+        self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
+        self.width = self.bars * 4
+        self.curr_page_num = 0
+        self.curr_rept_num = 0
+        self.prev_loc_beat = 0
+        self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
+        self.speed = speed  # Relative speed of this instrument compared to global clock
+        self.old_notes = []  # Keep track of currently playing notes so we can off them next step
+
+
+
+
 class Instrument(object):
     """docstring for Instrument."""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1, bars=W/4, height=H):
@@ -197,26 +220,27 @@ class Instrument(object):
         return self.speed
         return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
 
-    def change_division(self, up_down):
+    def change_division(self, div):
         '''Find current instrument, inc or dec its beat division as appropriate'''
-        self.speed = up_down
-        return  # TODO handle direct set and up_down
-        if up_down == 1:
+        if div == "-":
             if self.speed == 0:
                 return
             self.speed -= 1
             return
-        if up_down == -1:
+        if div == "+":
             if self.speed == 4:
                 return
             self.speed += 1
+            return
+
+        # Direct set
+        self.speed = div
         return
 
     def get_curr_notes(self):
         grid = self.get_curr_page_grid()
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
-        logging.info(self.chaos)
         if self.chaos > 0:  # If using chaos, switch up some notes
             if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
                 if random() < self.chaos:
