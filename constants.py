@@ -32,15 +32,16 @@ NOTE_OFF = 0
 NOTE_ON = 3
 
 # The glyphs used to display cell information/states in the CLI
+# DISPLAY = {0: '. ', 1:'  ', 2:'OO', 3:'XX'}
 DISPLAY = {0: '. ', 1:'░░', 2:'▒▒', 3:'▓▓'}
 PALLETE = {0:(1,1,1), 1:(3,2,0), 2:(18,7,0), 3:(18,7,1)}
 
-W = 8  # Width of the display grid
-H = 8  # Width of the display grid
+W = 16  # Width of the display grid
+H = 16  # Width of the display grid
 
 # Maximum number of instruments - limited by 16 available midi channels,
 # but we may want to run 2 separate sequencers with 8 channels in future
-MAX_INSTRUMENTS = 8
+MAX_INSTRUMENTS = 16
 
 # Note letters
 A = [

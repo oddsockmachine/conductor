@@ -3,6 +3,30 @@ from constants import *
 from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, SCALES, KEYS
 import mido
+from random import choice, random, randint
+
+class GenericInstrument(object):
+    """docstring for GenericInstrument."""
+    def __init__(self, ins_num, mport, speed=1, bars=W/4, height=H):
+        super(Instrument, self).__init__()
+        if not isinstance(ins_num, int):
+            print("Instrument num {} must be an int".format(ins_num))
+            exit()
+        self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
+        self.mport = mport
+        self.channel_num = ins_num
+        self.height = height
+        self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
+        self.width = self.bars * 4
+        self.curr_page_num = 0
+        self.curr_rept_num = 0
+        self.prev_loc_beat = 0
+        self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
+        self.speed = speed  # Relative speed of this instrument compared to global clock
+        self.old_notes = []  # Keep track of currently playing notes so we can off them next step
+
+
+
 
 class Instrument(object):
     """docstring for Instrument."""
@@ -13,17 +37,19 @@ class Instrument(object):
             exit()
         self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
         self.mport = mport
-        logging.info(mport)
+        # logging.info(mport)
         self.height = height
         self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
         self.width = self.bars * 4
         self.curr_page_num = 0
         self.curr_rept_num = 0
         self.prev_loc_beat = 0
-        self.local_beat_position = 0
-        self.speed = speed
-        self.isdrum = False
-        self.sustain = False  # TODO don't retrigger notes if this is True
+        self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
+        self.speed = speed  # Relative speed of this instrument compared to global clock
+        self.isdrum = False  # Chromatic instrument for drum tracks
+        self.random_pages = False  #  Pick page at random
+        self.sustain = True  # Don't retrigger notes if this is True
+        self.chaos = 0.0  # Add some randomness to notes
         self.pages = [Note_Grid(self.bars, self.height)]
         if key not in KEYS:
             print('Requested key {} not known'.format(key))
@@ -36,6 +62,13 @@ class Instrument(object):
         self.octave = octave  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, height)  # Function is cached for convenience
+
+    def update_chaos(self, dir):
+        if dir == 1:
+            self.chaos += 0.01
+        elif self.chaos > 0.01:
+            self.chaos -= 0.01
+        return
 
     def set_key(self, key):
         self.key = key
@@ -50,7 +83,6 @@ class Instrument(object):
         return True
 
     def change_octave(self, up_down):
-
         self.octave = up_down  #TODO handle up and down as well as octave number
         # self.octave = (self.octave + up_down) % 7
         # Converter is a cached lookup, we need to regenerate it
@@ -142,7 +174,16 @@ class Instrument(object):
         return False
 
     def get_next_page_num(self):
-        '''Return the number of the next page that has a positive number of repeats'''
+        '''Return the number of the next page that has a positive number of repeats
+        or return a random page if wanted'''
+        if self.random_pages:
+            # Create a distribution of the pages and their repeats, pick one at random
+            dist = []
+            for index, page in enumerate(self.pages):
+                for r in range(page.repeats):
+                    dist.append(index)
+            next_page_num = choice(dist)
+            return next_page_num
         for i in range(1, len(self.pages)):
             # Look through all the upcoming pages
             next_page_num = (self.curr_page_num + i) % len(self.pages)
@@ -155,6 +196,16 @@ class Instrument(object):
 
     def advance_page(self):
         '''Go to next repeat or page'''
+        if self.random_pages:
+            # Create a distribution of the pages and their repeats, pick one at random
+            dist = []
+            for index, page in enumerate(self.pages):
+                for r in range(page.repeats):
+                    dist.append(index)
+            next_page_num = choice(dist)
+            self.curr_page_num = next_page_num
+            self.curr_rept_num = 0  # Reset, for this page or next page
+            return
         self.curr_rept_num += 1  # inc repeat number
         if self.curr_rept_num >= self.get_curr_page().repeats:
         # If we're overfowing repeats, time to go to next available page
@@ -169,25 +220,33 @@ class Instrument(object):
         return self.speed
         return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
 
-    def change_division(self, up_down):
+    def change_division(self, div):
         '''Find current instrument, inc or dec its beat division as appropriate'''
-        self.speed = up_down
-        return  # TODO handle direct set and up_down
-        if up_down == 1:
+        if div == "-":
             if self.speed == 0:
                 return
             self.speed -= 1
             return
-        if up_down == -1:
+        if div == "+":
             if self.speed == 4:
                 return
             self.speed += 1
+            return
+
+        # Direct set
+        self.speed = div
         return
 
     def get_curr_notes(self):
         grid = self.get_curr_page_grid()
         beat_pos = self.local_beat_position
-        beat_notes = grid[beat_pos]
+        beat_notes = [n for n in grid[beat_pos]]
+        if self.chaos > 0:  # If using chaos, switch up some notes
+            if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
+                if random() < self.chaos:
+                    rand_note = randint(0, self.height-1)
+                    beat_notes[rand_note] = NOTE_ON if beat_notes[rand_note] != NOTE_ON else NOTE_OFF
+                    # beat_notes = [n if random() < self.chaos else (NOTE_ON if n==NOTE_OFF else NOTE_OFF) for n in beat_notes]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
 
@@ -195,6 +254,11 @@ class Instrument(object):
         """Return all note-ons from the current beat, and all note-offs from the last"""
         notes_off = [self.cell_to_midi(c) for c in old_notes]
         notes_on = [self.cell_to_midi(c) for c in new_notes]
+        if self.sustain:
+            _notes_off = [n for n in notes_off if n not in notes_on]
+            _notes_on = [n for n in notes_on if n not in notes_off]
+            notes_off = _notes_off
+            notes_on = _notes_on
         notes_off = [n for n in notes_off if n<128 and n>0]
         notes_on = [n for n in notes_on if n<128 and n>0]
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
@@ -209,7 +273,12 @@ class Instrument(object):
           "Octave": self.octave,
           "Key": self.key,
           "Scale": self.scale,
-          "Pages": [p.save() for p in self.pages]
+          "Pages": [p.save() for p in self.pages],
+          "Speed": self.speed,
+          "IsDrum": self.isdrum,
+          "Sustain": self.sustain,
+          "Chaos": self.chaos,
+          "RandomRpt": self.random_pages,
         }
         return saved
 
@@ -217,6 +286,11 @@ class Instrument(object):
         self.octave = saved["Octave"]
         self.key = saved["Key"]
         self.scale = saved["Scale"]
+        self.speed = saved["Speed"]
+        self.isdrum = saved["IsDrum"]
+        self.sustain = saved["Sustain"]
+        self.chaos = saved["Chaos"]
+        self.random_pages = saved["RandomRpt"]
         self.pages = []
         for p in saved["Pages"]:
             page = Note_Grid(self.bars, self.height)

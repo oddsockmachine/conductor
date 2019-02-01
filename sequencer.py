@@ -23,8 +23,9 @@ class Sequencer(object):
         self.max_beat_division = 8
         self.scale = scale
         self.octave = octave  # Starting octave
-        self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, speed=0, bars=bars) for x in range(MAX_INSTRUMENTS)]  # limit to 16 midi channels
+        self.instruments = [Instrument(x, self.mport, key=key, scale=scale, octave=octave, speed=1, bars=bars) for x in range(MAX_INSTRUMENTS)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
+        self.z_mode = False
         # If we're loading, ignore all this and overwrite with info from file!
         if saved:
             self.load(saved)
@@ -37,6 +38,7 @@ class Sequencer(object):
             note = white_key_lookup.get(note-47)
             if note == None:  # Ugh, 0 is valid but falsey!
                 continue
+            # TODO in z-mode we may want to add note based on channel
             self.get_curr_instrument().touch_note(self.get_curr_instrument().local_beat_position, note)
         return
 
@@ -54,6 +56,9 @@ class Sequencer(object):
             'octave': str(self.get_curr_instrument().octave),
             'isdrum': self.get_curr_instrument().isdrum,
             'division': self.get_curr_instrument().get_beat_division_str(),
+            'random_rpt': self.get_curr_instrument().random_pages,
+            'sustain': self.get_curr_instrument().sustain,
+            'chaos': self.get_curr_instrument().chaos,
         }
         return status
 
@@ -67,11 +72,26 @@ class Sequencer(object):
 
     def get_led_grid(self):
         '''Get led status types for all cells of the grid, to be drawn by the display'''
-        note_grid = self.get_curr_instrument().get_curr_page_grid()
         led_grid = []
-        for c, column in enumerate(note_grid):  # columnn counter
-            led_grid.append([self.get_led_status(x, c) for x in column])
-        return led_grid
+        if not self.z_mode:
+            note_grid = self.get_curr_instrument().get_curr_page_grid()
+            for c, column in enumerate(note_grid):  # columnn counter
+                led_grid.append([self.get_led_status(x, c) for x in column])
+            return led_grid
+        else:
+            for i, ins in enumerate(self.instruments):
+                notes = ins.get_curr_notes()
+                beat = ins.local_beat_position
+                led_grid.append([NOTE_OFF for x in range(self.height)])
+                led_grid[i][beat] = LED_BEAT
+                for n in notes:
+                    led_grid[i][n] = LED_ACTIVE
+            return led_grid
+
+    def toggle_z_mode(self):
+        '''Do we want to operate in z-mode'''
+        self.z_mode = not self.z_mode
+        return
 
     def get_led_status(self, cell, beat_pos):
         '''Determine which type of LED should be shown for a given cell'''
@@ -160,7 +180,10 @@ class Sequencer(object):
     ###### CONTROL PASSTHROUGH METHODS ######
 
     def touch_note(self, x, y):
-        self.get_curr_instrument().touch_note(x, y)
+        if not self.z_mode:
+            self.get_curr_instrument().touch_note(x, y)
+        else:
+            self.instruments[x].touch_note(self.get_curr_instrument().local_beat_position, y)
 
     def change_division(self, up_down):
         '''Find current instrument, inc or dec its beat division as appropriate'''

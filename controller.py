@@ -91,7 +91,7 @@ class Controller(object):
         elif m['cmd'] == 'swap_drum_inst':
             self.sequencer.swap_drum_inst()
         elif m['cmd'] == 'change_octave':
-            self.sequencer.change_octave(m['octave'])
+            self.sequencer.change_octave(m['dir'])
         elif m['cmd'] == 'note':
             self.sequencer.touch_note(m['x'], m['y'])
         elif m['cmd'] == 'ins':
@@ -104,6 +104,14 @@ class Controller(object):
             self.sequencer.add_page()
         elif m['cmd'] == 'change_division':
             self.sequencer.change_division(m['div'])
+        elif m['cmd'] == 'random_rpt':
+            self.sequencer.get_curr_instrument().random_pages = False if self.sequencer.get_curr_instrument().random_pages else True
+        elif m['cmd'] == 'sustain':
+            self.sequencer.get_curr_instrument().sustain = False if self.sequencer.get_curr_instrument().sustain else True
+        elif m['cmd'] == 'chaos':
+            self.sequencer.get_curr_instrument().update_chaos(m['dir'])
+        elif m['cmd'] == 'z_mode':
+            self.sequencer.toggle_z_mode()
         return
 
     def process_midi_tick(self):

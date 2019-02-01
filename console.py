@@ -46,12 +46,12 @@ class Display(object):
         if c == ord('m'):
             m['cmd'] = 'cycle_key'
             m['dir'] = 1
-        # if c == ord('['):
-        #     m['cmd'] = 'change_division'
-        #     m['dir'] = -1
-        # if c == ord(']'):
-        #     m['cmd'] = 'change_division'
-            m['dir'] = 1
+        if c == ord('['):
+            m['cmd'] = 'change_division'
+            m['div'] = "-"
+        if c == ord(']'):
+            m['cmd'] = 'change_division'
+            m['div'] = "+"
         if c == ord('v'):
             m['cmd'] = 'cycle_scale'
             m['dir'] = -1
@@ -66,6 +66,18 @@ class Display(object):
         if c == ord('x'):
             m['cmd'] = 'change_octave'
             m['dir'] = 1
+        if c == ord('r'):
+            m['cmd'] = 'random_rpt'
+        if c == ord('t'):
+            m['cmd'] = 'sustain'
+        if c == ord('o'):
+            m['cmd'] = 'chaos'
+            m['dir'] = +1
+        if c == ord('p'):
+            m['cmd'] = 'chaos'
+            m['dir'] = -1
+        if c == ord('/'):
+            m['cmd'] = 'z_mode'
         if c == curses.KEY_MOUSE:
             _m = curses.getmouse()
             m = self.get_mouse_zone(_m)
@@ -110,9 +122,12 @@ class Display(object):
             'scale': status.get('scale')[:5].rjust(5),
             'octave': status.get('octave'),
             'type': "Drum" if (status.get('isdrum')==True) else "Inst",
-            'division': status.get('division')
+            'division': status.get('division'),
+            'rpt': "R" if status.get('random_rpt') else " ",
+            'sustain': "S" if status.get('sustain') else " ",
+            'chaos': status.get('chaos'),
         }
-        status_line_2 = "{key} {scale} +{octave}ve {type} >{division} ".format(**status_strs)
+        status_line_2 = "{key} {scale} +{octave}ve {type} >{division}  {rpt} {sustain} {chaos}".format(**status_strs)
         self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
         self.draw_ins_selector(status['ins_num'], status['ins_total'])
         self.draw_pages(status['page_num'], status['repeat_num'], status['page_stats'])
@@ -156,6 +171,23 @@ class Display(object):
                 win.addstr(y, x, glyph)#, curses.color_pair(4))
         win.refresh()
         return
+
+    def draw_z_grid(self, led_grid):
+        '''Take a led_grid/array from the sequencer and print it to the screen'''
+        sx = self.grid_x
+        sy = self.grid_y
+        win = curses.newwin(self.grid_h+2, (self.grid_w)+2, sy, sx)
+        win.border()
+        for c, column in enumerate(led_grid):  # row counter
+            for r, cell in enumerate(column):  # column counter
+                x = (c*2) + 1
+                y = (H-r-1) + 1
+                glyph = DISPLAY[cell]
+                win.addstr(y, x, glyph)#, curses.color_pair(4))
+        win.refresh()
+        return
+
+
 
     def draw_all(self, status, led_grid):
         self.draw_gui(status)
