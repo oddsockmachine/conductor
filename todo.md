@@ -3,7 +3,6 @@
 - Show root notes, pentatonic notes, etc in different colors/shades
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 - multi-instrument support
-- fix beat subdivion control - inc/dec instead of direct set
 
 ### Hardware
 - create color engine, for different themes, brightnesses etc

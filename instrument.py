@@ -218,7 +218,7 @@ class Instrument(object):
 
     def get_beat_division_str(self):
         return self.speed
-        return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
+        # return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
 
     def change_division(self, div):
         '''Find current instrument, inc or dec its beat division as appropriate'''
