@@ -1,3 +1,4 @@
 mido==1.2.9
 python-rtmidi==1.1.2
 adafruit-circuitpython-neotrellis==1.0.3
+RPI.GPIO

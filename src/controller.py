@@ -136,7 +136,7 @@ class Controller(object):
 
 
 def console_main(stdscr):
-    from console import Display
+    from interfaces.console import Display
     m = curses.mousemask(1)
     curses.mouseinterval(10)
     stdscr.nodelay(1)
@@ -147,7 +147,7 @@ def console_main(stdscr):
             controller.run()
 
 def hardware_main():
-    from hardware import Display
+    from interfaces.hardware import Display
     display = Display()
     print(mido.get_input_names())
     print(mido.get_output_names())

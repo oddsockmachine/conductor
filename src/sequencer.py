@@ -1,7 +1,7 @@
 #coding=utf-8
 from time import sleep
 from constants import *
-from instrument import Instrument
+from instruments.instrument import Instrument
 from note_conversion import *
 
 class Sequencer(object):

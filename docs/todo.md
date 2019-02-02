@@ -1,8 +1,8 @@
 ## Top
+- multi-instrument support
 - create color engine, for different themes, brightnesses etc
 - Show root notes, pentatonic notes, etc in different colors/shades
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
-- multi-instrument support
 
 ### Hardware
 - create color engine, for different themes, brightnesses etc
