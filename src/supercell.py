@@ -2,30 +2,21 @@ from sequencer import Sequencer
 from constants import *
 from time import sleep, time
 from datetime import datetime
-import mido
 from json import dump, load
-import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--set", help="Filename of previous set to load", type=str)
-parser.add_argument("--hw",  help="Use real hardware", type=bool)
-args = parser.parse_args()
-print(args)
-
-class Controller(object):
-    """docstring for Controller."""
-    def __init__(self, display, mport, mportin):
-        super(Controller, self).__init__()
+class Supercell(object):
+    """docstring for Supercell."""
+    def __init__(self, display, mport, mportin, saved_set=None):
+        super(Supercell, self).__init__()
         self.mport = mport
         self.mportin = mportin
         self.beatclockcount = 0
         self.mportin.callback = self.process_incoming_midi()
         # Check for loading previous set
-        if args.set:
-            saved = args.set
-            with open(saved, 'r') as saved_file:
-                saved_set = load(saved_file)
-            self.sequencer = Sequencer(mport, saved=saved_set)
+        if saved_set:
+            with open(saved_set, 'r') as saved_file:
+                saved_data = load(saved_file)
+            self.sequencer = Sequencer(mport, saved=saved_data)
         else:
             self.sequencer = Sequencer(mport, saved=None)
         self.last = time()
@@ -58,11 +49,7 @@ class Controller(object):
 
     def command_cb(self, m):
         self.process_cmds(m)
-        # if m['cmd'] == 'note':
-        #     self.sequencer.touch_note(m['x'], m['y'])
         return
-
-
 
     def get_cmds(self):
         m = self.display.get_cmds()
@@ -133,46 +120,3 @@ class Controller(object):
         with open(filename, 'w') as savefile:
             saved = self.sequencer.save()
             dump(saved, savefile)
-
-
-def console_main(stdscr):
-    from interfaces.console import Display
-    m = curses.mousemask(1)
-    curses.mouseinterval(10)
-    stdscr.nodelay(1)
-    display = Display(stdscr)
-    with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
-        with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
-            controller = Controller(display, mport, mportin)
-            controller.run()
-
-def hardware_main():
-    from interfaces.hardware import Display
-    display = Display()
-    print(mido.get_input_names())
-    print(mido.get_output_names())
-    with mido.open_output('f_midi:f_midi 16:0') as mport:
-        with mido.open_input('f_midi:f_midi 16:0') as mportin:
-            print(mportin)
-            print(mport)
-            controller = Controller(display, mport, mportin)
-            controller.sequencer.instruments[0].add_page(0)
-            controller.sequencer.instruments[0].add_page(1)
-            controller.sequencer.instruments[0].add_page(1)
-            controller.sequencer.instruments[0].inc_page_repeats(0)
-            controller.sequencer.instruments[0].inc_page_repeats(0)
-            controller.sequencer.instruments[0].add_page(1)
-            controller.sequencer.instruments[0].inc_page_repeats(1)
-            controller.sequencer.instruments[0].inc_page_repeats(0)
-            controller.sequencer.instruments[3].add_page(1)
-            controller.sequencer.instruments[3].add_page(1)
-            controller.sequencer.instruments[3].inc_page_repeats(0)
-            controller.sequencer.instruments[6].add_page(1)
-            controller.run()
-
-if __name__ == '__main__':
-    if not args.hw:
-        import curses
-        curses.wrapper(console_main)
-    else:
-        hardware_main()
