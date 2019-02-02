@@ -1,4 +1,4 @@
-from sequencer import Sequencer
+from controller import Controller
 from constants import *
 from time import sleep, time
 from datetime import datetime
@@ -16,9 +16,9 @@ class Supercell(object):
         if saved_set:
             with open(saved_set, 'r') as saved_file:
                 saved_data = load(saved_file)
-            self.sequencer = Sequencer(mport, saved=saved_data)
+            self.controller = Controller(mport, saved=saved_data)
         else:
-            self.sequencer = Sequencer(mport, saved=None)
+            self.controller = Controller(mport, saved=None)
         self.last = time()
         self.display = display
         self.display.command_cb = self.command_cb
@@ -29,7 +29,7 @@ class Supercell(object):
         while True:
             self.get_cmds()
             sleep(0.1)  # TODO REMOVE TODO
-            # self.sequencer.step_beat()  # TODO REMOVE TODO
+            # self.controller.step_beat()  # TODO REMOVE TODO
             self.draw()  # TODO REMOVE TODO
         pass
 
@@ -41,10 +41,10 @@ class Supercell(object):
             if message.type == "clock":
                 tick = self.process_midi_tick()
                 if tick:
-                    self.sequencer.step_beat()
+                    self.controller.step_beat()
                     # self.draw()
             if message.type == "note_on":
-                self.sequencer.add_notes_from_midi([message.note])
+                self.controller.add_notes_from_midi([message.note])
         return _process_incoming_midi
 
     def command_cb(self, m):
@@ -68,37 +68,37 @@ class Supercell(object):
         elif m['cmd'] == 'save':
             self.save()
         elif m['cmd'] == 'step_beat':
-            self.sequencer.step_beat()
+            self.controller.step_beat()
         elif m['cmd'] == 'clear_page':
-            self.sequencer.clear_page()
+            self.controller.clear_page()
         elif m['cmd'] == 'cycle_key':
-            self.sequencer.cycle_key(m['dir'])
+            self.controller.cycle_key(m['dir'])
         elif m['cmd'] == 'cycle_scale':
-            self.sequencer.cycle_scale(m['dir'])
+            self.controller.cycle_scale(m['dir'])
         elif m['cmd'] == 'swap_drum_inst':
-            self.sequencer.swap_drum_inst()
+            self.controller.swap_drum_inst()
         elif m['cmd'] == 'change_octave':
-            self.sequencer.change_octave(m['dir'])
+            self.controller.change_octave(m['dir'])
         elif m['cmd'] == 'note':
-            self.sequencer.touch_note(m['x'], m['y'])
+            self.controller.touch_note(m['x'], m['y'])
         elif m['cmd'] == 'ins':
-            self.sequencer.current_visible_instrument = m['ins']
+            self.controller.current_visible_instrument = m['ins']
         elif m['cmd'] == 'inc_rep':
-            self.sequencer.inc_rep(m['page'])
+            self.controller.inc_rep(m['page'])
         elif m['cmd'] == 'dec_rep':
-            self.sequencer.dec_rep(m['page'])
+            self.controller.dec_rep(m['page'])
         elif m['cmd'] == 'add_page':
-            self.sequencer.add_page()
+            self.controller.add_page()
         elif m['cmd'] == 'change_division':
-            self.sequencer.change_division(m['div'])
+            self.controller.change_division(m['div'])
         elif m['cmd'] == 'random_rpt':
-            self.sequencer.get_curr_instrument().random_pages = False if self.sequencer.get_curr_instrument().random_pages else True
+            self.controller.get_curr_instrument().random_pages = False if self.controller.get_curr_instrument().random_pages else True
         elif m['cmd'] == 'sustain':
-            self.sequencer.get_curr_instrument().sustain = False if self.sequencer.get_curr_instrument().sustain else True
+            self.controller.get_curr_instrument().sustain = False if self.controller.get_curr_instrument().sustain else True
         elif m['cmd'] == 'chaos':
-            self.sequencer.get_curr_instrument().update_chaos(m['dir'])
+            self.controller.get_curr_instrument().update_chaos(m['dir'])
         elif m['cmd'] == 'z_mode':
-            self.sequencer.toggle_z_mode()
+            self.controller.toggle_z_mode()
         return
 
     def process_midi_tick(self):
@@ -110,13 +110,13 @@ class Supercell(object):
         return False
 
     def draw(self):
-        status = self.sequencer.get_status()
-        led_grid = self.sequencer.get_led_grid()
+        status = self.controller.get_status()
+        led_grid = self.controller.get_led_grid()
         self.display.draw_all(status, led_grid)
 
     def save(self):
         print("Saving current grid to {}.cell".format(datetime.now()))
         filename = './saved/' + str(datetime.now()).split('.')[0] + '.json'
         with open(filename, 'w') as savefile:
-            saved = self.sequencer.save()
+            saved = self.controller.save()
             dump(saved, savefile)

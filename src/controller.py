@@ -4,11 +4,11 @@ from constants import *
 from instruments.instrument import Instrument
 from note_conversion import *
 
-class Sequencer(object):
-    """docstring for Sequencer."""
+class Controller(object):
+    """docstring for Controller."""
     # def __init__(self, mport, bars=int(W/4)):
     def __init__(self, mport, saved=None, key="e", scale="pentatonic_maj", octave=2, bars=int(W/4), height=H):
-        super(Sequencer, self).__init__()
+        super(Controller, self).__init__()
         self.mport = mport
         if key not in KEYS:
             print('Requested key {} not known'.format(key))
@@ -230,7 +230,7 @@ class Sequencer(object):
 import unittest
 class TestInstrument(unittest.TestCase):
     def test_instrument_nums(self):
-        seq = Sequencer(None)
+        seq = Controller(None)
         self.assertEqual(seq.get_curr_instrument_num(), 1)
         self.assertEqual(seq.get_total_instrument_num(), 1)
         seq.next_instrument()
@@ -248,7 +248,7 @@ class TestInstrument(unittest.TestCase):
         self.assertEqual(seq.get_curr_instrument_num(), 1)
 
     def test_multi_instrument_notes(self):
-        seq = Sequencer(None)
+        seq = Controller(None)
         seq.add_instrument("e", "major")
         seq.touch_note(0,3)
         seq.touch_note(1,4)
@@ -265,7 +265,7 @@ class TestInstrument(unittest.TestCase):
         self.assertEqual(seq.get_curr_instrument().get_curr_notes(), [4])
 
     def test_led_grid(self):
-        seq = Sequencer(None)
+        seq = Controller(None)
         seq.touch_note(2,3)
         seq.touch_note(2,4)
         seq.touch_note(2,5)
