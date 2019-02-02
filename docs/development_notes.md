@@ -4,9 +4,9 @@
 
 #### Cursor
 
-#### Controller
+#### Supercell
 
-#### Sequencer
+#### Conductor
   - A collection of Instruments operating in-sync
   - Provides no major added functionality, except to synchronize and control all of its Instruments
   - Provides a top level interface analagous to a real-world sequencer
