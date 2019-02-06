@@ -15,7 +15,6 @@ class Sequencer(object):
             exit()
         self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
         self.mport = mport
-        # logging.info(mport)
         self.height = height
         self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
         self.width = self.bars * 4
@@ -27,7 +26,6 @@ class Sequencer(object):
         self.isdrum = False  # Chromatic instrument for drum tracks
         self.random_pages = False  #  Pick page at random
         self.sustain = True  # Don't retrigger notes if this is True
-        self.chaos = 0.0  # Add some randomness to notes
         self.pages = [Note_Grid(self.bars, self.height)]
         if key not in KEYS:
             print('Requested key {} not known'.format(key))
@@ -40,13 +38,6 @@ class Sequencer(object):
         self.octave = octave  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, height)  # Function is cached for convenience
-
-    def update_chaos(self, dir):
-        if dir == 1:
-            self.chaos += 0.01
-        elif self.chaos > 0.01:
-            self.chaos -= 0.01
-        return
 
     def set_key(self, key):
         self.key = key
@@ -219,12 +210,12 @@ class Sequencer(object):
         grid = self.get_curr_page_grid()
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
-        if self.chaos > 0:  # If using chaos, switch up some notes
-            if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
-                if random() < self.chaos:
-                    rand_note = randint(0, self.height-1)
-                    beat_notes[rand_note] = NOTE_ON if beat_notes[rand_note] != NOTE_ON else NOTE_OFF
-                    # beat_notes = [n if random() < self.chaos else (NOTE_ON if n==NOTE_OFF else NOTE_OFF) for n in beat_notes]
+        # if self.chaos > 0:  # If using chaos, switch up some notes
+        #     if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
+        #         if random() < self.chaos:
+        #             rand_note = randint(0, self.height-1)
+        #             beat_notes[rand_note] = NOTE_ON if beat_notes[rand_note] != NOTE_ON else NOTE_OFF
+        #             # beat_notes = [n if random() < self.chaos else (NOTE_ON if n==NOTE_OFF else NOTE_OFF) for n in beat_notes]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
 
@@ -255,7 +246,6 @@ class Sequencer(object):
           "Speed": self.speed,
           "IsDrum": self.isdrum,
           "Sustain": self.sustain,
-          "Chaos": self.chaos,
           "RandomRpt": self.random_pages,
         }
         return saved
@@ -267,7 +257,6 @@ class Sequencer(object):
         self.speed = saved["Speed"]
         self.isdrum = saved["IsDrum"]
         self.sustain = saved["Sustain"]
-        self.chaos = saved["Chaos"]
         self.random_pages = saved["RandomRpt"]
         self.pages = []
         for p in saved["Pages"]:

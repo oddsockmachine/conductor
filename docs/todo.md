@@ -1,6 +1,7 @@
 ## Top
 - numbered saved sets (easier to select/show on LCD)
 - multi-instrument support
+  - Handle saving/loading of different instruments
 - create color engine, for different themes, brightnesses etc
 - Show root notes, pentatonic notes, etc in different colors/shades
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
