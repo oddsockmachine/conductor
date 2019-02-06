@@ -1,8 +1,10 @@
 ## Top
+- numbered saved sets (easier to select/show on LCD)
 - multi-instrument support
 - create color engine, for different themes, brightnesses etc
 - Show root notes, pentatonic notes, etc in different colors/shades
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
+- https://www.lowes.com/pd/OPTIX-18-in-x-24-in-x-0-22-in-Clear-Acrylic-Sheet/3502292
 
 ### Hardware
 - create color engine, for different themes, brightnesses etc
@@ -110,3 +112,6 @@ sprint.line1("Select:")
 - Pitch is triggered when droplet reaches bottom
 - Touch above note to drag/extend it
 - Touch below note to catch/remove it
+
+### Transformer
+- Take a sequencer pattern, press one button to mutate by a set amount, another button to save the current state

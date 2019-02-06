@@ -99,6 +99,8 @@ class Supercell(object):
             self.conductor.get_curr_instrument().update_chaos(m['dir'])
         elif m['cmd'] == 'z_mode':
             self.conductor.toggle_z_mode()
+        elif m['cmd'] == 'add_instrument':
+            self.conductor.add_instrument(m['type'])
         return
 
     def process_midi_tick(self):

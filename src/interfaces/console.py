@@ -78,6 +78,9 @@ class Display(object):
             m['dir'] = -1
         if c == ord('/'):
             m['cmd'] = 'z_mode'
+        if c in [ord('1'), ord('2'), ord('3')]:
+            m['cmd'] = 'add_instrument'
+            m['type'] = int(chr(c))
         if c == curses.KEY_MOUSE:
             _m = curses.getmouse()
             m = self.get_mouse_zone(_m)
