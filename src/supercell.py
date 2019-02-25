@@ -1,8 +1,10 @@
 from conductor import Conductor
+from util import get_next_filename
 from constants import *
 from time import sleep, time
 from datetime import datetime
 from json import dump, load
+
 
 class Supercell(object):
     """docstring for Supercell."""
@@ -117,8 +119,9 @@ class Supercell(object):
         self.display.draw_all(status, led_grid)
 
     def save(self):
-        print("Saving current grid to {}.cell".format(datetime.now()))
-        filename = './saved/' + str(datetime.now()).split('.')[0] + '.json'
+        # filename = './saved/' + str(datetime.now()).split('.')[0] + '.json'
+        filename = get_next_filename('./saved/', '.json')
+        print("Saving current grid to {}".format(filename))
         with open(filename, 'w') as savefile:
             saved = self.conductor.save()
             dump(saved, savefile)

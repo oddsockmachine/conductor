@@ -124,13 +124,12 @@ class Display(object):
             'key': status.get('key'),
             'scale': status.get('scale')[:5].rjust(5),
             'octave': status.get('octave'),
-            'type': "Drum" if (status.get('isdrum')==True) else "Inst",
+            'type': status.get('type'),
             'division': status.get('division'),
             'rpt': "R" if status.get('random_rpt') else " ",
             'sustain': "S" if status.get('sustain') else " ",
-            'chaos': status.get('chaos'),
         }
-        status_line_2 = "{key} {scale} +{octave}ve {type} >{division}  {rpt} {sustain} {chaos}".format(**status_strs)
+        status_line_2 = "{key} {scale} +{octave}ve {type} >{division}  {rpt} {sustain}".format(**status_strs)
         self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
         self.draw_ins_selector(status['ins_num'], status['ins_total'])
         self.draw_pages(status['page_num'], status['repeat_num'], status['page_stats'])

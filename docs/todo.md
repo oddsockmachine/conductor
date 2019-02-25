@@ -1,9 +1,8 @@
 ## Top
-- numbered saved sets (easier to select/show on LCD)
 - multi-instrument support
-  - Handle saving/loading of different instruments
-- create color engine, for different themes, brightnesses etc
-- Show root notes, pentatonic notes, etc in different colors/shades
+- create color engine, for different themes, brightnesses, background gradient, etc https://www.sweetwater.com/store/detail/Fire--akai-professional-fire-grid-controller-for-fl-studio
+- Show gridlines, root notes, pentatonic notes, etc in different colors/shades
+- call background(x, y) to get a color code for general background pixel, as chosen by some other setting/algo
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 - https://www.lowes.com/pd/OPTIX-18-in-x-24-in-x-0-22-in-Clear-Acrylic-Sheet/3502292
 
@@ -12,12 +11,14 @@
 
 ### synchronize with Ableton
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
+- quick hack is to press a button to sync that
 
 ### Save and load
 - How to do that when running on external hardware? Startup menu? Probably only viable via ssh connection
 
 ### convert everything to asynchronous/event driven
 - midi time and button pressed events kind of already are, can it be better?
+- Not sure necessary, speed is more than adequate now
 
 ### Z-mode
 - Usability tweaks, like instrument speed etc
@@ -26,11 +27,6 @@
 - Could it show two different 1/2 size instruments, one above the other?
 - Or a 3/4 size instrument with a partial menu?
 - Selectable, pluggable instruments - ie pick up to 16 of sequencer, drum randomizer, random generator etc
-
-### Generic Data Structure
-- Would a more generic data structure for notes, pages, instruments be more efficient
-- ie a giant multidimensional array
-- All lookups are just slices of the array
 
 ### Handle LED colors better
 - Show root notes, pentatonic notes, etc in different colors/shades
@@ -73,6 +69,11 @@ sprint.line1("Select:")
 
 ## Instruments
 
+- Handle saving/loading of different instruments
+- Better inheritance
+- Each instrument should handle their own status
+- How to deal with multiple options for each instrument type?
+
 ### Grid Sequencer
 
 ### Z-Mode
@@ -113,6 +114,11 @@ sprint.line1("Select:")
 - Pitch is triggered when droplet reaches bottom
 - Touch above note to drag/extend it
 - Touch below note to catch/remove it
+
+## BeatMaker
+- Each drum instrument has a vertical track
+- Each vertical cell is a different pattern (or no pattern) for that instrument
+- Select a set of patters for each instrument, change on the fly
 
 ### Transformer
 - Take a sequencer pattern, press one button to mutate by a set amount, another button to save the current state

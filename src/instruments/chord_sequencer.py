@@ -13,9 +13,9 @@ class ChordSequencer(object):
         if not isinstance(ins_num, int):
             print("ChordSequencer num {} must be an int".format(ins_num))
             exit()
+        self.type = "Chord Sequencer"
         self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
         self.mport = mport
-        # logging.info(mport)
         self.height = height
         self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
         self.width = self.bars * 4

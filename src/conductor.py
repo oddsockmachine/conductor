@@ -68,11 +68,10 @@ class Conductor(object):
             'key': str(self.key),
             'scale': str(self.scale),
             'octave': str(self.get_curr_instrument().octave),
-            'isdrum': self.get_curr_instrument().isdrum,
+            'type': self.get_curr_instrument().type,
             'division': self.get_curr_instrument().get_beat_division_str(),
             'random_rpt': self.get_curr_instrument().random_pages,
             'sustain': self.get_curr_instrument().sustain,
-            'chaos': self.get_curr_instrument().chaos,
         }
         return status
 
