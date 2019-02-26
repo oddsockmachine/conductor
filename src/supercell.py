@@ -15,6 +15,9 @@ class Supercell(object):
         self.beatclockcount = 0
         self.mportin.callback = self.process_incoming_midi()
         # Check for loading previous set
+        # TODO show set loading display
+        display.draw_load_screen()
+        sleep(10)
         if saved_set:
             with open(saved_set, 'r') as saved_file:
                 saved_data = load(saved_file)
@@ -120,7 +123,7 @@ class Supercell(object):
 
     def save(self):
         # filename = './saved/' + str(datetime.now()).split('.')[0] + '.json'
-        filename = get_next_filename('./saved/', '.json')
+        filename = get_next_filename(save_location, save_extension)
         print("Saving current grid to {}".format(filename))
         with open(filename, 'w') as savefile:
             saved = self.conductor.save()

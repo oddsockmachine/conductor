@@ -9,6 +9,8 @@ from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 print("Done")
 
+AUTO_WRITE = False
+
 class Display(object):
     """docstring for Display."""
     def __init__(self, w=W, h=H, command_cb=None):
@@ -18,6 +20,9 @@ class Display(object):
         print("Done")
         trelli = [[NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x31)],
                   [NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30)],]
+        if AUTO_WRITE:
+            for t in trelli:  # Stop autowriting - otherwise, we flush whole buffer every time we set each pixel
+                t.pixels.auto_write = False
         self.trellis = MultiTrellis(trelli)
         self.grid_h = h
         self.grid_w = w
@@ -66,6 +71,9 @@ class Display(object):
         t_start = perf_counter_ns()
         for diff in diffs:
             self.trellis.color(diff[0],diff[1],diff[2])
+        if AUTO_WRITE:
+            for t in trelli:
+                t.pixels.show()
         t_stop = perf_counter_ns()
         logger.info(str(t1_stop-t1_start))
         return

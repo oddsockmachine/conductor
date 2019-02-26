@@ -16,3 +16,11 @@ def get_next_filename(saved_location, extension):
     next_file = saved_location + str(next_num) + extension
     # print(next_file)
     return next_file
+
+def get_all_set_file_numbers(saved_location, extension):
+    files = glob(saved_location+'*'+extension)
+    # print(files)
+    files = [f for f in files if fullmatch(saved_location+'\d+\.json', f)]
+    files = [f.replace(saved_location,'').replace(extension,'') for f in files if fullmatch(saved_location+'\d+'+extension, f)]
+    files = sorted([int(f) for f in files])
+    return files

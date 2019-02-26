@@ -4,17 +4,16 @@
 - Show gridlines, root notes, pentatonic notes, etc in different colors/shades
 - call background(x, y) to get a color code for general background pixel, as chosen by some other setting/algo
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
-- https://www.lowes.com/pd/OPTIX-18-in-x-24-in-x-0-22-in-Clear-Acrylic-Sheet/3502292
 
-### Hardware
-- create color engine, for different themes, brightnesses etc
 
 ### synchronize with Ableton
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 - quick hack is to press a button to sync that
 
 ### Save and load
-- How to do that when running on external hardware? Startup menu? Probably only viable via ssh connection
+- On startup, show colored pixels for numbered sets. Allows 255 memory slots, plus use 1 for empty
+- Show that screen as a menu
+- Click an empty pixel to save there
 
 ### convert everything to asynchronous/event driven
 - midi time and button pressed events kind of already are, can it be better?
@@ -22,6 +21,8 @@
 
 ### Z-mode
 - Usability tweaks, like instrument speed etc
+- Will probably ignore, now that 16 instruments may all be different type
+- Maybe use as a display mode instead
 
 ### Generic Display
 - Could it show two different 1/2 size instruments, one above the other?
@@ -29,18 +30,11 @@
 - Selectable, pluggable instruments - ie pick up to 16 of sequencer, drum randomizer, random generator etc
 
 ### Handle LED colors better
+- create color engine, for different themes, brightnesses etc
 - Show root notes, pentatonic notes, etc in different colors/shades
 - Root note for pentatonics
 - root and pentatonic for modes
 - Should be handled by sequencer.get_led_status/get_led_grid, seq has access to scale and cell info
-
-### Transfer to Ableton
-- Button/whatever to trigger transfer currently playing instrument (or all) to ableton clips
-- Send cmds to start recording at start of page/bar for each active instrument/channel, then stop recording once page(s) completed
-- Could do the same thing in reverse to import and manipulate live midi
-
-### unit tests remaining
-- for controller, display(?), recent new features
 
 ### Performance improvements
 - fork trellis, seesaw etc
@@ -122,3 +116,13 @@ sprint.line1("Select:")
 
 ### Transformer
 - Take a sequencer pattern, press one button to mutate by a set amount, another button to save the current state
+
+
+
+### Transfer to Ableton
+- Button/whatever to trigger transfer currently playing instrument (or all) to ableton clips
+- Send cmds to start recording at start of page/bar for each active instrument/channel, then stop recording once page(s) completed
+- Could do the same thing in reverse to import and manipulate live midi
+
+### unit tests remaining
+- for controller, display(?), recent new features

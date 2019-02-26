@@ -2,6 +2,8 @@
 import logging
 logging.basicConfig(filename='sequencer.log',level=logging.DEBUG)
 
+save_location = './saved/'
+save_extension = '.json'
 
 THEME = "A"
 # The ints used to represent the state of leds on an led_grid

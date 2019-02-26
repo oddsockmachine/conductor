@@ -18,8 +18,8 @@ def console_main(stdscr):
     display = Display(stdscr)
     with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
-            controller = Supercell(display, mport, mportin, args.set)
-            controller.run()
+            supercell = Supercell(display, mport, mportin, args.set)
+            supercell.run()
 
 def hardware_main():
     from interfaces.hardware import Display
@@ -30,20 +30,20 @@ def hardware_main():
         with mido.open_input('f_midi:f_midi 16:0') as mportin:
             print(mportin)
             print(mport)
-            controller = Supercell(display, mport, mportin, args.set)
-            controller.sequencer.instruments[0].add_page(0)
-            controller.sequencer.instruments[0].add_page(1)
-            controller.sequencer.instruments[0].add_page(1)
-            controller.sequencer.instruments[0].inc_page_repeats(0)
-            controller.sequencer.instruments[0].inc_page_repeats(0)
-            controller.sequencer.instruments[0].add_page(1)
-            controller.sequencer.instruments[0].inc_page_repeats(1)
-            controller.sequencer.instruments[0].inc_page_repeats(0)
-            controller.sequencer.instruments[3].add_page(1)
-            controller.sequencer.instruments[3].add_page(1)
-            controller.sequencer.instruments[3].inc_page_repeats(0)
-            controller.sequencer.instruments[6].add_page(1)
-            controller.run()
+            supercell = Supercell(display, mport, mportin, args.set)
+            supercell.sequencer.instruments[0].add_page(0)
+            supercell.sequencer.instruments[0].add_page(1)
+            supercell.sequencer.instruments[0].add_page(1)
+            supercell.sequencer.instruments[0].inc_page_repeats(0)
+            supercell.sequencer.instruments[0].inc_page_repeats(0)
+            supercell.sequencer.instruments[0].add_page(1)
+            supercell.sequencer.instruments[0].inc_page_repeats(1)
+            supercell.sequencer.instruments[0].inc_page_repeats(0)
+            supercell.sequencer.instruments[3].add_page(1)
+            supercell.sequencer.instruments[3].add_page(1)
+            supercell.sequencer.instruments[3].inc_page_repeats(0)
+            supercell.sequencer.instruments[6].add_page(1)
+            supercell.run()
 
 if __name__ == '__main__':
     if not args.hw:
