@@ -44,7 +44,7 @@ def set_all(wait=0.1, col=YELLOW):
     for x in range(16):
         for y in range(16):
             trellis.color(x, y, col)
-            sleep(wait)
+            # sleep(wait)
     for ts in trelli:
         for t in ts:
             t.pixels.show()
@@ -52,5 +52,8 @@ def set_all(wait=0.1, col=YELLOW):
 # set_all(wait, OFF)
 print("low")
 set_all(wait, LOW)
+print("done")
+sleep(5)
 print("off")
 set_all(wait, OFF)
+print("done")
