@@ -18,7 +18,7 @@ trelli = [
     [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
     [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],
 
-for t in trelli:  # Stop autowriting - otherwise, we flush whole buffer every time we set each pixel
+for t in trelli:
     t.pixels.auto_write = False
                     ]
 trellis = MultiTrellis(trelli)
