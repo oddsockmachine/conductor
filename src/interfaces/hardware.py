@@ -75,6 +75,7 @@ class Display(object):
         # t_start = perf_counter()
         for diff in diffs:
             self.trellis.color(diff[0],diff[1],diff[2])
+            sleep(0.001)
         if len(diffs)>0:
             if AUTO_WRITE:
                 for ts in self.trellis._trelli:
