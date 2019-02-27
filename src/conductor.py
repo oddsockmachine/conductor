@@ -24,7 +24,7 @@ class Conductor(object):
         self.max_beat_division = 8
         self.scale = scale
         self.octave = octave  # Starting octave
-        self.instruments = [instrument_lookup(1)(ins_num=x, mport=self.mport, key=key, scale=scale, octave=octave, speed=1, bars=bars) for x in range(1)]  # limit to 16 midi channels
+        self.instruments = [instrument_lookup(1)(ins_num=x, mport=self.mport, key=key, scale=scale, octave=octave, speed=1, bars=bars) for x in range(16)]  # limit to 16 midi channels
         self.current_visible_instrument = 0
         self.z_mode = False
         # If we're loading, ignore all this and overwrite with info from file!
