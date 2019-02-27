@@ -1,6 +1,6 @@
 from constants import *
 from note_conversion import SCALES
-from time import perf_counter_ns
+from time import perf_counter
 print("Importing hardware connections")
 from board import SCL, SDA, D13, D6
 import busio
@@ -68,13 +68,13 @@ class Display(object):
                     # self.trellis.color(x, y, self.led_matrix[x][y])
                 self.old_led_matrix[x][y] = self.led_matrix[x][y]
         # This method might be better once the grid is much bigger
-        t_start = perf_counter_ns()
+        t_start = perf_counter()
         for diff in diffs:
             self.trellis.color(diff[0],diff[1],diff[2])
         if AUTO_WRITE:
             for t in trelli:
                 t.pixels.show()
-        t_stop = perf_counter_ns()
+        t_stop = perf_counter()
         logger.info(str(t1_stop-t1_start))
         return
 

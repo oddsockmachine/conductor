@@ -17,7 +17,7 @@ class Supercell(object):
         # Check for loading previous set
         # TODO show set loading display
         display.draw_load_screen()
-        sleep(10)
+        # sleep(10)
         if saved_set:
             with open(saved_set, 'r') as saved_file:
                 saved_data = load(saved_file)
@@ -100,8 +100,8 @@ class Supercell(object):
             self.conductor.get_curr_instrument().random_pages = False if self.conductor.get_curr_instrument().random_pages else True
         elif m['cmd'] == 'sustain':
             self.conductor.get_curr_instrument().sustain = False if self.conductor.get_curr_instrument().sustain else True
-        elif m['cmd'] == 'chaos':
-            self.conductor.get_curr_instrument().update_chaos(m['dir'])
+        # elif m['cmd'] == 'chaos':
+        #     self.conductor.get_curr_instrument().update_chaos(m['dir'])
         elif m['cmd'] == 'z_mode':
             self.conductor.toggle_z_mode()
         elif m['cmd'] == 'add_instrument':

@@ -70,12 +70,12 @@ class Display(object):
             m['cmd'] = 'random_rpt'
         if c == ord('t'):
             m['cmd'] = 'sustain'
-        if c == ord('o'):
-            m['cmd'] = 'chaos'
-            m['dir'] = +1
-        if c == ord('p'):
-            m['cmd'] = 'chaos'
-            m['dir'] = -1
+        # if c == ord('o'):
+        #     m['cmd'] = 'chaos'
+        #     m['dir'] = +1
+        # if c == ord('p'):
+        #     m['cmd'] = 'chaos'
+        #     m['dir'] = -1
         if c == ord('/'):
             m['cmd'] = 'z_mode'
         if c in [ord('1'), ord('2'), ord('3')]:
