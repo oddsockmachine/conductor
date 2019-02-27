@@ -1,6 +1,6 @@
 from constants import *
 from note_conversion import SCALES
-from time import perf_counter
+# from time import perf_counter
 print("Importing hardware connections")
 from board import SCL, SDA, D13, D6
 import busio
@@ -9,7 +9,7 @@ from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 print("Done")
 
-AUTO_WRITE = False
+AUTO_WRITE = True
 
 class Display(object):
     """docstring for Display."""
@@ -18,11 +18,15 @@ class Display(object):
         print("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
         print("Done")
-        trelli = [[NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x31)],
-                  [NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30)],]
+        trelli = [
+            [NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
+            [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
+            [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
+            [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],]
         if AUTO_WRITE:
-            for t in trelli:  # Stop autowriting - otherwise, we flush whole buffer every time we set each pixel
-                t.pixels.auto_write = False
+            for ts in trelli:
+                for t in ts:
+                    t.pixels.auto_write = False
         self.trellis = MultiTrellis(trelli)
         self.grid_h = h
         self.grid_w = w
@@ -68,14 +72,15 @@ class Display(object):
                     # self.trellis.color(x, y, self.led_matrix[x][y])
                 self.old_led_matrix[x][y] = self.led_matrix[x][y]
         # This method might be better once the grid is much bigger
-        t_start = perf_counter()
+        # t_start = perf_counter()
         for diff in diffs:
             self.trellis.color(diff[0],diff[1],diff[2])
         if AUTO_WRITE:
-            for t in trelli:
-                t.pixels.show()
-        t_stop = perf_counter()
-        logger.info(str(t1_stop-t1_start))
+            for ts in trelli:
+                for t in ts:
+                    t.pixels.show()
+        # t_stop = perf_counter()
+        # logger.info(str(t1_stop-t1_start))
         return
 
     def draw_note_grid(self, led_grid):
