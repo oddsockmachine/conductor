@@ -186,3 +186,6 @@ class Display(object):
                     self.command_cb({'cmd': 'note', 'x': xcoord, 'y': self.grid_h-1-ycoord})
             return
         return button_cb
+
+    def draw_load_screen():
+        return
