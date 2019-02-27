@@ -33,12 +33,14 @@ from time import sleep
 PURPLE = (180, 0, 255)
 
 def set_all(wait=0.1, col=YELLOW):
-    for x in range(8):
-        for y in range(8):
+    for x in range(16):
+        for y in range(16):
             trellis.color(x, y, col)
             sleep(wait)
 
 
 # set_all(0.5, OFF)
+print("low")
 set_all(0.5, LOW)
+print("off")
 set_all(0.5, OFF)
