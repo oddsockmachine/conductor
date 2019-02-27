@@ -27,7 +27,7 @@ for ts in trelli:
         print(type(t))
         t.pixels.auto_write = False
 
-
+print('''')
 wait = 0.05
 #some color definitions
 OFF = (0, 0, 0)
