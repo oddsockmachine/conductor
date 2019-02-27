@@ -8,7 +8,7 @@ import digitalio
 from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 print("Done")
-
+from time import sleep
 AUTO_WRITE = True
 
 class Display(object):
