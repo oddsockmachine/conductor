@@ -36,7 +36,9 @@ class Display(object):
         print("Initializing Trellis")
         for y in range(h):
             for x in range(w):
+                sleep(0.01)
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_RISING)
+                sleep(0.01)
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_FALLING)
                 self.trellis.set_callback(x, y, button_cb)
         self.seq_button = digitalio.DigitalInOut(D13)
