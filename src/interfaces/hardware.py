@@ -187,5 +187,5 @@ class Display(object):
             return
         return button_cb
 
-    def draw_load_screen():
+    def draw_load_screen(self):
         return
