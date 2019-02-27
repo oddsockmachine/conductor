@@ -9,7 +9,7 @@ from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 print("Done")
 
-AUTO_WRITE = False
+AUTO_WRITE = True
 
 class Display(object):
     """docstring for Display."""
