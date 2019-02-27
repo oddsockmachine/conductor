@@ -45,7 +45,7 @@ class Display(object):
         return
 
     def get_cmds(self):
-        # self.trellis.sync()
+        # self.trellis.sync()  # TODO undo?
         return {'cmd': None}
 
     def draw_all(self, status, led_grid):
