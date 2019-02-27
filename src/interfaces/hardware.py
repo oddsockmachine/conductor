@@ -9,7 +9,7 @@ from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 print("Done")
 
-AUTO_WRITE = True
+AUTO_WRITE = False
 
 class Display(object):
     """docstring for Display."""
@@ -76,7 +76,7 @@ class Display(object):
         for diff in diffs:
             self.trellis.color(diff[0],diff[1],diff[2])
         if AUTO_WRITE:
-            for ts in trelli:
+            for ts in self.trellis._trelli:
                 for t in ts:
                     t.pixels.show()
         # t_stop = perf_counter()
