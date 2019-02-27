@@ -21,11 +21,11 @@ trelli = [
 
 trellis = MultiTrellis(trelli)
 
-for ts in trelli:
-    for t in ts:
-        print(t)
-        print(type(t))
-        t.pixels.auto_write = False
+# for ts in trelli:
+#     for t in ts:
+#         print(t)
+#         print(type(t))
+#         t.pixels.auto_write = False
 
 
 wait = 0.05
@@ -49,8 +49,8 @@ def set_all(wait=0.1, col=YELLOW):
         for t in ts:
             t.pixels.show()
 
-# set_all(0.5, OFF)
+set_all(wait, OFF)
 print("low")
-set_all(0.5, LOW)
+set_all(wait, LOW)
 print("off")
-set_all(0.5, OFF)
+set_all(wait, OFF)
