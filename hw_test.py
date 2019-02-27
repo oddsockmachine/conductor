@@ -17,8 +17,13 @@ trelli = [
     [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
     [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
     [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],
+
+for t in trelli:  # Stop autowriting - otherwise, we flush whole buffer every time we set each pixel
+    t.pixels.auto_write = False
                     ]
 trellis = MultiTrellis(trelli)
+
+
 
 wait = 0.05
 #some color definitions
@@ -37,7 +42,8 @@ def set_all(wait=0.1, col=YELLOW):
         for y in range(16):
             trellis.color(x, y, col)
             sleep(wait)
-
+    for t in trelli:
+        t.pixels.show()
 
 # set_all(0.5, OFF)
 print("low")
