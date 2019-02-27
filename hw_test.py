@@ -23,6 +23,8 @@ trellis = MultiTrellis(trelli)
 
 for ts in trelli:
     for t in ts:
+        print(t)
+        print(type(t))
         t.pixels.auto_write = False
 
 
