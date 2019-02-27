@@ -75,10 +75,11 @@ class Display(object):
         # t_start = perf_counter()
         for diff in diffs:
             self.trellis.color(diff[0],diff[1],diff[2])
-        if AUTO_WRITE:
-            for ts in self.trellis._trelli:
-                for t in ts:
-                    t.pixels.show()
+        if len(diffs)>0:
+            if AUTO_WRITE:
+                for ts in self.trellis._trelli:
+                    for t in ts:
+                        t.pixels.show()
         # t_stop = perf_counter()
         # logger.info(str(t1_stop-t1_start))
         return
