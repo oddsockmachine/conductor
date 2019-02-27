@@ -26,8 +26,10 @@ def hardware_main():
     display = Display()
     print(mido.get_input_names())
     print(mido.get_output_names())
+    print("Creating MIDI ports")
     with mido.open_output('f_midi:f_midi 16:0') as mport:
         with mido.open_input('f_midi:f_midi 16:0') as mportin:
+            print("Done")
             print(mportin)
             print(mport)
             supercell = Supercell(display, mport, mportin, args.set)
