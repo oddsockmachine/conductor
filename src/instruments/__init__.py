@@ -1,3 +1,4 @@
+from instruments.instrument import Instrument
 from instruments.sequencer import Sequencer
 from instruments.drum_machine import DrumMachine
 from instruments.drum_deviation import DrumDeviation
@@ -12,6 +13,7 @@ from instruments.transformer import Transformer
 
 def instrument_lookup(num):
     return {
+        0: Instrument,  # Generic, fallback, no functionality
         1: Sequencer,
         2: DrumMachine,
         3: ChordSequencer,

@@ -5,8 +5,8 @@ class Note_Grid(object):
     def __init__(self, bars=int(W/4), height=H):
         super(Note_Grid, self).__init__()
         self.bars = min(bars, 8)  # Option to reduce number of bars < 4
-        self.height = height
-        self.width = self.bars * 4
+        self.height = 16
+        self.width = 16
         # A W x H grid to store notes on
         # grid is a list of columns of notes
         # x gives you the column, y gives the note - 0 being low, 15+ being high

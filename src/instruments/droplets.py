@@ -6,47 +6,61 @@ from note_conversion import create_cell_to_midi_note_lookup, SCALES, KEYS
 import mido
 from random import choice, random, randint
 
-class Droplets(object):
+class Droplets(Instrument):
     """docstring for Droplets."""
-    def __init__(self, ins_num, mport, key, scale, octave=1, speed=1, bars=W/4, height=H):
-        super(Droplets, self).__init__()
+    def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
+        super(Droplets, self).__init__(ins_num, mport, key, scale, octave, speed)
         if not isinstance(ins_num, int):
-            print("Droplets num {} must be an int".format(ins_num))
+            print("Instrument num {} must be an int".format(ins_num))
             exit()
-        self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
-        self.mport = mport
-        # logging.info(mport)
-        self.height = height
-        self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
-        self.width = self.bars * 4
-        self.curr_page_num = 0
-        self.curr_rept_num = 0
-        self.prev_loc_beat = 0
+        self.type = "Droplets"
+        # self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
+        # self.mport = mport
+        # # logging.info(mport)
+        self.height = 16
+        # self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
+        self.width = 16
+        # self.curr_page_num = 0
+        # self.curr_rept_num = 0
+        # self.prev_loc_beat = 0
         self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
         self.speed = speed  # Relative speed of this instrument compared to global clock
-        self.isdrum = False  # Chromatic instrument for drum tracks
-        self.random_pages = False  #  Pick page at random
-        self.sustain = True  # Don't retrigger notes if this is True
-        self.chaos = 0.0  # Add some randomness to notes
-        self.pages = [Note_Grid(self.bars, self.height)]
-        if key not in KEYS:
-            print('Requested key {} not known'.format(key))
-            exit()
-        self.key = key
-        if scale not in SCALES.keys():
-            print('Requested scale {} not known'.format(scale))
-            exit()
-        self.scale = scale
-        self.octave = octave  # Starting octave
-        self.old_notes = []  # Keep track of currently playing notes so we can off them next step
-        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, height)  # Function is cached for convenience
+        # self.isdrum = False  # Chromatic instrument for drum tracks
+        # self.random_pages = False  #  Pick page at random
+        # self.sustain = True  # Don't retrigger notes if this is True
+        # self.chaos = 0.0  # Add some randomness to notes
+        # self.pages = [Note_Grid(self.bars, self.height)]
+        # if key not in KEYS:
+        #     print('Requested key {} not known'.format(key))
+        #     exit()
+        # self.key = key
+        # if scale not in SCALES.keys():
+        #     print('Requested scale {} not known'.format(scale))
+        #     exit()
+        # self.scale = scale
+        # self.octave = octave  # Starting octave
+        # self.old_notes = []  # Keep track of currently playing notes so we can off them next step
+        # self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, height)  # Function is cached for convenience
 
-    def update_chaos(self, dir):
-        if dir == 1:
-            self.chaos += 0.01
-        elif self.chaos > 0.01:
-            self.chaos -= 0.01
-        return
+    def get_status(self):
+        status = {
+            'ins_num': self.ins_num+1,
+            'ins_total': 16,
+            'page_num': 0,
+            'page_total': 0,
+            'repeat_num': 0,
+            'repeat_total': 0,
+            'page_stats': {},
+            'key': str(self.key),
+            'scale': str(self.scale),
+            'octave': str(self.octave),
+            'type': self.type,
+            'division': self.get_beat_division_str(),
+            'random_rpt': False,
+            'sustain': False,
+        }
+        return status
+
 
     def set_key(self, key):
         self.key = key
@@ -65,22 +79,6 @@ class Droplets(object):
         # self.octave = (self.octave + up_down) % 7
         # Converter is a cached lookup, we need to regenerate it
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
-
-    def get_curr_page(self):
-        return self.pages[self.curr_page_num]
-
-    def get_page_stats(self):
-        return [x.repeats for x in self.pages]
-
-    def add_page(self, pos=True):
-        '''Add or insert a new blank page into the list of pages'''
-        if len(self.pages) == 8:
-            return False
-        if pos:
-            self.pages.insert(self.curr_page_num+1, Note_Grid(self.bars, self.height))
-        else:
-            self.pages.append(Note_Grid(self.bars, self.height))
         return True
 
     def cell_to_midi(self, cell):
@@ -104,21 +102,7 @@ class Droplets(object):
         return
 
     def get_curr_page_grid(self):
-        return self.get_curr_page().note_grid
-
-    def inc_page_repeats(self, page):
-        '''Increase how many times the current page will loop'''
-        if page > len(self.pages)-1:
-            return False
-        self.pages[page].inc_repeats()
-        return True
-
-    def dec_page_repeats(self, page):
-        '''Reduce how many times the current page will loop'''
-        if page > len(self.pages)-1:
-            return False
-        self.pages[page].dec_repeats()
-        return True
+        return [[]]
 
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
@@ -127,8 +111,8 @@ class Droplets(object):
             # Intermediate beat for this instrument, do nothing
             return
         self.local_beat_position = local
-        if self.is_page_end():
-            self.advance_page()
+        # if self.is_page_end():
+        #     self.advance_page()
         new_notes = self.get_curr_notes()
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
@@ -141,55 +125,12 @@ class Droplets(object):
         # logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
         return local_beat
 
-    def is_page_end(self):
-        return self.local_beat_position == 0
-
     def has_beat_changed(self, local_beat):
         if self.prev_loc_beat != local_beat:
             self.prev_loc_beat = local_beat
             return True
         self.prev_loc_beat = local_beat
         return False
-
-    def get_next_page_num(self):
-        '''Return the number of the next page that has a positive number of repeats
-        or return a random page if wanted'''
-        if self.random_pages:
-            # Create a distribution of the pages and their repeats, pick one at random
-            dist = []
-            for index, page in enumerate(self.pages):
-                for r in range(page.repeats):
-                    dist.append(index)
-            next_page_num = choice(dist)
-            return next_page_num
-        for i in range(1, len(self.pages)):
-            # Look through all the upcoming pages
-            next_page_num = (self.curr_page_num + i) % len(self.pages)
-            rpts = self.pages[next_page_num].repeats
-            # logging.info("i{} p{} r{}".format(i, next_page_num, rpts))
-            if rpts > 0:  # This one's good, return it
-                return next_page_num
-        # All pages including curr_page are zero repeats, just stick with this one
-        return self.curr_page_num
-
-    def advance_page(self):
-        '''Go to next repeat or page'''
-        if self.random_pages:
-            # Create a distribution of the pages and their repeats, pick one at random
-            dist = []
-            for index, page in enumerate(self.pages):
-                for r in range(page.repeats):
-                    dist.append(index)
-            next_page_num = choice(dist)
-            self.curr_page_num = next_page_num
-            self.curr_rept_num = 0  # Reset, for this page or next page
-            return
-        self.curr_rept_num += 1  # inc repeat number
-        if self.curr_rept_num >= self.get_curr_page().repeats:
-        # If we're overfowing repeats, time to go to next available page
-            self.curr_rept_num = 0  # Reset, for this page or next page
-            self.curr_page_num = self.get_next_page_num()
-        return
 
     def get_beat_division(self):
         return 2**self.speed
@@ -210,21 +151,14 @@ class Droplets(object):
                 return
             self.speed += 1
             return
-
         # Direct set
         self.speed = div
         return
 
     def get_curr_notes(self):
-        grid = self.get_curr_page_grid()
+        # grid = self.get_curr_page_grid()
         beat_pos = self.local_beat_position
-        beat_notes = [n for n in grid[beat_pos]]
-        if self.chaos > 0:  # If using chaos, switch up some notes
-            if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
-                if random() < self.chaos:
-                    rand_note = randint(0, self.height-1)
-                    beat_notes[rand_note] = NOTE_ON if beat_notes[rand_note] != NOTE_ON else NOTE_OFF
-                    # beat_notes = [n if random() < self.chaos else (NOTE_ON if n==NOTE_OFF else NOTE_OFF) for n in beat_notes]
+        beat_notes = []#[n for n in grid[beat_pos]]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
 
@@ -232,11 +166,11 @@ class Droplets(object):
         """Return all note-ons from the current beat, and all note-offs from the last"""
         notes_off = [self.cell_to_midi(c) for c in old_notes]
         notes_on = [self.cell_to_midi(c) for c in new_notes]
-        if self.sustain:
-            _notes_off = [n for n in notes_off if n not in notes_on]
-            _notes_on = [n for n in notes_on if n not in notes_off]
-            notes_off = _notes_off
-            notes_on = _notes_on
+        # if self.sustain:
+        #     _notes_off = [n for n in notes_off if n not in notes_on]
+        #     _notes_on = [n for n in notes_on if n not in notes_off]
+        #     notes_off = _notes_off
+        #     notes_on = _notes_on
         notes_off = [n for n in notes_off if n<128 and n>0]
         notes_on = [n for n in notes_on if n<128 and n>0]
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
@@ -251,12 +185,7 @@ class Droplets(object):
           "Octave": self.octave,
           "Key": self.key,
           "Scale": self.scale,
-          "Pages": [p.save() for p in self.pages],
           "Speed": self.speed,
-          "IsDrum": self.isdrum,
-          "Sustain": self.sustain,
-          "Chaos": self.chaos,
-          "RandomRpt": self.random_pages,
         }
         return saved
 
@@ -265,16 +194,6 @@ class Droplets(object):
         self.key = saved["Key"]
         self.scale = saved["Scale"]
         self.speed = saved["Speed"]
-        self.isdrum = saved["IsDrum"]
-        self.sustain = saved["Sustain"]
-        self.chaos = saved["Chaos"]
-        self.random_pages = saved["RandomRpt"]
-        self.pages = []
-        for p in saved["Pages"]:
-            page = Note_Grid(self.bars, self.height)
-            print(p)
-            page.load(p)
-            self.pages.append(page)
         return
 
     def clear_page(self):

@@ -1,4 +1,5 @@
 ## Top
+- Run on full-size raspberry-pi, with USB-Midi interface
 - multi-instrument support
 - create color engine, for different themes, brightnesses, background gradient, etc https://www.sweetwater.com/store/detail/Fire--akai-professional-fire-grid-controller-for-fl-studio
 - Show gridlines, root notes, pentatonic notes, etc in different colors/shades
@@ -9,6 +10,7 @@
 ### synchronize with Ableton
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 - quick hack is to press a button to sync that
+- synchronize sequences/pages with clips in Ableton. Use Live to launch, hardware to edit
 
 ### Save and load
 - On startup, show colored pixels for numbered sets. Allows 255 memory slots, plus use 1 for empty
@@ -35,12 +37,6 @@
 - Root note for pentatonics
 - root and pentatonic for modes
 - Should be handled by sequencer.get_led_status/get_led_grid, seq has access to scale and cell info
-
-### Performance improvements
-- fork trellis, seesaw etc
-- batch cmds
-- don't autoshow
-- port to raspberry pi
 
 ### Add small screen for better feedback
 from screen import sprint
@@ -109,7 +105,7 @@ sprint.line1("Select:")
 - Touch above note to drag/extend it
 - Touch below note to catch/remove it
 
-## BeatMaker
+### BeatMaker
 - Each drum instrument has a vertical track
 - Each vertical cell is a different pattern (or no pattern) for that instrument
 - Select a set of patters for each instrument, change on the fly
@@ -117,7 +113,8 @@ sprint.line1("Select:")
 ### Transformer
 - Take a sequencer pattern, press one button to mutate by a set amount, another button to save the current state
 
-
+### Matrix
+- 8x16 sequencer, plus an 8x8 in/out grid - so outputs can be re-routed to different notes
 
 ### Transfer to Ableton
 - Button/whatever to trigger transfer currently playing instrument (or all) to ableton clips

@@ -6,19 +6,19 @@ from note_conversion import create_cell_to_midi_note_lookup, SCALES, KEYS
 import mido
 from random import choice, random, randint
 
-class Sequencer(object):
+class Sequencer(Instrument):
     """docstring for Sequencer."""
-    def __init__(self, ins_num, mport, key, scale, octave=1, speed=1, bars=W/4, height=H):
-        super(Sequencer, self).__init__()
+    def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
+        super(Sequencer, self).__init__(ins_num, mport, key, scale, octave, speed)
         if not isinstance(ins_num, int):
             print("Sequencer num {} must be an int".format(ins_num))
             exit()
         self.type = "Sequencer"
         self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
         self.mport = mport
-        self.height = height
-        self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
-        self.width = self.bars * 4
+        self.height = 16
+        self.bars = 4 #min(bars, W/4)  # Option to reduce number of bars < 4
+        self.width = 16
         self.curr_page_num = 0
         self.curr_rept_num = 0
         self.prev_loc_beat = 0
@@ -37,7 +37,7 @@ class Sequencer(object):
         self.scale = scale
         self.octave = octave  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
-        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, height)  # Function is cached for convenience
+        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)  # Function is cached for convenience
 
     def set_key(self, key):
         self.key = key
@@ -130,7 +130,7 @@ class Sequencer(object):
         div = self.get_beat_division()
         local_beat = int(global_beat / div) % self.width
         # logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
-        return local_beat
+        return int(local_beat)
 
     def is_page_end(self):
         return self.local_beat_position == 0

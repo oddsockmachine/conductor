@@ -24,12 +24,23 @@ class Conductor(object):
         self.max_beat_division = 8
         self.scale = scale
         self.octave = octave  # Starting octave
-        self.instruments = [instrument_lookup(1)(ins_num=x, mport=self.mport, key=key, scale=scale, octave=octave, speed=1, bars=bars) for x in range(16)]  # limit to 16 midi channels
+        self.instruments = [instrument_lookup(1)(ins_num=x, speed=1, **self.instrument_ctx()) for x in range(8)]
+        for x in range(7):
+            self.instruments.append(instrument_lookup(2)(ins_num=x+8, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
+        self.instruments.append(instrument_lookup(7)(ins_num=15, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
         self.current_visible_instrument = 0
         self.z_mode = False
         # If we're loading, ignore all this and overwrite with info from file!
         if saved:
             self.load(saved)
+
+    def instrument_ctx(self):
+        return {
+            'mport': self.mport,
+            'key': self.key,
+            'scale': self.scale,
+            'octave': self.octave,
+        }
 
     def add_instrument(self, type):
         if len(self.instruments) == 16:
@@ -57,6 +68,8 @@ class Conductor(object):
         return
 
     def get_status(self):
+        status = self.get_curr_instrument().get_status()
+        return status
         status = {
             'ins_num': self.get_curr_instrument_num(),
             'ins_total': self.get_total_instrument_num(),

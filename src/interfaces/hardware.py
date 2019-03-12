@@ -18,22 +18,31 @@ class Display(object):
         print("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
         print("Done")
-        trelli = [
-            [NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
-            [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
-            [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
-            [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],]
-        if AUTO_WRITE:
-            for ts in trelli:
-                for t in ts:
-                    t.pixels.auto_write = False
+        print("Creating Trelli")
+        trelli = []
+        addrs = [0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D]
+        for addr in addrs:  # Create trelli sequentially with a slight pause between each
+            t = NeoTrellis(i2c_bus, False, addr=addr)
+            t.pixels.auto_write = False
+            trelli.append(t)
+            sleep(0.2)
+            # [NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
+            # [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
+            # [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
+            # [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],]
+        # if AUTO_WRITE:
+        #     for ts in trelli:
+        #         for t in ts:
+        #             t.pixels.auto_write = False
+        print("Linking Trelli")
         self.trellis = MultiTrellis(trelli)
+        print("Done")
         self.grid_h = h
         self.grid_w = w
         self.led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         button_cb = self.make_cb()
-        print("Initializing Trellis")
+        print("Initializing Trelli inputs")
         for y in range(h):
             for x in range(w):
                 sleep(0.01)
@@ -47,7 +56,7 @@ class Display(object):
         return
 
     def get_cmds(self):
-        self.trellis.sync()  # TODO undo?
+        self.trellis.sync()  # TODO undo? Fails if called too often
         return {'cmd': None}
 
     def draw_all(self, status, led_grid):

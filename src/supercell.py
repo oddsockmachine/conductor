@@ -128,3 +128,4 @@ class Supercell(object):
         with open(filename, 'w') as savefile:
             saved = self.conductor.save()
             dump(saved, savefile)
+        print("Save number was: {}".format(filename))
