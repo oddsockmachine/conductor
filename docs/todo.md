@@ -1,6 +1,8 @@
 ## Top
 - Run on full-size raspberry-pi, with USB-Midi interface
 - multi-instrument support
+- move get_led_status
+- refactor status call
 - create color engine, for different themes, brightnesses, background gradient, etc https://www.sweetwater.com/store/detail/Fire--akai-professional-fire-grid-controller-for-fl-studio
 - Show gridlines, root notes, pentatonic notes, etc in different colors/shades
 - call background(x, y) to get a color code for general background pixel, as chosen by some other setting/algo

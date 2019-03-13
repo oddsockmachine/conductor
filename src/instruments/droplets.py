@@ -29,7 +29,10 @@ class Droplets(Instrument):
         # self.random_pages = False  #  Pick page at random
         # self.sustain = True  # Don't retrigger notes if this is True
         # self.chaos = 0.0  # Add some randomness to notes
-        # self.pages = [Note_Grid(self.bars, self.height)]
+        # self.page = Note_Grid(self.bars, self.height)
+        self.droplet_velocities = [1 for n in range(self.width)]
+        self.droplet_positions = [0 for n in range(self.width)]
+        self.droplet_starts = [0 for n in range(self.width)]
         # if key not in KEYS:
         #     print('Requested key {} not known'.format(key))
         #     exit()
@@ -88,21 +91,25 @@ class Droplets(Instrument):
 
     def touch_note(self, x, y):
         '''touch the x/y cell on the current page'''
-        page = self.get_curr_page()
-        if not page.validate_touch(x, y):
-            return False
-        page.touch_note(x, y)
+        # if y < 4:
+        #     self.droplet_velocities[x] = y
+        # else:
+        self.droplet_positions[x] = y
+        self.droplet_starts[x] = y
         return True
 
     def get_notes_from_curr_beat(self):
-        self.get_curr_page().get_notes_from_beat(self.local_beat_position)
+        # self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
 
     def get_curr_page_leds(self):
         return
 
     def get_curr_page_grid(self):
-        return [[]]
+        page = [[LED_BLANK for y in range(self.height)] for x in range(self.width)]
+        for i in range(self.width):
+            page[i][self.droplet_positions[i]] = NOTE_ON
+        return page
 
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
@@ -113,7 +120,15 @@ class Droplets(Instrument):
         self.local_beat_position = local
         # if self.is_page_end():
         #     self.advance_page()
-        new_notes = self.get_curr_notes()
+        new_notes = []
+        for i in range(self.width):
+            if self.droplet_positions[i] == 0:
+                continue  # Ignore any that we leave at 0, they're resting
+            self.droplet_positions[i] -= self.droplet_velocities[i]
+            if self.droplet_positions[i] <= 0:
+                new_notes.append(i)
+                self.droplet_positions[i] = self.droplet_starts[i]
+        # new_notes = self.get_curr_notes()
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
@@ -155,12 +170,12 @@ class Droplets(Instrument):
         self.speed = div
         return
 
-    def get_curr_notes(self):
-        # grid = self.get_curr_page_grid()
-        beat_pos = self.local_beat_position
-        beat_notes = []#[n for n in grid[beat_pos]]
-        notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
-        return notes_on
+    # def get_curr_notes(self):
+    #     # grid = self.get_curr_page_grid()
+    #     beat_pos = self.local_beat_position
+    #     beat_notes = []#[n for n in grid[beat_pos]]
+    #     notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
+    #     return notes_on
 
     def output(self, old_notes, new_notes):
         """Return all note-ons from the current beat, and all note-offs from the last"""
@@ -199,190 +214,3 @@ class Droplets(Instrument):
     def clear_page(self):
         self.get_curr_page().clear_page()
         return
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import unittest
-class TestSequencer(unittest.TestCase):
-
-    def test_instrument(self):
-        ins = Sequencer(8, None, "a", "pentatonic", octave=2, bars=4)
-        self.assertTrue(ins.touch_note(0,1))
-        self.assertTrue(ins.touch_note(0,3))
-        self.assertTrue(ins.touch_note(0,5))
-        self.assertTrue(ins.touch_note(2,6))
-        self.assertTrue(ins.touch_note(2,7))
-        self.assertTrue(ins.touch_note(2,8))
-        self.assertFalse(ins.touch_note(-1,-1))
-        self.assertFalse(ins.touch_note(99,-99))
-        self.assertTrue(ins.touch_note(1,0))
-        self.assertTrue(ins.touch_note(2,0))
-        ins.inc_curr_page_repeats()
-        ins.add_page(1)
-        ins.step_beat()
-
-    def test_multi_pages(self):
-        ins = Sequencer(8, None, "a", "pentatonic", octave=3, bars=4)
-        self.assertEqual(len(ins.pages), 1)
-        self.assertEqual(ins.curr_page_num, 0)
-        ins.touch_note(0,0)
-        ins.touch_note(0,1)
-        ins.touch_note(0,2)
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-
-        ins.add_page(1)  # Add a page _after_ current page
-        self.assertEqual(ins.curr_page_num, 0)
-        ins.touch_note(0,4)  # Still on first page
-        ins.touch_note(0,5)
-        ins.touch_note(0,6)
-        self.assertEqual(len(ins.pages), 2)
-        self.assertEqual(ins.get_curr_notes(), [0,1,2,4,5,6])
-
-        ins.add_page(0)  # Add a page _before_ current page
-        self.assertEqual(ins.curr_page_num, 0)  # on new page, prev page pushed back
-        self.assertEqual(len(ins.pages), 3)
-        ins.touch_note(0,3)
-        ins.touch_note(0,6)
-        ins.touch_note(0,9)
-        self.assertEqual(ins.get_curr_notes(), [3,6,9])
-
-    def test_stepping_and_pages(self):
-        ins = Sequencer(8, None, "a", "pentatonic", octave=3, bars=4)
-        ins.touch_note(0,0)
-        ins.touch_note(0,1)
-        ins.touch_note(0,2)
-        ins.touch_note(1,5)
-        ins.touch_note(1,6)
-        ins.touch_note(1,7)
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-        self.assertEqual(ins.local_beat_position, 0)
-        ins.step_beat()
-        self.assertEqual(ins.get_curr_notes(), [5,6,7])
-        self.assertEqual(ins.local_beat_position, 1)
-        ins.step_beat()
-        self.assertEqual(ins.get_curr_notes(), [])
-        self.assertEqual(ins.local_beat_position, 2)
-        self.assertEqual(ins.curr_page_num, 0)  # Still on page 0
-        for i in range(14):
-            ins.step_beat()
-        self.assertEqual(ins.local_beat_position, 0)
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, wrapped around
-        ins.add_page(1)
-        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, new page is next
-        for i in range(17):
-            ins.step_beat()
-        self.assertEqual(ins.local_beat_position, 1)
-        self.assertEqual(ins.curr_page_num, 1)  # Should still be on same page, wrapped around
-        self.assertEqual(ins.get_curr_notes(), [])
-        for i in range(15):
-            ins.step_beat()
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, wrapped around
-        self.assertEqual(ins.local_beat_position, 0)
-
-    def test_multi_repeats(self):
-        ins = Sequencer(8, None, "a", "pentatonic", octave=3, bars=4)
-        ins.touch_note(0,0)
-        ins.touch_note(0,1)
-        ins.touch_note(0,2)
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-        ins.add_page(1)
-        for i in range(17):
-            ins.step_beat()
-        self.assertEqual(ins.curr_page_num, 1)
-        self.assertEqual(ins.local_beat_position, 1)
-        ins.touch_note(1,5)
-        ins.touch_note(1,6)
-        ins.touch_note(1,7)
-        self.assertEqual(ins.get_curr_notes(), [5,6,7])
-        for i in range(16):
-            ins.step_beat()
-        self.assertEqual(ins.curr_page_num, 0) # Back to page 0
-        self.assertEqual(ins.local_beat_position, 1)
-        ins.inc_curr_page_repeats()
-        self.assertEqual(ins.curr_rept_num, 0)
-        for i in range(15):
-            ins.step_beat()
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, 2nd repeat
-        self.assertEqual(ins.local_beat_position, 0)
-        self.assertEqual(ins.curr_rept_num, 1)
-        for i in range(17):
-            ins.step_beat()
-        self.assertEqual(ins.curr_page_num, 1)
-        self.assertEqual(ins.local_beat_position, 1)
-        self.assertEqual(ins.get_curr_notes(), [5,6,7])
-
-    def test_cell_to_midi(self):
-        ins1 = Sequencer(8, None, "a", "chromatic", octave=3, bars=4)
-        self.assertEqual(ins1.cell_to_midi(0), 57)
-        self.assertEqual(ins1.cell_to_midi(1), 58)
-        self.assertEqual(ins1.cell_to_midi(2), 59)
-        ins2 = Sequencer(8, None, "a", "major", octave=3, bars=4)
-        self.assertEqual(ins2.cell_to_midi(0), 57)
-        self.assertEqual(ins2.cell_to_midi(1), 59)
-        self.assertEqual(ins2.cell_to_midi(2), 61)
-        self.assertEqual(ins2.cell_to_midi(3), 62)
-
-    def test_midi_out(self):
-        from midi import MockMidiOut
-        fake_out = MockMidiOut()
-        ins = Sequencer(9, fake_out, "a", "chromatic", octave=3, bars=4)
-        ins.touch_note(1,0)
-        ins.touch_note(1,1)
-        ins.touch_note(2,14)
-        ins.touch_note(2,15)
-        ins.step_beat()
-        # print(fake_out.buffer)
-        self.assertEqual(len(fake_out.buffer), 2)
-        notes = fake_out.get_output()
-        self.assertEqual(len(notes), 2)
-        note1 = notes[0]
-        note2 = notes[1]
-        self.assertEqual(len(fake_out.buffer), 0)
-        self.assertEqual(note1.type, 'note_on')
-        self.assertEqual(note1.channel, 9)
-        self.assertEqual(note1.note, 57)
-        self.assertEqual(note2.note, 58)
-        ins.step_beat()
-        notes = fake_out.get_output()
-        note3 = notes[0]
-        note4 = notes[1]
-        note5 = notes[2]
-        note6 = notes[3]
-        self.assertEqual(note3.type, 'note_off')
-        self.assertEqual(note3.note, 57)
-        self.assertEqual(note4.type, 'note_off')
-        self.assertEqual(note4.note, 58)
-        self.assertEqual(note5.type, 'note_on')
-        self.assertEqual(note5.note, 71)
-        self.assertEqual(note6.type, 'note_on')
-        self.assertEqual(note6.note, 72)
-
-if __name__ == '__main__':
-    unittest.main()

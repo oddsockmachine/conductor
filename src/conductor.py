@@ -120,6 +120,7 @@ class Conductor(object):
         return
 
     def get_led_status(self, cell, beat_pos):
+        # TODO move this to individual instruments
         '''Determine which type of LED should be shown for a given cell'''
         led = LED_BLANK  # Start with blank / no led
         if beat_pos == self.get_curr_instrument().local_beat_position:
@@ -172,8 +173,8 @@ class Conductor(object):
         new_scale = (curr_scale + up_down) % len(SCALES.keys())
         self.scale = list(SCALES.keys())[new_scale]
         for i in self.instruments:
-            if not i.isdrum:
-                i.set_scale(self.scale)
+            # if not i.isdrum:
+            i.set_scale(self.scale)
         return
 
     def swap_drum_inst(self):

@@ -15,6 +15,10 @@ LED_BEAT = {"A":1, "B": 1,}[THEME]
 LED_SCALE_PRIMARY = {"A":9, "B": 9,}[THEME]
 LED_SCALE_SECONDARY = {"A":9, "B": 9,}[THEME]
 
+DROPLET_MOVING = '▒▒'
+DROPLET_SPLASH = '▓▓'
+DROPLET_STOPPED = '░░'
+
 # TODO calculate and return color tuples based on brightness setting
 OFF = (0, 0, 0)
 RED = (255, 0, 0)
@@ -27,7 +31,7 @@ INDIGO = (180, 0, 255)
 PURPLE = (255, 0, 255)
 PURPLE = (10, 0, 10)
 LOW = (18, 7, 0)
-colors  =[RED, ORANGE,YELLOW, GREEN,CYAN,BLUE,INDIGO,PURPLE]
+colors = [RED, ORANGE,YELLOW, GREEN,CYAN,BLUE,INDIGO,PURPLE]
 
 # The ints used to represent the state of notes on a note_grid
 NOTE_OFF = 0

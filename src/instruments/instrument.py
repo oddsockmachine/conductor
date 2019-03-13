@@ -23,7 +23,7 @@ class Instrument(object):
         if key not in KEYS:
             print('Requested key {} not known'.format(key))
             exit()
-        self.key = 'key'
+        self.key = key
         if scale not in SCALES.keys():
             print('Requested scale {} not known'.format(scale))
             exit()

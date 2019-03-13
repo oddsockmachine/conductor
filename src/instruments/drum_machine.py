@@ -39,6 +39,11 @@ class DrumMachine(Instrument):
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)  # Function is cached for convenience
 
+    def set_scale(self, scale):
+        return # Not used
+    def set_key(self, key):
+        return # Not used
+
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
 
