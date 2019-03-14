@@ -91,11 +91,27 @@ class Sequencer(Instrument):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
 
-    def get_curr_page_leds(self):
-        return
+    # def get_curr_page_leds(self):
+    #     return
 
-    def get_curr_page_grid(self):
-        return self.get_curr_page().note_grid
+    def get_led_grid(self):
+        led_grid = []
+        grid = self.get_curr_page().note_grid
+        for c, column in enumerate(grid):  # columnn counter
+            led_grid.append([self.get_led_status(x, c) for x in column])
+        return led_grid
+
+    def get_led_status(self, cell, beat_pos):
+        '''Determine which type of LED should be shown for a given cell'''
+        led = LED_BLANK  # Start with blank / no led
+        if beat_pos == self.local_beat_position:
+            led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
+            if cell == NOTE_ON:
+                led = LED_SELECT  # Unless we want a selected + beat cell to be special
+        elif cell == NOTE_ON:
+            led = LED_ACTIVE  # Otherwise if the cell is active (touched)
+        return led
+
 
     def inc_page_repeats(self, page):
         '''Increase how many times the current page will loop'''
@@ -110,7 +126,7 @@ class Sequencer(Instrument):
             return False
         self.pages[page].dec_repeats()
         return True
-
+    #
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
         local = self.calc_local_beat(global_beat)
@@ -124,13 +140,13 @@ class Sequencer(Instrument):
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
-
-    def calc_local_beat(self, global_beat):
-        '''Calc local_beat_pos for this instrument'''
-        div = self.get_beat_division()
-        local_beat = int(global_beat / div) % self.width
-        # logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
-        return int(local_beat)
+    #
+    # def calc_local_beat(self, global_beat):
+    #     '''Calc local_beat_pos for this instrument'''
+    #     div = self.get_beat_division()
+    #     local_beat = int(global_beat / div) % self.width
+    #     # logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
+    #     return int(local_beat)
 
     def is_page_end(self):
         return self.local_beat_position == 0
@@ -181,33 +197,33 @@ class Sequencer(Instrument):
             self.curr_rept_num = 0  # Reset, for this page or next page
             self.curr_page_num = self.get_next_page_num()
         return
-
-    def get_beat_division(self):
-        return 2**self.speed
-
-    def get_beat_division_str(self):
-        return self.speed
-        # return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
-
-    def change_division(self, div):
-        '''Find current instrument, inc or dec its beat division as appropriate'''
-        if div == "-":
-            if self.speed == 0:
-                return
-            self.speed -= 1
-            return
-        if div == "+":
-            if self.speed == 4:
-                return
-            self.speed += 1
-            return
-
-        # Direct set
-        self.speed = div
-        return
+    #
+    # def get_beat_division(self):
+    #     return 2**self.speed
+    #
+    # def get_beat_division_str(self):
+    #     return self.speed
+    #     # return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
+    #
+    # def change_division(self, div):
+    #     '''Find current instrument, inc or dec its beat division as appropriate'''
+    #     if div == "-":
+    #         if self.speed == 0:
+    #             return
+    #         self.speed -= 1
+    #         return
+    #     if div == "+":
+    #         if self.speed == 4:
+    #             return
+    #         self.speed += 1
+    #         return
+    #
+    #     # Direct set
+    #     self.speed = div
+    #     return
 
     def get_curr_notes(self):
-        grid = self.get_curr_page_grid()
+        grid = self.get_led_grid()
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
@@ -233,25 +249,19 @@ class Sequencer(Instrument):
 
     def save(self):
         saved = {
-          "Octave": self.octave,
-          "Key": self.key,
-          "Scale": self.scale,
-          "Pages": [p.save() for p in self.pages],
-          "Speed": self.speed,
-          "Sustain": self.sustain,
-          "RandomRpt": self.random_pages,
+          "pages": [p.save() for p in self.pages],
+          "sustain": self.sustain,
+          "random_rpt": self.random_pages,
         }
+        saved.update(self.default_save_info())
         return saved
 
     def load(self, saved):
-        self.octave = saved["Octave"]
-        self.key = saved["Key"]
-        self.scale = saved["Scale"]
-        self.speed = saved["Speed"]
-        self.sustain = saved["Sustain"]
-        self.random_pages = saved["RandomRpt"]
+        self.load_default_info(saved)
+        self.sustain = saved["sustain"]
+        self.random_pages = saved["random_rpt"]
         self.pages = []
-        for p in saved["Pages"]:
+        for p in saved["pages"]:
             page = Note_Grid(self.bars, self.height)
             print(p)
             page.load(p)

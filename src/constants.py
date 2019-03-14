@@ -15,9 +15,9 @@ LED_BEAT = {"A":1, "B": 1,}[THEME]
 LED_SCALE_PRIMARY = {"A":9, "B": 9,}[THEME]
 LED_SCALE_SECONDARY = {"A":9, "B": 9,}[THEME]
 
-DROPLET_MOVING = '▒▒'
-DROPLET_SPLASH = '▓▓'
-DROPLET_STOPPED = '░░'
+DROPLET_MOVING = 2
+DROPLET_SPLASH = 3
+DROPLET_STOPPED = 1
 
 # TODO calculate and return color tuples based on brightness setting
 OFF = (0, 0, 0)

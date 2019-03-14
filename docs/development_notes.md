@@ -37,10 +37,9 @@
   - Each page can be repeated zero or more times. The Note_Grid knows how many repeats it has, but the Instrument handles whether to repeat or not
 
 #### Constants
-
   - Constants are shared throughout the program, and do not change at runtime.
   - They typically represent limitations of hardware, for example the width of the visible grid.
-  - In future, the constants will likely change depending on what hardware the sequencer is running against.
+  - In future, the constants will likely switch depending on what hardware the sequencer is running against.
 
 #### Note positions
 

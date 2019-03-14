@@ -1,7 +1,7 @@
 ## Top
 - Run on full-size raspberry-pi, with USB-Midi interface
-- multi-instrument support
-- move get_led_status
+- multi-instrument support (works, need controls to create/manage instruments)
+- refactor display and controls - section for per-instrument controls
 - refactor status call
 - create color engine, for different themes, brightnesses, background gradient, etc https://www.sweetwater.com/store/detail/Fire--akai-professional-fire-grid-controller-for-fl-studio
 - Show gridlines, root notes, pentatonic notes, etc in different colors/shades
@@ -24,7 +24,6 @@
 - Not sure necessary, speed is more than adequate now
 
 ### Z-mode
-- Usability tweaks, like instrument speed etc
 - Will probably ignore, now that 16 instruments may all be different type
 - Maybe use as a display mode instead
 
@@ -67,16 +66,28 @@ sprint.line1("Select:")
 - How to deal with multiple options for each instrument type?
 
 ### Grid Sequencer
+- 16x16 sequencer
+- Add pages to extend sequence length
+- Pages can have repeats
+- Pages can be picked randomly, weighted by repeats
 
 ### Z-Mode
+- Use for display only
+- Maybe a screensaver?
 
 ### Euclidean Beat Generator
 - For each drum-note/sample, set a bar length (<16), euclidean density, and offset
+- Bottom 16x8 shows 8 bar lengths, with hits highlighted. Beatpos moves across, or bar rotates? Clicking on a bar determines its bar length
+- TopLeft 8x8 shows sliders for euclidean density. Clicking on a slider sets density
+- TopRight 8x8 shows sliders for offset. Is this necessary?
 
 ### Random Beat Generator
 - For each drum-note/sample, the ability to generate a random sequence with specific sparsity/density
 - Each note line can be regenerated at will
 - Create multiple pages once happy with a particular page
+- Bottom 16x8 shows drum sequence. Clicking on a note toggles it manually.
+- TopLeft 8x8 shows sliders for randomness density. Clicking on a value regenerates that track.
+- TopRight 8x8 shows pages and controls. Save, select, clear pages
 
 ### Random Deviation Beat Sequencer
 - Draw a beat on a sequencer grid
@@ -106,11 +117,13 @@ sprint.line1("Select:")
 - Pitch is triggered when droplet reaches bottom
 - Touch above note to drag/extend it
 - Touch below note to catch/remove it
+- Add multiple drops per line?
 
 ### BeatMaker
-- Each drum instrument has a vertical track
-- Each vertical cell is a different pattern (or no pattern) for that instrument
-- Select a set of patters for each instrument, change on the fly
+- Each drum instrument has a horizontal track
+- Each horizontal cell is a different pattern (or no pattern) for each instrument
+- Select a set of patterns for each instrument, change on the fly
+- Show hits and highlight beatpos as normal
 
 ### Transformer
 - Take a sequencer pattern, press one button to mutate by a set amount, another button to save the current state
@@ -122,6 +135,3 @@ sprint.line1("Select:")
 - Button/whatever to trigger transfer currently playing instrument (or all) to ableton clips
 - Send cmds to start recording at start of page/bar for each active instrument/channel, then stop recording once page(s) completed
 - Could do the same thing in reverse to import and manipulate live midi
-
-### unit tests remaining
-- for controller, display(?), recent new features

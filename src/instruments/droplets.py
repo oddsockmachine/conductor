@@ -97,18 +97,22 @@ class Droplets(Instrument):
         self.droplet_positions[x] = y
         self.droplet_starts[x] = y
         return True
+    #
+    # def get_notes_from_curr_beat(self):
+    #     # self.get_curr_page().get_notes_from_beat(self.local_beat_position)
+    #     return
 
-    def get_notes_from_curr_beat(self):
-        # self.get_curr_page().get_notes_from_beat(self.local_beat_position)
-        return
+    # def get_curr_page_leds(self):
+    #     return
 
-    def get_curr_page_leds(self):
-        return
-
-    def get_curr_page_grid(self):
+    def get_led_grid(self):
         page = [[LED_BLANK for y in range(self.height)] for x in range(self.width)]
+        display = {
+            0: DROPLET_STOPPED,
+            1: DROPLET_SPLASH
+        }
         for i in range(self.width):
-            page[i][self.droplet_positions[i]] = NOTE_ON
+            page[i][self.droplet_positions[i]] = display.get(self.droplet_positions[i], DROPLET_MOVING)
         return page
 
     def step_beat(self, global_beat):
@@ -170,22 +174,10 @@ class Droplets(Instrument):
         self.speed = div
         return
 
-    # def get_curr_notes(self):
-    #     # grid = self.get_curr_page_grid()
-    #     beat_pos = self.local_beat_position
-    #     beat_notes = []#[n for n in grid[beat_pos]]
-    #     notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
-    #     return notes_on
-
     def output(self, old_notes, new_notes):
         """Return all note-ons from the current beat, and all note-offs from the last"""
         notes_off = [self.cell_to_midi(c) for c in old_notes]
         notes_on = [self.cell_to_midi(c) for c in new_notes]
-        # if self.sustain:
-        #     _notes_off = [n for n in notes_off if n not in notes_on]
-        #     _notes_on = [n for n in notes_on if n not in notes_off]
-        #     notes_off = _notes_off
-        #     notes_on = _notes_on
         notes_off = [n for n in notes_off if n<128 and n>0]
         notes_on = [n for n in notes_on if n<128 and n>0]
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
@@ -197,18 +189,18 @@ class Droplets(Instrument):
 
     def save(self):
         saved = {
-          "Octave": self.octave,
-          "Key": self.key,
-          "Scale": self.scale,
-          "Speed": self.speed,
+          "droplet_velocities": self.droplet_velocities,
+          "droplet_positions": self.droplet_positions,
+          "droplet_starts": self.droplet_starts,
         }
+        saved.update(self.default_save_info())
         return saved
 
     def load(self, saved):
-        self.octave = saved["Octave"]
-        self.key = saved["Key"]
-        self.scale = saved["Scale"]
-        self.speed = saved["Speed"]
+        self.load_default_info(saved)
+        self.droplet_velocities = saved["droplet_velocities"]
+        self.droplet_positions = saved["droplet_positions"]
+        self.droplet_starts = saved["droplet_starts"]
         return
 
     def clear_page(self):

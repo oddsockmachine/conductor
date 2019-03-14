@@ -77,11 +77,24 @@ class DrumMachine(Instrument):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
 
-    def get_curr_page_leds(self):
-        return
+    def get_led_grid(self):
+        led_grid = []
+        grid = self.get_curr_page().note_grid
+        for c, column in enumerate(grid):  # columnn counter
+            led_grid.append([self.get_led_status(x, c) for x in column])
+        return led_grid
 
-    def get_curr_page_grid(self):
-        return self.get_curr_page().note_grid
+    def get_led_status(self, cell, beat_pos):
+        '''Determine which type of LED should be shown for a given cell'''
+        led = LED_BLANK  # Start with blank / no led
+        if beat_pos == self.local_beat_position:
+            led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
+            if cell == NOTE_ON:
+                led = LED_SELECT  # Unless we want a selected + beat cell to be special
+        elif cell == NOTE_ON:
+            led = LED_ACTIVE  # Otherwise if the cell is active (touched)
+        return led
+
 
     def inc_page_repeats(self, page):
         '''Increase how many times the current page will loop'''
@@ -193,7 +206,7 @@ class DrumMachine(Instrument):
         return
 
     def get_curr_notes(self):
-        grid = self.get_curr_page_grid()
+        grid = self.get_led_grid()
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
@@ -219,25 +232,19 @@ class DrumMachine(Instrument):
 
     def save(self):
         saved = {
-          "Octave": self.octave,
-          "Key": self.key,
-          "Scale": self.scale,
-          "Pages": [p.save() for p in self.pages],
-          "Speed": self.speed,
-          "IsDrum": self.isdrum,
-          "RandomRpt": self.random_pages,
+          "pages": [p.save() for p in self.pages],
+          "sustain": self.sustain,
+          "random_rpt": self.random_pages,
         }
+        saved.update(self.default_save_info())
         return saved
 
     def load(self, saved):
-        self.octave = saved["Octave"]
-        self.key = saved["Key"]
-        self.scale = saved["Scale"]
-        self.speed = saved["Speed"]
-        self.isdrum = saved["IsDrum"]
-        self.random_pages = saved["RandomRpt"]
+        self.load_default_info(saved)
+        self.sustain = saved["sustain"]
+        self.random_pages = saved["random_rpt"]
         self.pages = []
-        for p in saved["Pages"]:
+        for p in saved["pages"]:
             page = Note_Grid(self.bars, self.height)
             print(p)
             page.load(p)

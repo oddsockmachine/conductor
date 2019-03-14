@@ -68,12 +68,44 @@ class Instrument(object):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
 
-    def get_curr_page_leds(self):
+    def get_curr_notes(self):
+        grid = self.get_led_grid()
+        beat_pos = self.local_beat_position
+        beat_notes = [n for n in grid[beat_pos]]
+        if self.chaos > 0:  # If using chaos, switch up some notes
+            if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
+                if random() < self.chaos:
+                    rand_note = randint(0, self.height-1)
+                    beat_notes[rand_note] = NOTE_ON if beat_notes[rand_note] != NOTE_ON else NOTE_OFF
+                    # beat_notes = [n if random() < self.chaos else (NOTE_ON if n==NOTE_OFF else NOTE_OFF) for n in beat_notes]
+        notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
+        return notes_on
+
+    def get_beat_division(self):
+        return 2**self.speed
+
+    def get_beat_division_str(self):
+        return self.speed
+        # return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
+
+    def change_division(self, div):
+        '''Find current instrument, inc or dec its beat division as appropriate'''
+        if div == "-":
+            if self.speed == 0:
+                return
+            self.speed -= 1
+            return
+        if div == "+":
+            if self.speed == 4:
+                return
+            self.speed += 1
+            return
+
+        # Direct set
+        self.speed = div
         return
 
-    def get_curr_page_grid(self):
-        return self.get_curr_page().note_grid
-
+    #
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
         local = self.calc_local_beat(global_beat)
@@ -87,56 +119,13 @@ class Instrument(object):
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
-
+    #
     def calc_local_beat(self, global_beat):
         '''Calc local_beat_pos for this instrument'''
         div = self.get_beat_division()
         local_beat = int(global_beat / div) % self.width
         # logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
-        return local_beat
-
-    def has_beat_changed(self, local_beat):
-        if self.prev_loc_beat != local_beat:
-            self.prev_loc_beat = local_beat
-            return True
-        self.prev_loc_beat = local_beat
-        return False
-
-    def get_beat_division(self):
-        return 2**self.speed
-
-    def get_beat_division_str(self):
-        return self.speed
-        # return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
-
-    def change_division(self, spd):
-        '''inc or dec beat division as appropriate, or set directly'''
-        if spd == "-":
-            if self.speed == 0:  # lowest possible
-                return
-            self.speed -= 1
-            return
-        if spd == "+":
-            if self.speed == 5:  # highest possible
-                return
-            self.speed += 1
-            return
-        # Direct set
-        self.speed = spd
-        return
-
-    def get_curr_notes(self):
-        grid = self.get_curr_page_grid()
-        beat_pos = self.local_beat_position
-        beat_notes = [n for n in grid[beat_pos]]
-        if self.chaos > 0:  # If using chaos, switch up some notes
-            if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
-                if random() < self.chaos:
-                    rand_note = randint(0, self.height-1)
-                    beat_notes[rand_note] = NOTE_ON if beat_notes[rand_note] != NOTE_ON else NOTE_OFF
-                    # beat_notes = [n if random() < self.chaos else (NOTE_ON if n==NOTE_OFF else NOTE_OFF) for n in beat_notes]
-        notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
-        return notes_on
+        return int(local_beat)
 
     def output(self, old_notes, new_notes):
         """Return all note-ons from the current beat, and all note-offs from the last"""
@@ -156,18 +145,26 @@ class Instrument(object):
             for msg in msgs:
                 self.mport.send(msg)
 
+    def default_save_info(self):
+        return {
+            "type": self.type,
+            "octave": self.octave,
+            "key": self.key,
+            "scale": self.scale,
+            "speed": self.speed,
+          }
+
     def save(self):
-        saved = {
-          "Octave": self.octave,
-          "Key": self.key,
-          "Scale": self.scale,
-          "Speed": self.speed,
-        }
-        return saved
+        return self.default_save_info()
+
+    def load_default_info(self, saved):
+        self.type = saved["type"]
+        self.octave = saved["octave"]
+        self.key = saved["key"]
+        self.scale = saved["scale"]
+        self.speed = saved["speed"]
+        return
 
     def load(self, saved):
-        self.octave = saved["Octave"]
-        self.key = saved["Key"]
-        self.scale = saved["Scale"]
-        self.speed = saved["Speed"]
+        self.load_default_info(saved)
         return

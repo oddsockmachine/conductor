@@ -28,8 +28,7 @@ class Conductor(object):
         for x in range(7):
             self.instruments.append(instrument_lookup(2)(ins_num=x+8, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
         self.instruments.append(instrument_lookup(7)(ins_num=15, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
-        self.current_visible_instrument = 0
-        self.z_mode = False
+        self.current_visible_instrument_num = 0
         # If we're loading, ignore all this and overwrite with info from file!
         if saved:
             self.load(saved)
@@ -54,38 +53,22 @@ class Conductor(object):
         # self.instruments.append(Sequencer(ins_num=len(self.instruments), **stats))
         return
 
-    def add_notes_from_midi(self, notes):
-        '''Take midi notes 48-74 inclusive, map to current grid'''
-        # Map white keys to sequential numbers
-        white_key_lookup = { v:k for k,v in enumerate([1,3,5,6,8,10,12,13,15,17,18,20,22,24,25,27]) }
-        for note in notes:
-            note = white_key_lookup.get(note-47)
-            if note == None:  # Ugh, 0 is valid but falsey!
-                continue
-            # TODO in z-mode we may want to add note based on channel
-            # self.instruments[midi.channel].touch_note....
-            self.get_curr_instrument().touch_note(self.get_curr_instrument().local_beat_position, note)
-        return
+#  TODO replace with Ableton clip integration
+    # def add_notes_from_midi(self, notes):
+    #     '''Take midi notes 48-74 inclusive, map to current grid'''
+    #     # Map white keys to sequential numbers
+    #     white_key_lookup = { v:k for k,v in enumerate([1,3,5,6,8,10,12,13,15,17,18,20,22,24,25,27]) }
+    #     for note in notes:
+    #         note = white_key_lookup.get(note-47)
+    #         if note == None:  # Ugh, 0 is valid but falsey!
+    #             continue
+    #         # TODO in z-mode we may want to add note based on channel
+    #         # self.instruments[midi.channel].touch_note....
+    #         self.get_curr_instrument().touch_note(self.get_curr_instrument().local_beat_position, note)
+    #     return
 
     def get_status(self):
         status = self.get_curr_instrument().get_status()
-        return status
-        status = {
-            'ins_num': self.get_curr_instrument_num(),
-            'ins_total': self.get_total_instrument_num(),
-            'page_num': self.get_curr_instrument().curr_page_num+1,
-            'page_total': len(self.get_curr_instrument().pages),
-            'repeat_num': self.get_curr_instrument().curr_rept_num+1,
-            'repeat_total': self.get_curr_instrument().get_curr_page().repeats,
-            'page_stats': self.get_curr_instrument().get_page_stats(),
-            'key': str(self.key),
-            'scale': str(self.scale),
-            'octave': str(self.get_curr_instrument().octave),
-            'type': self.get_curr_instrument().type,
-            'division': self.get_curr_instrument().get_beat_division_str(),
-            'random_rpt': self.get_curr_instrument().random_pages,
-            'sustain': self.get_curr_instrument().sustain,
-        }
         return status
 
     def step_beat(self):
@@ -98,62 +81,36 @@ class Conductor(object):
 
     def get_led_grid(self):
         '''Get led status types for all cells of the grid, to be drawn by the display'''
-        led_grid = []
-        if not self.z_mode:
-            note_grid = self.get_curr_instrument().get_curr_page_grid()
-            for c, column in enumerate(note_grid):  # columnn counter
-                led_grid.append([self.get_led_status(x, c) for x in column])
-            return led_grid
-        else:
-            for i, ins in enumerate(self.instruments):
-                notes = ins.get_curr_notes()
-                beat = ins.local_beat_position
-                led_grid.append([NOTE_OFF for x in range(self.height)])
-                led_grid[i][beat] = LED_BEAT
-                for n in notes:
-                    led_grid[i][n] = LED_ACTIVE
-            return led_grid
-
-    def toggle_z_mode(self):
-        '''Do we want to operate in z-mode'''
-        self.z_mode = not self.z_mode
-        return
-
-    def get_led_status(self, cell, beat_pos):
-        # TODO move this to individual instruments
-        '''Determine which type of LED should be shown for a given cell'''
-        led = LED_BLANK  # Start with blank / no led
-        if beat_pos == self.get_curr_instrument().local_beat_position:
-            led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
-            if cell == NOTE_ON:
-                led = LED_SELECT  # Unless we want a selected + beat cell to be special
-        elif cell == NOTE_ON:
-            led = LED_ACTIVE  # Otherwise if the cell is active (touched)
-        return led
+        led_grid = self.get_curr_instrument().get_led_grid()
+        return led_grid
 
     def save(self):
         return {
-            "Height": 16,
-            "Width": 16,
-            "Instruments": [i.save() for i in self.instruments]
+            "height": 16,
+            "width": 16,
+            "instruments": [i.save() for i in self.instruments]
         }
 
     def load(self, saved):
-        self.height = saved['Height']
-        self.width = saved['Width']
-        self.scale = saved['Instruments'][0]['Scale']
-        self.octave = saved['Instruments'][0]['Octave']
-        self.key = saved['Instruments'][0]['Key']
-        for i in range(len(saved['Instruments'])):
-            self.instruments[i].load(saved['Instruments'][i])
+        self.height = saved['height']
+        self.width = saved['width']
+        self.scale = saved['instruments'][0]['scale']
+        self.octave = saved['instruments'][0]['octave']
+        self.key = saved['instruments'][0]['key']
+        for i in range(len(saved['instruments'])):
+            self.add_instrument(saved['instruments'][i]['type'])
+            self.instruments[i].load(saved['instruments'][i])
 
     ###### GETTERS/SETTERS ######
 
     def get_curr_instrument(self):
-        return self.instruments[self.current_visible_instrument]
+        return self.instruments[self.current_visible_instrument_num]
+
+    def set_curr_instrument(self, num):
+        self.current_visible_instrument_num = num
 
     def get_curr_instrument_num(self):
-        return self.current_visible_instrument + 1
+        return self.current_visible_instrument_num + 1
 
     def get_total_instrument_num(self):
         return len(self.instruments)
@@ -177,40 +134,35 @@ class Conductor(object):
             i.set_scale(self.scale)
         return
 
-    def swap_drum_inst(self):
-        '''Swap the currently selected instrument between drum and instrument modes'''
-        ins = self.get_curr_instrument()
-        if ins.isdrum:
-            ins.octave = self.octave
-            ins.set_scale(self.scale)
-            ins.isdrum = False
-        else:
-            ins.octave = 1
-            ins.set_scale('chromatic')
-            ins.isdrum = True
-        return
+    # def swap_drum_inst(self):
+    #     '''Swap the currently selected instrument between drum and instrument modes'''
+    #     ins = self.get_curr_instrument()
+    #     if ins.isdrum:
+    #         ins.octave = self.octave
+    #         ins.set_scale(self.scale)
+    #         ins.isdrum = False
+    #     else:
+    #         ins.octave = 1
+    #         ins.set_scale('chromatic')
+    #         ins.isdrum = True
+    #     return
 
     def next_instrument(self):
-        if self.current_visible_instrument == len(self.instruments)-1:
-            # logging.warning('Reached end of instruments')
+        if self.current_visible_instrument_num == len(self.instruments)-1:
             return False
-        self.current_visible_instrument += 1
+        self.current_visible_instrument_num += 1
         return
 
     def prev_instrument(self):
-        if self.current_visible_instrument == 0:
-            # logging.warning('Reached start of instruments')
+        if self.current_visible_instrument_num == 0:
             return False
-        self.current_visible_instrument -= 1
+        self.current_visible_instrument_num -= 1
         return
 
     ###### CONTROL PASSTHROUGH METHODS ######
 
     def touch_note(self, x, y):
-        if not self.z_mode:
-            self.get_curr_instrument().touch_note(x, y)
-        else:
-            self.instruments[x].touch_note(self.get_curr_instrument().local_beat_position, y)
+        self.get_curr_instrument().touch_note(x, y)
 
     def change_division(self, up_down):
         '''Find current instrument, inc or dec its beat division as appropriate'''

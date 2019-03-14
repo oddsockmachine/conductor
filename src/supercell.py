@@ -12,7 +12,8 @@ class Supercell(object):
         super(Supercell, self).__init__()
         self.mport = mport
         self.mportin = mportin
-        self.beatclockcount = 0
+        self.beat_clock_count = 0
+        self.midi_clock_divider = 7
         self.mportin.callback = self.process_incoming_midi()
         # Check for loading previous set
         # TODO show set loading display
@@ -87,7 +88,7 @@ class Supercell(object):
         elif m['cmd'] == 'note':
             self.conductor.touch_note(m['x'], m['y'])
         elif m['cmd'] == 'ins':
-            self.conductor.current_visible_instrument = m['ins']
+            self.conductor.set_curr_instrument(m['ins'])
         elif m['cmd'] == 'inc_rep':
             self.conductor.inc_rep(m['page'])
         elif m['cmd'] == 'dec_rep':
@@ -110,9 +111,9 @@ class Supercell(object):
 
     def process_midi_tick(self):
         '''Perform midi tick subdivision so ticks only happen on beats'''
-        self.beatclockcount += 1
-        if self.beatclockcount >= 3:
-            self.beatclockcount %= 3
+        self.beat_clock_count += 1
+        if self.beat_clock_count >= self.midi_clock_divider:
+            self.beat_clock_count %= self.midi_clock_divider
             return True
         return False
 
