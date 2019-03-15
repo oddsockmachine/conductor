@@ -24,14 +24,19 @@ class Conductor(object):
         self.max_beat_division = 8
         self.scale = scale
         self.octave = octave  # Starting octave
-        self.instruments = [instrument_lookup(1)(ins_num=x, speed=1, **self.instrument_ctx()) for x in range(8)]
-        for x in range(7):
+        self.instruments = [instrument_lookup(1)(ins_num=x, **self.instrument_ctx()) for x in range(8)]
+        for x in range(6):
             self.instruments.append(instrument_lookup(2)(ins_num=x+8, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
-        self.instruments.append(instrument_lookup(7)(ins_num=15, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
+        self.instruments.append(instrument_lookup(7)(ins_num=14, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
+        self.instruments.append(instrument_lookup(5)(ins_num=15, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
         self.current_visible_instrument_num = 0
         # If we're loading, ignore all this and overwrite with info from file!
         if saved:
             self.load(saved)
+        self.states = 'play save load ins_cfg gbl_cfg display'.split()  # Valid states for the display(s)
+        # TODO maybe instruments should implement this too?
+        self.current_state = 'load'  # Current state to be shown on display(s)
+        return
 
     def instrument_ctx(self):
         return {
@@ -39,33 +44,15 @@ class Conductor(object):
             'key': self.key,
             'scale': self.scale,
             'octave': self.octave,
+            'speed': 1
         }
 
     def add_instrument(self, type):
         if len(self.instruments) == 16:
             return
-        print(type)
-        stats = {
-            'mport': self.mport, 'key': self.key, 'scale': self.scale, 'octave': self.octave, 'speed': 1, 'bars': self.bars,
-        }
         ins_type = instrument_lookup(type)
-        self.instruments.append(ins_type(ins_num=len(self.instruments), **stats))
-        # self.instruments.append(Sequencer(ins_num=len(self.instruments), **stats))
+        self.instruments.append(ins_type(ins_num=len(self.instruments), **self.instrument_ctx()))
         return
-
-#  TODO replace with Ableton clip integration
-    # def add_notes_from_midi(self, notes):
-    #     '''Take midi notes 48-74 inclusive, map to current grid'''
-    #     # Map white keys to sequential numbers
-    #     white_key_lookup = { v:k for k,v in enumerate([1,3,5,6,8,10,12,13,15,17,18,20,22,24,25,27]) }
-    #     for note in notes:
-    #         note = white_key_lookup.get(note-47)
-    #         if note == None:  # Ugh, 0 is valid but falsey!
-    #             continue
-    #         # TODO in z-mode we may want to add note based on channel
-    #         # self.instruments[midi.channel].touch_note....
-    #         self.get_curr_instrument().touch_note(self.get_curr_instrument().local_beat_position, note)
-    #     return
 
     def get_status(self):
         status = self.get_curr_instrument().get_status()
@@ -133,19 +120,6 @@ class Conductor(object):
             # if not i.isdrum:
             i.set_scale(self.scale)
         return
-
-    # def swap_drum_inst(self):
-    #     '''Swap the currently selected instrument between drum and instrument modes'''
-    #     ins = self.get_curr_instrument()
-    #     if ins.isdrum:
-    #         ins.octave = self.octave
-    #         ins.set_scale(self.scale)
-    #         ins.isdrum = False
-    #     else:
-    #         ins.octave = 1
-    #         ins.set_scale('chromatic')
-    #         ins.isdrum = True
-    #     return
 
     def next_instrument(self):
         if self.current_visible_instrument_num == len(self.instruments)-1:

@@ -19,6 +19,11 @@ DROPLET_MOVING = 2
 DROPLET_SPLASH = 3
 DROPLET_STOPPED = 1
 
+DRUM_OFF = 0
+DRUM_SELECT = 3
+DRUM_ACTIVE = 2
+DRUM_CHANGED = 1
+
 # TODO calculate and return color tuples based on brightness setting
 OFF = (0, 0, 0)
 RED = (255, 0, 0)

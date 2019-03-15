@@ -1,7 +1,7 @@
 from instruments.instrument import Instrument
 from instruments.sequencer import Sequencer
 from instruments.drum_machine import DrumMachine
-from instruments.drum_deviation import DrumDeviation
+from instruments.drum_deviator import DrumDeviator
 from instruments.beat_randomizer import BeatRandomizer
 from instruments.binary_sequencer import BinarySequencer
 from instruments.chord_sequencer import ChordSequencer
@@ -18,7 +18,7 @@ def instrument_lookup(num):
         2: DrumMachine,
         3: ChordSequencer,
         4: BeatRandomizer,
-        5: DrumDeviation,
+        5: DrumDeviator,
         6: BinarySequencer,
         7: Droplets,
         8: Transformer,

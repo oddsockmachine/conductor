@@ -71,6 +71,11 @@ sprint.line1("Select:")
 - Pages can have repeats
 - Pages can be picked randomly, weighted by repeats
 
+### Drum Machine
+- Like sequencer, but specifically for drums/samplers
+- Notes are chromatic, to fit 4x4 sample set
+- TODO! on controls page, make it easier to set up multiple pages, select individual pages etc
+
 ### Z-Mode
 - Use for display only
 - Maybe a screensaver?
@@ -91,7 +96,7 @@ sprint.line1("Select:")
 
 ### Random Deviation Beat Sequencer
 - Draw a beat on a sequencer grid
-- Each drum-note/sample has a separate random chance of suppressing/firing/transposing
+- Each drum-note/sample has a separate random chance of suppressing/firing or transposing
 - Show drum sequencer along bottom 16x8, with notes that are modified for this bar highlighted
 - (suppressed: slightly darker - triggered: slightly brighter - transposed: different color)
 - Use the top 16x8 for controls like randomness per note
@@ -99,6 +104,7 @@ sprint.line1("Select:")
 - Transposition could/should be predictable, eg to +8 notes
 - Random notes for each bar determined at start of bar
 - Randomness/chaos amount should be per bar, not per note. eg: at low levels, only change a few notes occasionally
+- TODO randomness controls cover all pages - maybe they should be per-page?
 
 ### Chord Sequencer
 - Specify chords on a timeline
