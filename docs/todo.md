@@ -1,50 +1,33 @@
 ## Top
 - Run on full-size raspberry-pi, with USB-Midi interface
-- multi-instrument support (works, need controls to create/manage instruments)
-- refactor display and controls - section for per-instrument controls
+- work on conductor/instrument states for config, play, save, load etc
 - refactor status call
+- refactor display and controls - section for per-instrument controls
+- multi-instrument support (works, need controls to create/manage instruments)
 - create color engine, for different themes, brightnesses, background gradient, etc https://www.sweetwater.com/store/detail/Fire--akai-professional-fire-grid-controller-for-fl-studio
 - Show gridlines, root notes, pentatonic notes, etc in different colors/shades
 - call background(x, y) to get a color code for general background pixel, as chosen by some other setting/algo
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 
 
-### synchronize with Ableton
-- call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
-- quick hack is to press a button to sync that
-- synchronize sequences/pages with clips in Ableton. Use Live to launch, hardware to edit
-
 ### Save and load
 - On startup, show colored pixels for numbered sets. Allows 255 memory slots, plus use 1 for empty
 - Show that screen as a menu
 - Click an empty pixel to save there
-
-### convert everything to asynchronous/event driven
-- midi time and button pressed events kind of already are, can it be better?
-- Not sure necessary, speed is more than adequate now
-
-### Z-mode
-- Will probably ignore, now that 16 instruments may all be different type
-- Maybe use as a display mode instead
-
-### Generic Display
-- Could it show two different 1/2 size instruments, one above the other?
-- Or a 3/4 size instrument with a partial menu?
-- Selectable, pluggable instruments - ie pick up to 16 of sequencer, drum randomizer, random generator etc
 
 ### Handle LED colors better
 - create color engine, for different themes, brightnesses etc
 - Show root notes, pentatonic notes, etc in different colors/shades
 - Root note for pentatonics
 - root and pentatonic for modes
-- Should be handled by sequencer.get_led_status/get_led_grid, seq has access to scale and cell info
+- Should be handled by instrument.get_led_status/get_led_grid, has access to scale and cell info
 
 ### Add small screen for better feedback
 from screen import sprint
 sprint.line1("Select:")
 
-### MIDI control
-- Each variable has a uid and can have midi CC's routed to it
+## Instruments
+- Handle saving/loading of different instruments
 
 ### Inspirations for new instruments
 - Arc https://www.youtube.com/watch?v=HM0EBvJe1s0
@@ -58,13 +41,6 @@ sprint.line1("Select:")
 - Meadowphysics https://monome.org/docs/modular/meadowphysics/
 - general https://monome.org/docs/grid-studies/python/
 
-## Instruments
-
-- Handle saving/loading of different instruments
-- Better inheritance
-- Each instrument should handle their own status
-- How to deal with multiple options for each instrument type?
-
 ### Grid Sequencer
 - 16x16 sequencer
 - Add pages to extend sequence length
@@ -75,10 +51,6 @@ sprint.line1("Select:")
 - Like sequencer, but specifically for drums/samplers
 - Notes are chromatic, to fit 4x4 sample set
 - TODO! on controls page, make it easier to set up multiple pages, select individual pages etc
-
-### Z-Mode
-- Use for display only
-- Maybe a screensaver?
 
 ### Euclidean Beat Generator
 - For each drum-note/sample, set a bar length (<16), euclidean density, and offset
@@ -130,6 +102,7 @@ sprint.line1("Select:")
 - Each horizontal cell is a different pattern (or no pattern) for each instrument
 - Select a set of patterns for each instrument, change on the fly
 - Show hits and highlight beatpos as normal
+- 4x4 grid for saved pattern combos. Touch current to reset, touch other to load next page and save previous
 
 ### Transformer
 - Take a sequencer pattern, press one button to mutate by a set amount, another button to save the current state
@@ -137,7 +110,27 @@ sprint.line1("Select:")
 ### Matrix
 - 8x16 sequencer, plus an 8x8 in/out grid - so outputs can be re-routed to different notes
 
+
+
+### Z-Mode
+- Use for display only
+- Maybe a screensaver?
+
+
+### synchronize with Ableton
+- call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
+- quick hack is to press a button to sync that
+- synchronize sequences/pages with clips in Ableton. Use Live to launch, hardware to edit
+
 ### Transfer to Ableton
 - Button/whatever to trigger transfer currently playing instrument (or all) to ableton clips
 - Send cmds to start recording at start of page/bar for each active instrument/channel, then stop recording once page(s) completed
 - Could do the same thing in reverse to import and manipulate live midi
+
+### convert everything to asynchronous/event driven
+- midi time and button pressed events kind of already are, can it be better?
+- Not sure necessary, speed is more than adequate now
+
+### MIDI control
+- Each variable has a uid and can have midi CC's routed to it
+- Might not be useful or practical, each instrument has its own config, why add more controls?

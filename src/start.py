@@ -1,7 +1,7 @@
 from supercell import Supercell
 import mido
 import argparse
-
+from time import sleep
 # Get command line arguments, set up midi connections, start up Supercell in correct mode
 
 parser = argparse.ArgumentParser()
@@ -11,6 +11,9 @@ args = parser.parse_args()
 print(args)
 
 def console_main(stdscr):
+    print(mido.get_input_names())
+    print(mido.get_output_names())
+    sleep(10)
     from interfaces.console import Display
     m = curses.mousemask(1)
     curses.mouseinterval(10)
