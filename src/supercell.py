@@ -49,8 +49,6 @@ class Supercell(object):
                 if tick:
                     self.conductor.step_beat()
                     # self.draw()
-            if message.type == "note_on":
-                self.conductor.add_notes_from_midi([message.note])
         return _process_incoming_midi
 
     def command_cb(self, m):
