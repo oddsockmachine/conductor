@@ -3,6 +3,8 @@ from time import sleep
 from constants import *
 from instruments import instrument_lookup
 from note_conversion import *
+from util import get_all_set_file_numbers, load_from_touch
+
 
 class Conductor(object):
     """docstring for Conductor."""
@@ -17,6 +19,7 @@ class Conductor(object):
         if scale not in SCALES.keys():
             print('Requested scale {} not known'.format(scale))
             exit()
+        self.states = 'play save load ins_cfg gbl_cfg display'.split()  # Valid states for the display(s)
         self.beat_position = 0
         self.height = H
         self.width = bars*4
@@ -30,12 +33,13 @@ class Conductor(object):
         self.instruments.append(instrument_lookup(7)(ins_num=14, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
         self.instruments.append(instrument_lookup(5)(ins_num=15, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
         self.current_visible_instrument_num = 0
-        # If we're loading, ignore all this and overwrite with info from file!
         if saved:
+            # If we're loading immediately, ignore all this setup and overwrite with info from file
             self.load(saved)
-        self.states = 'play save load ins_cfg gbl_cfg display'.split()  # Valid states for the display(s)
-        # TODO maybe instruments should implement this too?
-        self.current_state = 'load'  # Current state to be shown on display(s)
+            self.current_state = 'play'  # Current state to be shown on display(s)
+        else:
+            # Otherwise, show load screen to select file (or empty)
+            self.current_state = 'load'  # Current state to be shown on display(s)
         return
 
     def instrument_ctx(self):
@@ -46,6 +50,26 @@ class Conductor(object):
             'octave': self.octave,
             'speed': 1
         }
+
+    def play_screen(self):
+        led_grid = self.get_curr_instrument().get_led_grid()
+        return led_grid
+
+    def load_screen(self):
+        led_grid = []
+        for x in range(16):
+            led_grid.append([LED_BLANK for y in range(16)])
+        files = get_all_set_file_numbers(save_location, save_extension)
+        for f in files:
+            if f > 254:  # TODO add a slot for empty/new
+                continue
+            x = int(f / 16)
+            y = int(f % 16)
+            led_grid[y][15-x] = LED_ACTIVE
+        return led_grid
+
+    def save_screen(self):
+        return
 
     def add_instrument(self, type):
         if len(self.instruments) == 16:
@@ -68,8 +92,15 @@ class Conductor(object):
 
     def get_led_grid(self):
         '''Get led status types for all cells of the grid, to be drawn by the display'''
-        led_grid = self.get_curr_instrument().get_led_grid()
-        return led_grid
+        display_func_name = self.current_state + '_screen'
+        self.__getattribute__(display_func_name)
+        display_func = getattr(self, display_func_name)
+        return display_func()
+        # if self.current_state == 'play':
+        #     led_grid = self.get_curr_instrument().get_led_grid()
+        # elif self.current_state == 'load':
+        #     led_grid = self.show_load_page()
+        # return led_grid
 
     def save(self):
         return {
@@ -87,6 +118,9 @@ class Conductor(object):
         for i in range(len(saved['instruments'])):
             self.add_instrument(saved['instruments'][i]['type'])
             self.instruments[i].load(saved['instruments'][i])
+        self.current_state = 'play'
+        return
+
 
     ###### GETTERS/SETTERS ######
 
@@ -136,7 +170,12 @@ class Conductor(object):
     ###### CONTROL PASSTHROUGH METHODS ######
 
     def touch_note(self, x, y):
-        self.get_curr_instrument().touch_note(x, y)
+        if self.current_state == 'play':
+            self.get_curr_instrument().touch_note(x, y)
+        elif self.current_state == 'load':
+            saved_data = load_from_touch(x, y)
+            self.load(saved_data)
+        return
 
     def change_division(self, up_down):
         '''Find current instrument, inc or dec its beat division as appropriate'''

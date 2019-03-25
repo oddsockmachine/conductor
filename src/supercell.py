@@ -15,10 +15,6 @@ class Supercell(object):
         self.beat_clock_count = 0
         self.midi_clock_divider = 7
         self.mportin.callback = self.process_incoming_midi()
-        # Check for loading previous set
-        # TODO show set loading display
-        display.draw_load_screen()
-        # sleep(10)
         if saved_set:
             with open(saved_set, 'r') as saved_file:
                 saved_data = load(saved_file)

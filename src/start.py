@@ -1,7 +1,7 @@
 from supercell import Supercell
 import mido
 import argparse
-from time import sleep
+
 # Get command line arguments, set up midi connections, start up Supercell in correct mode
 
 parser = argparse.ArgumentParser()
@@ -11,16 +11,13 @@ args = parser.parse_args()
 print(args)
 
 def console_main(stdscr):
-    print(mido.get_input_names())
-    print(mido.get_output_names())
-    sleep(10)
     from interfaces.console import Display
     m = curses.mousemask(1)
     curses.mouseinterval(10)
     stdscr.nodelay(1)
     display = Display(stdscr)
-    with mido.open_output('USB Device 0x8888:0x03:USB Device 0x8888:0x03 MIDI 1 20:0', autoreset=True) as mport:
-        with mido.open_input('USB Device 0x8888:0x03:USB Device 0x8888:0x03 MIDI 1 20:0', autoreset=True) as mportin:
+    with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
+        with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
             supercell = Supercell(display, mport, mportin, args.set)
             supercell.run()
 

@@ -195,20 +195,3 @@ class Display(object):
         self.draw_gui(status)
         self.draw_grid(led_grid)
         return
-
-    def draw_load_screen(self):
-        # self.draw_gui({})
-        sx = self.grid_x
-        sy = self.grid_y
-        win = curses.newwin(self.grid_h+2, (self.grid_w)+2, sy, sx)
-        win.border()
-        files = get_all_set_file_numbers(save_location, save_extension)
-        for f in files:
-            if f > 255:
-                continue
-            x = int(f / 16) + 1
-            y = 2 * int(f % 16) + 1
-            # print(x,y)
-            win.addstr(x, y, "x")#, curses.color_pair(4))
-        win.refresh()
-        return

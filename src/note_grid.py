@@ -98,11 +98,11 @@ class Note_Grid(object):
                 if n:
                     acc += 2**x
             saved_grid.append(acc)
-        return {"Grid": saved_grid, "Repeats": self.repeats}
+        return {"grid": saved_grid, "repeats": self.repeats}
 
     def load(self, saved):  # TODO fix this
-        self.repeats = saved["Repeats"]
-        for x, g in enumerate(saved["Grid"]):
+        self.repeats = saved["repeats"]
+        for x, g in enumerate(saved["grid"]):
             # print(g)
             # print('{0:0b}'.format(g).zfill(self.height))
             for y, i in enumerate([int(x) for x in list('{0:0b}'.format(g).zfill(self.height))]):

@@ -1,6 +1,6 @@
 ## Top
-- Run on full-size raspberry-pi, with USB-Midi interface
 - work on conductor/instrument states for config, play, save, load etc
+- sequencer could be 15 notes high, one row dedicated to pages/repeats
 - refactor status call
 - refactor display and controls - section for per-instrument controls
 - multi-instrument support (works, need controls to create/manage instruments)
