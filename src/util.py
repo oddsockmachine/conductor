@@ -3,11 +3,11 @@ from re import fullmatch
 from constants import logging, save_location, save_extension
 from json import load
 
-def get_next_filename(saved_location, extension):
-    files = glob(saved_location+'*'+extension)
+def get_next_filename():
+    files = glob(save_location+'*'+save_extension)
     # print(files)
-    files = [f for f in files if fullmatch(saved_location+'\d+\.json', f)]
-    files = [f.replace(saved_location,'').replace(extension,'') for f in files if fullmatch(saved_location+'\d+'+extension, f)]
+    files = [f for f in files if fullmatch(save_location+'\d+\.json', f)]
+    files = [f.replace(save_location,'').replace(save_extension,'') for f in files if fullmatch(save_location+'\d+'+save_extension, f)]
     files = sorted([int(f) for f in files])
     # print(files)
     next_num = 0
@@ -15,24 +15,31 @@ def get_next_filename(saved_location, extension):
         if int(num)+1 not in files:
             next_num = int(num)+1
             break
-    next_file = saved_location + str(next_num) + extension
+    next_file = save_location + str(next_num) + save_extension
     # print(next_file)
     return next_file
 
-def get_all_set_file_numbers(saved_location, extension):
-    files = glob(saved_location+'*'+extension)
+def get_all_set_file_numbers():
+    files = glob(save_location+'*'+save_extension)
     # print(files)
-    files = [f for f in files if fullmatch(saved_location+'\d+\.json', f)]
-    files = [f.replace(saved_location,'').replace(extension,'') for f in files if fullmatch(saved_location+'\d+'+extension, f)]
+    files = [f for f in files if fullmatch(save_location+'\d+\.json', f)]
+    files = [f.replace(save_location,'').replace(save_extension,'') for f in files if fullmatch(save_location+'\d+'+save_extension, f)]
     files = sorted([int(f) for f in files])
     return files
 
+ALL_FILE_NAMES = get_all_set_file_numbers()
+logging.info(str(ALL_FILE_NAMES))
 
-def load_from_touch(x, y):
+def filenum_from_touch(x, y):
     num = str(255 - (y * 16 + (15 - x)))
-    # logging.info("touched ", num)
-    filename = save_location + num + save_extension
-    # logging.info("opening ", filename)
+    # filenum = save_location + num + save_extension
+    return num
+
+def validate_filenum(num):
+    return int(num) in ALL_FILE_NAMES
+
+def load_filenum(filenum):
+    filename = save_location + filenum + save_extension
     with open(filename, 'r') as saved_file:
         saved_data = load(saved_file)
     return saved_data

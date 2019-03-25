@@ -118,7 +118,7 @@ class Supercell(object):
 
     def save(self):
         # filename = './saved/' + str(datetime.now()).split('.')[0] + '.json'
-        filename = get_next_filename(save_location, save_extension)
+        filename = get_next_filename()
         print("Saving current grid to {}".format(filename))
         with open(filename, 'w') as savefile:
             saved = self.conductor.save()

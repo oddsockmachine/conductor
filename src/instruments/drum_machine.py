@@ -77,7 +77,7 @@ class DrumMachine(Instrument):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
 
-    def get_led_grid(self):
+    def get_led_grid(self, state):
         led_grid = []
         grid = self.get_curr_page().note_grid
         for c, column in enumerate(grid):  # columnn counter
@@ -206,7 +206,7 @@ class DrumMachine(Instrument):
         return
 
     def get_curr_notes(self):
-        grid = self.get_led_grid()
+        grid = self.get_led_grid('play')
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on

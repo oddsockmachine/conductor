@@ -105,7 +105,7 @@ class Droplets(Instrument):
     # def get_curr_page_leds(self):
     #     return
 
-    def get_led_grid(self):
+    def get_led_grid(self, state):
         page = [[LED_BLANK for y in range(self.height)] for x in range(self.width)]
         display = {
             0: DROPLET_STOPPED,

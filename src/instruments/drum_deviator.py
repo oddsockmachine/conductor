@@ -55,7 +55,7 @@ class DrumDeviator(DrumMachine):
             self.temp_page.touch_note(x, y)
         return True
 
-    def get_led_grid(self):
+    def get_led_grid(self, state):
         led_grid = []
         grid = self.get_curr_page().note_grid
         for c, column in enumerate(grid):

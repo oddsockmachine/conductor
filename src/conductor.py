@@ -3,7 +3,7 @@ from time import sleep
 from constants import *
 from instruments import instrument_lookup
 from note_conversion import *
-from util import get_all_set_file_numbers, load_from_touch
+from util import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum
 
 
 class Conductor(object):
@@ -51,21 +51,29 @@ class Conductor(object):
             'speed': 1
         }
 
+    def get_led_grid(self):
+        '''Get led status types for all cells of the grid, to be drawn by the display'''
+        display_func_name = self.current_state + '_screen'
+        self.__getattribute__(display_func_name)
+        display_func = getattr(self, display_func_name)
+        return display_func()
+
     def play_screen(self):
-        led_grid = self.get_curr_instrument().get_led_grid()
+        led_grid = self.get_curr_instrument().get_led_grid(self.current_state)
         return led_grid
 
     def load_screen(self):
         led_grid = []
         for x in range(16):
             led_grid.append([LED_BLANK for y in range(16)])
-        files = get_all_set_file_numbers(save_location, save_extension)
+        files = get_all_set_file_numbers()
         for f in files:
             if f > 254:  # TODO add a slot for empty/new
                 continue
             x = int(f / 16)
             y = int(f % 16)
             led_grid[y][15-x] = LED_ACTIVE
+        led_grid[0][15] = LED_CURSOR
         return led_grid
 
     def save_screen(self):
@@ -89,18 +97,6 @@ class Conductor(object):
             # ins.step_beat()#self.beat_position)
             ins.step_beat(self.beat_position)
         pass
-
-    def get_led_grid(self):
-        '''Get led status types for all cells of the grid, to be drawn by the display'''
-        display_func_name = self.current_state + '_screen'
-        self.__getattribute__(display_func_name)
-        display_func = getattr(self, display_func_name)
-        return display_func()
-        # if self.current_state == 'play':
-        #     led_grid = self.get_curr_instrument().get_led_grid()
-        # elif self.current_state == 'load':
-        #     led_grid = self.show_load_page()
-        # return led_grid
 
     def save(self):
         return {
@@ -173,8 +169,12 @@ class Conductor(object):
         if self.current_state == 'play':
             self.get_curr_instrument().touch_note(x, y)
         elif self.current_state == 'load':
-            saved_data = load_from_touch(x, y)
-            self.load(saved_data)
+            filenum = filenum_from_touch(x, y)
+            logging.info(filenum)
+            if not validate_filenum(filenum):
+                logging.info("rejected")
+                return
+            self.load(load_filenum(filenum))
         return
 
     def change_division(self, up_down):
