@@ -246,7 +246,6 @@ class DrumMachine(Instrument):
         self.pages = []
         for p in saved["pages"]:
             page = Note_Grid(self.bars, self.height)
-            print(p)
             page.load(p)
             self.pages.append(page)
         return

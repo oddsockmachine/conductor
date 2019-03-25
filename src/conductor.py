@@ -3,7 +3,7 @@ from time import sleep
 from constants import *
 from instruments import instrument_lookup
 from note_conversion import *
-from util import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum
+from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum
 
 
 class Conductor(object):
@@ -51,6 +51,20 @@ class Conductor(object):
             'speed': 1
         }
 
+    def ins_cfg(self):
+        if self.current_state == 'ins_cfg':
+            self.current_state = 'play'
+        else:
+            self.current_state = 'ins_cfg'
+        return
+
+    def gbl_cfg(self):
+        if self.current_state == 'gbl_cfg':
+            self.current_state = 'play'
+        else:
+            self.current_state = 'gbl_cfg'
+        return
+
     def get_led_grid(self):
         '''Get led status types for all cells of the grid, to be drawn by the display'''
         display_func_name = self.current_state + '_screen'
@@ -60,6 +74,17 @@ class Conductor(object):
 
     def play_screen(self):
         led_grid = self.get_curr_instrument().get_led_grid(self.current_state)
+        return led_grid
+
+    def gbl_cfg_screen(self):
+        led_grid = []
+        for x in range(16):
+            led_grid.append([LED_BLANK for y in range(16)])
+        led_grid[5][5] = LED_CURSOR
+        return led_grid
+
+    def ins_cfg_screen(self):
+        led_grid = self.get_curr_instrument().get_led_grid('ins_cfg')
         return led_grid
 
     def load_screen(self):
@@ -150,18 +175,18 @@ class Conductor(object):
             # if not i.isdrum:
             i.set_scale(self.scale)
         return
-
-    def next_instrument(self):
-        if self.current_visible_instrument_num == len(self.instruments)-1:
-            return False
-        self.current_visible_instrument_num += 1
-        return
-
-    def prev_instrument(self):
-        if self.current_visible_instrument_num == 0:
-            return False
-        self.current_visible_instrument_num -= 1
-        return
+    #
+    # def next_instrument(self):
+    #     if self.current_visible_instrument_num == len(self.instruments)-1:
+    #         return False
+    #     self.current_visible_instrument_num += 1
+    #     return
+    #
+    # def prev_instrument(self):
+    #     if self.current_visible_instrument_num == 0:
+    #         return False
+    #     self.current_visible_instrument_num -= 1
+    #     return
 
     ###### CONTROL PASSTHROUGH METHODS ######
 
@@ -170,9 +195,7 @@ class Conductor(object):
             self.get_curr_instrument().touch_note(x, y)
         elif self.current_state == 'load':
             filenum = filenum_from_touch(x, y)
-            logging.info(filenum)
             if not validate_filenum(filenum):
-                logging.info("rejected")
                 return
             self.load(load_filenum(filenum))
         return

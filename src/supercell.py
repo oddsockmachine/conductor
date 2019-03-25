@@ -1,5 +1,5 @@
 from conductor import Conductor
-from util import get_next_filename
+from save_utils import get_next_filename
 from constants import *
 from time import sleep, time
 from datetime import datetime
@@ -67,6 +67,10 @@ class Supercell(object):
             logging.info(self.save_on_exit)
         elif m['cmd'] == 'save':
             self.save()
+        elif m['cmd'] == 'CONFIG_A':
+            self.conductor.gbl_cfg()
+        elif m['cmd'] == 'CONFIG_B':
+            self.conductor.ins_cfg()
         elif m['cmd'] == 'step_beat':
             self.conductor.step_beat()
         elif m['cmd'] == 'clear_page':

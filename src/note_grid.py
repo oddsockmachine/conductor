@@ -103,11 +103,9 @@ class Note_Grid(object):
     def load(self, saved):  # TODO fix this
         self.repeats = saved["repeats"]
         for x, g in enumerate(saved["grid"]):
-            # print(g)
             # print('{0:0b}'.format(g).zfill(self.height))
             for y, i in enumerate([int(x) for x in list('{0:0b}'.format(g).zfill(self.height))]):
                 if i:
-                    print(x,y)
                     self.add_note(self.width-y-1, self.height-x-1)
         return
 

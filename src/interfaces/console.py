@@ -1,6 +1,5 @@
 #coding=utf-8
 from constants import *
-from util import get_all_set_file_numbers
 import curses
 from curses.textpad import rectangle
 import locale
@@ -30,6 +29,14 @@ class Display(object):
         c = self.stdscr.getch()
         if c == -1:
             m['cmd'] = None
+        if c == curses.KEY_LEFT:
+            m['cmd'] = "CONFIG_A"
+        if c == curses.KEY_RIGHT:
+            m['cmd'] = "CONFIG_B"
+        # if c == curses.KEY_UP:
+        #     m['cmd'] = "LOAD"
+        # if c == curses.KEY_DOWN:
+        #     m['cmd'] = "SAVE"
         if c == ord('Q'):
             m['cmd'] = 'quit'
         if c == ord('s'):
@@ -130,7 +137,11 @@ class Display(object):
             'sustain': "S" if status.get('sustain') else " ",
         }
         status_line_2 = "{key} {scale} +{octave}ve {type} >{division}  {rpt} {sustain}".format(**status_strs)
-        self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
+
+        lines = ["{}: {}".format(k,v) for k, v in status.items()]
+        # self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
+        for i, line in enumerate(lines):
+            self.stdscr.addstr(self.grid_y+18+i, self.grid_x+2, line)#, curses.color_pair(4))
         self.draw_ins_selector(status['ins_num'], status['ins_total'])
         self.draw_pages(status['page_num'], status['repeat_num'], status['page_stats'])
         return

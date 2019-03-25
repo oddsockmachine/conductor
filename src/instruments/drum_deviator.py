@@ -172,37 +172,31 @@ class DrumDeviator(DrumMachine):
 #             for msg in msgs:
 #                 self.mport.send(msg)
 #
-#     def save(self):
-#         saved = {
-#           "Octave": self.octave,
-#           "Key": self.key,
-#           "Scale": self.scale,
-#           "Pages": [p.save() for p in self.pages],
-#           "Speed": self.speed,
-#           "IsDrum": self.isdrum,
-#           "Sustain": self.sustain,
-#           "Chaos": self.chaos,
-#           "RandomRpt": self.random_pages,
-#         }
-#         return saved
-#
-#     def load(self, saved):
-#         self.octave = saved["Octave"]
-#         self.key = saved["Key"]
-#         self.scale = saved["Scale"]
-#         self.speed = saved["Speed"]
-#         self.isdrum = saved["IsDrum"]
-#         self.sustain = saved["Sustain"]
-#         self.chaos = saved["Chaos"]
-#         self.random_pages = saved["RandomRpt"]
-#         self.pages = []
-#         for p in saved["Pages"]:
-#             page = Note_Grid(self.bars, self.height)
-#             print(p)
-#             page.load(p)
-#             self.pages.append(page)
-#         return
-#
+    def save(self):
+        saved = {
+          "pages": [p.save() for p in self.pages],
+          "sustain": self.sustain,
+          "random_rpt": self.random_pages,
+          "fire_chances": self.fire_chances,
+          "transpose_chances": self.transpose_chances,
+        }
+        saved.update(self.default_save_info())
+        return saved
+
+    def load(self, saved):
+        self.load_default_info(saved)
+        self.sustain = saved["sustain"]
+        self.random_pages = saved["random_rpt"]
+        self.pages = []
+        self.fire_chances = saved['fire_chances']
+        self.transpose_chances = saved['transpose_chances']
+        for p in saved["pages"]:
+            page = Note_Grid(self.bars, self.height)
+            page.load(p)
+            self.pages.append(page)
+        return
+
+
 #     def clear_page(self):
 #         self.get_curr_page().clear_page()
 #         return
