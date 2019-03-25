@@ -1,5 +1,4 @@
 ## Top
-- work on conductor/instrument states for config, play, save, load etc
 - sequencer could be 15 notes high, one row dedicated to pages/repeats
 - refactor status call
 - refactor display and controls - section for per-instrument controls
@@ -34,15 +33,15 @@ sprint.line1("Select:")
 - general https://monome.org/docs/grid-studies/python/
 
 ### Grid Sequencer
-- 16x16 sequencer
-- Add pages to extend sequence length
-- Pages can have repeats
-- Pages can be picked randomly, weighted by repeats
+  - 16x16 sequencer
+  - Add pages to extend sequence length
+  - Pages can have repeats
+  - Pages can be picked randomly, weighted by repeats
 
 ### Drum Machine
-- Like sequencer, but specifically for drums/samplers
-- Notes are chromatic, to fit 4x4 sample set
-- TODO! on controls page, make it easier to set up multiple pages, select individual pages etc
+  - Like sequencer, but specifically for drums/samplers
+  - Notes are chromatic, to fit 4x4 sample set
+- TODO! on controls page, make it easier to set up multiple pages, select next pages etc (like a "play-clip" mode)
 
 ### Euclidean Beat Generator
 - For each drum-note/sample, set a bar length (<16), euclidean density, and offset
@@ -59,11 +58,11 @@ sprint.line1("Select:")
 - TopRight 8x8 shows pages and controls. Save, select, clear pages
 
 ### Random Deviation Beat Sequencer
-- Draw a beat on a sequencer grid
+  - Draw a beat on a sequencer grid
 - Each drum-note/sample has a separate random chance of suppressing/firing or transposing
-- Show drum sequencer along bottom 16x8, with notes that are modified for this bar highlighted
+  - Show drum sequencer along bottom 16x8, with notes that are modified for this bar highlighted
 - (suppressed: slightly darker - triggered: slightly brighter - transposed: different color)
-- Use the top 16x8 for controls like randomness per note
+  - Use the top 16x8 for controls like randomness per note
 - Allow multiple pages per instrument
 - Transposition could/should be predictable, eg to +8 notes
 - Random notes for each bar determined at start of bar
@@ -80,11 +79,11 @@ sprint.line1("Select:")
 
 ### Droplets
 - Like Flin
-- Droplets fall vertically
-- Pitch is horizontal
+  - Droplets fall vertically
+  - Pitch is horizontal
 - Touch high up, droplet falls with high velocity
 - Touch low down, droplet falls with low velocity
-- Pitch is triggered when droplet reaches bottom
+  - Pitch is triggered when droplet reaches bottom
 - Touch above note to drag/extend it
 - Touch below note to catch/remove it
 - Add multiple drops per line?
