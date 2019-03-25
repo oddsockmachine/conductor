@@ -5,8 +5,8 @@ class Note_Grid(object):
     def __init__(self, bars=int(W/4), height=H):
         super(Note_Grid, self).__init__()
         self.bars = min(bars, 8)  # Option to reduce number of bars < 4
-        self.height = height
-        self.width = self.bars * 4
+        self.height = 16
+        self.width = 16
         # A W x H grid to store notes on
         # grid is a list of columns of notes
         # x gives you the column, y gives the note - 0 being low, 15+ being high
@@ -98,16 +98,14 @@ class Note_Grid(object):
                 if n:
                     acc += 2**x
             saved_grid.append(acc)
-        return {"Grid": saved_grid, "Repeats": self.repeats}
+        return {"grid": saved_grid, "repeats": self.repeats}
 
     def load(self, saved):  # TODO fix this
-        self.repeats = saved["Repeats"]
-        for x, g in enumerate(saved["Grid"]):
-            # print(g)
+        self.repeats = saved["repeats"]
+        for x, g in enumerate(saved["grid"]):
             # print('{0:0b}'.format(g).zfill(self.height))
             for y, i in enumerate([int(x) for x in list('{0:0b}'.format(g).zfill(self.height))]):
                 if i:
-                    print(x,y)
                     self.add_note(self.width-y-1, self.height-x-1)
         return
 

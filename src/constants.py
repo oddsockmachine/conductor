@@ -2,6 +2,8 @@
 import logging
 logging.basicConfig(filename='sequencer.log',level=logging.DEBUG)
 
+save_location = './saved/'
+save_extension = '.json'
 
 THEME = "A"
 # The ints used to represent the state of leds on an led_grid
@@ -12,6 +14,15 @@ LED_SELECT = {"A":3, "B": 3,}[THEME]
 LED_BEAT = {"A":1, "B": 1,}[THEME]
 LED_SCALE_PRIMARY = {"A":9, "B": 9,}[THEME]
 LED_SCALE_SECONDARY = {"A":9, "B": 9,}[THEME]
+
+DROPLET_MOVING = 2
+DROPLET_SPLASH = 3
+DROPLET_STOPPED = 1
+
+DRUM_OFF = 0
+DRUM_SELECT = 3
+DRUM_ACTIVE = 2
+DRUM_CHANGED = 1
 
 # TODO calculate and return color tuples based on brightness setting
 OFF = (0, 0, 0)
@@ -25,7 +36,7 @@ INDIGO = (180, 0, 255)
 PURPLE = (255, 0, 255)
 PURPLE = (10, 0, 10)
 LOW = (18, 7, 0)
-colors  =[RED, ORANGE,YELLOW, GREEN,CYAN,BLUE,INDIGO,PURPLE]
+colors = [RED, ORANGE,YELLOW, GREEN,CYAN,BLUE,INDIGO,PURPLE]
 
 # The ints used to represent the state of notes on a note_grid
 NOTE_OFF = 0

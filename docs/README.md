@@ -20,6 +20,8 @@
 
 `python controller.py [--hw 1]`
 
+`python controller.py --set saved/2019-01-15\ 14:35:59.json`
+
 ### Usage
 
 The instrument's layout is divided into four major sections:
@@ -59,3 +61,5 @@ The grid is a piano-roll style input for the sequencer
 - o chaos +1
 - p -1 chaos
 - / toggle z mode
+
+### Changelog/releases

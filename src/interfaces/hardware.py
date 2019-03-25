@@ -1,6 +1,6 @@
 from constants import *
 from note_conversion import SCALES
-from time import perf_counter_ns
+# from time import perf_counter
 print("Importing hardware connections")
 from board import SCL, SDA, D13, D6
 import busio
@@ -8,6 +8,8 @@ import digitalio
 from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 print("Done")
+from time import sleep
+AUTO_WRITE = True
 
 class Display(object):
     """docstring for Display."""
@@ -16,18 +18,36 @@ class Display(object):
         print("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
         print("Done")
-        trelli = [[NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x31)],
-                  [NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30)],]
+        print("Creating Trelli")
+        trelli = []
+        addrs = [0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D]
+        for addr in addrs:  # Create trelli sequentially with a slight pause between each
+            t = NeoTrellis(i2c_bus, False, addr=addr)
+            t.pixels.auto_write = False
+            trelli.append(t)
+            sleep(0.2)
+            # [NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
+            # [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
+            # [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
+            # [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],]
+        # if AUTO_WRITE:
+        #     for ts in trelli:
+        #         for t in ts:
+        #             t.pixels.auto_write = False
+        print("Linking Trelli")
         self.trellis = MultiTrellis(trelli)
+        print("Done")
         self.grid_h = h
         self.grid_w = w
         self.led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
         button_cb = self.make_cb()
-        print("Initializing Trellis")
+        print("Initializing Trelli inputs")
         for y in range(h):
             for x in range(w):
+                sleep(0.01)
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_RISING)
+                sleep(0.01)
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_FALLING)
                 self.trellis.set_callback(x, y, button_cb)
         self.seq_button = digitalio.DigitalInOut(D13)
@@ -36,7 +56,11 @@ class Display(object):
         return
 
     def get_cmds(self):
-        self.trellis.sync()
+        try:
+            self.trellis.sync()  # TODO undo? Fails if called too often
+        except:
+            print("HW error")
+            return {'cmd': None}
         return {'cmd': None}
 
     def draw_all(self, status, led_grid):
@@ -63,11 +87,17 @@ class Display(object):
                     # self.trellis.color(x, y, self.led_matrix[x][y])
                 self.old_led_matrix[x][y] = self.led_matrix[x][y]
         # This method might be better once the grid is much bigger
-        t_start = perf_counter_ns()
+        # t_start = perf_counter()
         for diff in diffs:
             self.trellis.color(diff[0],diff[1],diff[2])
-        t_stop = perf_counter_ns()
-        logger.info(str(t1_stop-t1_start))
+            sleep(0.001)
+        if len(diffs)>0:
+            if AUTO_WRITE:
+                for ts in self.trellis._trelli:
+                    for t in ts:
+                        t.pixels.show()
+        # t_stop = perf_counter()
+        # logger.info(str(t1_stop-t1_start))
         return
 
     def draw_note_grid(self, led_grid):
@@ -173,3 +203,6 @@ class Display(object):
                     self.command_cb({'cmd': 'note', 'x': xcoord, 'y': self.grid_h-1-ycoord})
             return
         return button_cb
+
+    def draw_load_screen(self):
+        return

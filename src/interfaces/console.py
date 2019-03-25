@@ -1,6 +1,5 @@
 #coding=utf-8
 from constants import *
-
 import curses
 from curses.textpad import rectangle
 import locale
@@ -30,6 +29,14 @@ class Display(object):
         c = self.stdscr.getch()
         if c == -1:
             m['cmd'] = None
+        if c == curses.KEY_LEFT:
+            m['cmd'] = "CONFIG_A"
+        if c == curses.KEY_RIGHT:
+            m['cmd'] = "CONFIG_B"
+        if c == curses.KEY_UP:
+            m['cmd'] = "LOAD"
+        if c == curses.KEY_DOWN:
+            m['cmd'] = "SAVE"
         if c == ord('Q'):
             m['cmd'] = 'quit'
         if c == ord('s'):
@@ -70,14 +77,17 @@ class Display(object):
             m['cmd'] = 'random_rpt'
         if c == ord('t'):
             m['cmd'] = 'sustain'
-        if c == ord('o'):
-            m['cmd'] = 'chaos'
-            m['dir'] = +1
-        if c == ord('p'):
-            m['cmd'] = 'chaos'
-            m['dir'] = -1
+        # if c == ord('o'):
+        #     m['cmd'] = 'chaos'
+        #     m['dir'] = +1
+        # if c == ord('p'):
+        #     m['cmd'] = 'chaos'
+        #     m['dir'] = -1
         if c == ord('/'):
             m['cmd'] = 'z_mode'
+        if c in [ord('1'), ord('2'), ord('3')]:
+            m['cmd'] = 'add_instrument'
+            m['type'] = int(chr(c))
         if c == curses.KEY_MOUSE:
             _m = curses.getmouse()
             m = self.get_mouse_zone(_m)
@@ -121,14 +131,17 @@ class Display(object):
             'key': status.get('key'),
             'scale': status.get('scale')[:5].rjust(5),
             'octave': status.get('octave'),
-            'type': "Drum" if (status.get('isdrum')==True) else "Inst",
+            'type': status.get('type'),
             'division': status.get('division'),
             'rpt': "R" if status.get('random_rpt') else " ",
             'sustain': "S" if status.get('sustain') else " ",
-            'chaos': status.get('chaos'),
         }
-        status_line_2 = "{key} {scale} +{octave}ve {type} >{division}  {rpt} {sustain} {chaos}".format(**status_strs)
-        self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
+        status_line_2 = "{key} {scale} +{octave}ve {type} >{division}  {rpt} {sustain}".format(**status_strs)
+
+        lines = ["{}: {}".format(k,v) for k, v in status.items()]
+        # self.stdscr.addstr(self.grid_y-1, self.grid_x+2, status_line_2)#, curses.color_pair(4))
+        for i, line in enumerate(lines):
+            self.stdscr.addstr(self.grid_y+18+i, self.grid_x+2, line)#, curses.color_pair(4))
         self.draw_ins_selector(status['ins_num'], status['ins_total'])
         self.draw_pages(status['page_num'], status['repeat_num'], status['page_stats'])
         return

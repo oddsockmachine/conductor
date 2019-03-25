@@ -1,39 +1,17 @@
 #coding=utf-8
+from instruments.instrument import Instrument
 from constants import *
 from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, SCALES, KEYS
 import mido
 from random import choice, random, randint
 
-class GenericInstrument(object):
-    """docstring for GenericInstrument."""
-    def __init__(self, ins_num, mport, speed=1, bars=W/4, height=H):
-        super(Instrument, self).__init__()
-        if not isinstance(ins_num, int):
-            print("Instrument num {} must be an int".format(ins_num))
-            exit()
-        self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
-        self.mport = mport
-        self.channel_num = ins_num
-        self.height = height
-        self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
-        self.width = self.bars * 4
-        self.curr_page_num = 0
-        self.curr_rept_num = 0
-        self.prev_loc_beat = 0
-        self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
-        self.speed = speed  # Relative speed of this instrument compared to global clock
-        self.old_notes = []  # Keep track of currently playing notes so we can off them next step
-
-
-
-
-class Instrument(object):
-    """docstring for Instrument."""
+class BinarySequencer(object):
+    """docstring for BinarySequencer."""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1, bars=W/4, height=H):
-        super(Instrument, self).__init__()
+        super(BinarySequencer, self).__init__()
         if not isinstance(ins_num, int):
-            print("Instrument num {} must be an int".format(ins_num))
+            print("BinarySequencer num {} must be an int".format(ins_num))
             exit()
         self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
         self.mport = mport
@@ -330,10 +308,10 @@ class Instrument(object):
 
 
 import unittest
-class TestInstrument(unittest.TestCase):
+class TestSequencer(unittest.TestCase):
 
     def test_instrument(self):
-        ins = Instrument(8, None, "a", "pentatonic", octave=2, bars=4)
+        ins = Sequencer(8, None, "a", "pentatonic", octave=2, bars=4)
         self.assertTrue(ins.touch_note(0,1))
         self.assertTrue(ins.touch_note(0,3))
         self.assertTrue(ins.touch_note(0,5))
@@ -349,7 +327,7 @@ class TestInstrument(unittest.TestCase):
         ins.step_beat()
 
     def test_multi_pages(self):
-        ins = Instrument(8, None, "a", "pentatonic", octave=3, bars=4)
+        ins = Sequencer(8, None, "a", "pentatonic", octave=3, bars=4)
         self.assertEqual(len(ins.pages), 1)
         self.assertEqual(ins.curr_page_num, 0)
         ins.touch_note(0,0)
@@ -374,7 +352,7 @@ class TestInstrument(unittest.TestCase):
         self.assertEqual(ins.get_curr_notes(), [3,6,9])
 
     def test_stepping_and_pages(self):
-        ins = Instrument(8, None, "a", "pentatonic", octave=3, bars=4)
+        ins = Sequencer(8, None, "a", "pentatonic", octave=3, bars=4)
         ins.touch_note(0,0)
         ins.touch_note(0,1)
         ins.touch_note(0,2)
@@ -409,7 +387,7 @@ class TestInstrument(unittest.TestCase):
         self.assertEqual(ins.local_beat_position, 0)
 
     def test_multi_repeats(self):
-        ins = Instrument(8, None, "a", "pentatonic", octave=3, bars=4)
+        ins = Sequencer(8, None, "a", "pentatonic", octave=3, bars=4)
         ins.touch_note(0,0)
         ins.touch_note(0,1)
         ins.touch_note(0,2)
@@ -442,11 +420,11 @@ class TestInstrument(unittest.TestCase):
         self.assertEqual(ins.get_curr_notes(), [5,6,7])
 
     def test_cell_to_midi(self):
-        ins1 = Instrument(8, None, "a", "chromatic", octave=3, bars=4)
+        ins1 = Sequencer(8, None, "a", "chromatic", octave=3, bars=4)
         self.assertEqual(ins1.cell_to_midi(0), 57)
         self.assertEqual(ins1.cell_to_midi(1), 58)
         self.assertEqual(ins1.cell_to_midi(2), 59)
-        ins2 = Instrument(8, None, "a", "major", octave=3, bars=4)
+        ins2 = Sequencer(8, None, "a", "major", octave=3, bars=4)
         self.assertEqual(ins2.cell_to_midi(0), 57)
         self.assertEqual(ins2.cell_to_midi(1), 59)
         self.assertEqual(ins2.cell_to_midi(2), 61)
@@ -455,7 +433,7 @@ class TestInstrument(unittest.TestCase):
     def test_midi_out(self):
         from midi import MockMidiOut
         fake_out = MockMidiOut()
-        ins = Instrument(9, fake_out, "a", "chromatic", octave=3, bars=4)
+        ins = Sequencer(9, fake_out, "a", "chromatic", octave=3, bars=4)
         ins.touch_note(1,0)
         ins.touch_note(1,1)
         ins.touch_note(2,14)
