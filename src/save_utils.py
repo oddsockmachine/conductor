@@ -1,7 +1,7 @@
 from glob import glob
 from re import fullmatch
 from constants import logging, save_location, save_extension
-from json import load
+from json import load, dump
 
 def get_next_filename():
     files = glob(save_location+'*'+save_extension)
@@ -43,3 +43,12 @@ def load_filenum(filenum):
     with open(filename, 'r') as saved_file:
         saved_data = load(saved_file)
     return saved_data
+
+def save_filenum(data, filenum=None):
+    if not filenum:
+        filename = get_next_filename()
+    else:
+        filename = save_location + filenum + save_extension
+    with open(filename, 'w') as savefile:
+        dump(data, savefile)
+    return

@@ -10,11 +10,6 @@
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 
 
-### Save and load
-- On startup, show colored pixels for numbered sets. Allows 255 memory slots, plus use 1 for empty
-- Show that screen as a menu
-- Click an empty pixel to save there
-
 ### Handle LED colors better
 - create color engine, for different themes, brightnesses etc
 - Show root notes, pentatonic notes, etc in different colors/shades
@@ -25,9 +20,6 @@
 ### Add small screen for better feedback
 from screen import sprint
 sprint.line1("Select:")
-
-## Instruments
-- Handle saving/loading of different instruments
 
 ### Inspirations for new instruments
 - Arc https://www.youtube.com/watch?v=HM0EBvJe1s0

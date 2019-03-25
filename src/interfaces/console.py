@@ -33,10 +33,10 @@ class Display(object):
             m['cmd'] = "CONFIG_A"
         if c == curses.KEY_RIGHT:
             m['cmd'] = "CONFIG_B"
-        # if c == curses.KEY_UP:
-        #     m['cmd'] = "LOAD"
-        # if c == curses.KEY_DOWN:
-        #     m['cmd'] = "SAVE"
+        if c == curses.KEY_UP:
+            m['cmd'] = "LOAD"
+        if c == curses.KEY_DOWN:
+            m['cmd'] = "SAVE"
         if c == ord('Q'):
             m['cmd'] = 'quit'
         if c == ord('s'):

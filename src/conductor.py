@@ -3,7 +3,7 @@ from time import sleep
 from constants import *
 from instruments import instrument_lookup
 from note_conversion import *
-from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum
+from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum, save_filenum
 
 
 class Conductor(object):
@@ -51,18 +51,32 @@ class Conductor(object):
             'speed': 1
         }
 
-    def ins_cfg(self):
+    def ins_cfg_state(self):
         if self.current_state == 'ins_cfg':
             self.current_state = 'play'
         else:
             self.current_state = 'ins_cfg'
         return
 
-    def gbl_cfg(self):
+    def gbl_cfg_state(self):
         if self.current_state == 'gbl_cfg':
             self.current_state = 'play'
         else:
             self.current_state = 'gbl_cfg'
+        return
+
+    def save_state(self):
+        if self.current_state == 'save':
+            self.current_state = 'play'
+        else:
+            self.current_state = 'save'
+        return
+
+    def load_state(self):
+        if self.current_state == 'load':
+            self.current_state = 'play'
+        else:
+            self.current_state = 'load'
         return
 
     def get_led_grid(self):
@@ -101,8 +115,9 @@ class Conductor(object):
         led_grid[0][15] = LED_CURSOR
         return led_grid
 
+
     def save_screen(self):
-        return
+        return self.load_screen()
 
     def add_instrument(self, type):
         if len(self.instruments) == 16:
@@ -123,12 +138,14 @@ class Conductor(object):
             ins.step_beat(self.beat_position)
         pass
 
-    def save(self):
-        return {
+    def save(self, filenum=None):
+        data = {
             "height": 16,
             "width": 16,
             "instruments": [i.save() for i in self.instruments]
         }
+        save_filenum(data, filenum)
+
 
     def load(self, saved):
         self.height = saved['height']
@@ -198,6 +215,13 @@ class Conductor(object):
             if not validate_filenum(filenum):
                 return
             self.load(load_filenum(filenum))
+            self.current_state == 'play'  # TODO return to play, or stay in load?
+        elif self.current_state == 'save':
+            filenum = filenum_from_touch(x, y)
+            if validate_filenum(filenum):
+                return  # don't overwrite existing files
+            self.save(filenum)
+            self.current_state == 'play'  # TODO return to play, or stay in save?
         return
 
     def change_division(self, up_down):

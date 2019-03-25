@@ -68,9 +68,13 @@ class Supercell(object):
         elif m['cmd'] == 'save':
             self.save()
         elif m['cmd'] == 'CONFIG_A':
-            self.conductor.gbl_cfg()
+            self.conductor.gbl_cfg_state()
         elif m['cmd'] == 'CONFIG_B':
-            self.conductor.ins_cfg()
+            self.conductor.ins_cfg_state()
+        elif m['cmd'] == 'LOAD':
+            self.conductor.load_state()
+        elif m['cmd'] == 'SAVE':
+            self.conductor.save_state()
         elif m['cmd'] == 'step_beat':
             self.conductor.step_beat()
         elif m['cmd'] == 'clear_page':
