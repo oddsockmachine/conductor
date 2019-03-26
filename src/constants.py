@@ -104,7 +104,7 @@ G = [
 [0,0,1],
 [1,1,1],
 ]
-H = [
+h = [
 [1,0,1],
 [1,0,1],
 [1,1,1],
@@ -168,11 +168,11 @@ Y = [
 [0,1,0],
 ]
 PLUS = [
-[0,1,0],
+[0,0,0],
 [0,1,0],
 [1,1,1],
 [0,1,0],
-[0,1,0],
+[0,0,0],
 ]
 MINUS = [
 [0,0,0],
@@ -199,9 +199,9 @@ SCALES = {
     'locrian':    'lo',
     'major':      'ma',
     'minor':      'mi',
-    'penta Maj':  'p+',
-    'penta Min':  'p-',
+    'pentatonic_maj':  'p+',
+    'pentatonic_min':  'p-',
     'chromatic':  'ch',
 }
 
-LETTERS = {'a':A,'b':B,'c':C,'d':D,'e':E,'f':F,'g':G,'h':H,'i':I,'l':L,'m':M,'o':O,'p':P,'s':S,'x':X,'y':Y,'+':PLUS,'-':MINUS,'#':SHARP}
+LETTERS = {'a':A,'b':B,'c':C,'d':D,'e':E,'f':F,'g':G,'h':h,'i':I,'l':L,'m':M,'o':O,'p':P,'s':S,'x':X,'y':Y,'+':PLUS,'-':MINUS,'#':SHARP}

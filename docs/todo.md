@@ -13,6 +13,9 @@
 - Select instrument
 - Add (/remove) instrument
 - Load, save pages
+- handle touches programmatically:
+  - create 16x16 grid using callbacks, same mechanism as adding chars to grid
+
 
 ### Handle LED colors better
 - create color engine, for different themes, brightnesses etc

@@ -14,7 +14,7 @@ class DrumMachine(Instrument):
         # self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
         # self.mport = mport
         # self.height = 16
-        # self.bars = 4 #min(bars, W/4)  # Option to reduce number of bars < 4
+        self.bars = 4 #min(bars, W/4)  # Option to reduce number of bars < 4
         # self.width = 16
         self.curr_page_num = 0
         self.curr_rept_num = 0

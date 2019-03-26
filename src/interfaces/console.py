@@ -174,7 +174,7 @@ class Display(object):
         '''Take a led_grid/array from the sequencer and print it to the screen'''
         sx = self.grid_x
         sy = self.grid_y
-        win = curses.newwin(self.grid_h+2, (self.grid_w)+2, sy, sx)
+        win = curses.newwin(self.grid_h+2, self.grid_w+2, sy, sx)
         win.border()
         for c, column in enumerate(led_grid):  # row counter
             for r, cell in enumerate(column):  # column counter
@@ -185,20 +185,20 @@ class Display(object):
         win.refresh()
         return
 
-    def draw_z_grid(self, led_grid):
-        '''Take a led_grid/array from the sequencer and print it to the screen'''
-        sx = self.grid_x
-        sy = self.grid_y
-        win = curses.newwin(self.grid_h+2, (self.grid_w)+2, sy, sx)
-        win.border()
-        for c, column in enumerate(led_grid):  # row counter
-            for r, cell in enumerate(column):  # column counter
-                x = (c*2) + 1
-                y = (H-r-1) + 1
-                glyph = DISPLAY[cell]
-                win.addstr(y, x, glyph)#, curses.color_pair(4))
-        win.refresh()
-        return
+    # def draw_z_grid(self, led_grid):
+    #     '''Take a led_grid/array from the sequencer and print it to the screen'''
+    #     sx = self.grid_x
+    #     sy = self.grid_y
+    #     win = curses.newwin(self.grid_h+2, (self.grid_w)+2, sy, sx)
+    #     win.border()
+    #     for c, column in enumerate(led_grid):  # row counter
+    #         for r, cell in enumerate(column):  # column counter
+    #             x = (c*2) + 1
+    #             y = (H-r-1) + 1
+    #             glyph = DISPLAY[cell]
+    #             win.addstr(y, x, glyph)#, curses.color_pair(4))
+    #     win.refresh()
+    #     return
 
 
 

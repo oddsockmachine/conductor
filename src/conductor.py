@@ -4,7 +4,7 @@ from constants import *
 from instruments import instrument_lookup
 from note_conversion import *
 from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum, save_filenum
-
+from screens import create_gbl_cfg_grid
 
 class Conductor(object):
     """docstring for Conductor."""
@@ -91,11 +91,7 @@ class Conductor(object):
         return led_grid
 
     def gbl_cfg_screen(self):
-        led_grid = []
-        for x in range(16):
-            led_grid.append([LED_BLANK for y in range(16)])
-        led_grid[5][5] = LED_CURSOR
-        return led_grid
+        return create_gbl_cfg_grid(range(len(self.instruments)), self.key, self.scale)
 
     def ins_cfg_screen(self):
         led_grid = self.get_curr_instrument().get_led_grid('ins_cfg')
@@ -222,6 +218,12 @@ class Conductor(object):
                 return  # don't overwrite existing files
             self.save(filenum)
             self.current_state == 'play'  # TODO return to play, or stay in save?
+        elif self.current_state == 'gbl_cfg':
+            if x == 15:
+                pass
+            if y < 5:
+                if x < 3:
+                    pass
         return
 
     def change_division(self, up_down):
