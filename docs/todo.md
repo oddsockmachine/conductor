@@ -1,6 +1,5 @@
 ## Top
 - sequencer could be 15 notes high, one row dedicated to pages/repeats
-- refactor status call
 - refactor display and controls - section for per-instrument controls
 - multi-instrument support (works, need controls to create/manage instruments)
 - create color engine, for different themes, brightnesses, background gradient, etc https://www.sweetwater.com/store/detail/Fire--akai-professional-fire-grid-controller-for-fl-studio
@@ -8,6 +7,12 @@
 - call background(x, y) to get a color code for general background pixel, as chosen by some other setting/algo
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 
+
+### Global Controls
+- Scale, key
+- Select instrument
+- Add (/remove) instrument
+- Load, save pages
 
 ### Handle LED colors better
 - create color engine, for different themes, brightnesses etc
@@ -57,7 +62,7 @@ sprint.line1("Select:")
 - TopLeft 8x8 shows sliders for randomness density. Clicking on a value regenerates that track.
 - TopRight 8x8 shows pages and controls. Save, select, clear pages
 
-### Random Deviation Beat Sequencer
+### Drum Deviator - Random Deviation Beat Sequencer
   - Draw a beat on a sequencer grid
 - Each drum-note/sample has a separate random chance of suppressing/firing or transposing
   - Show drum sequencer along bottom 16x8, with notes that are modified for this bar highlighted
@@ -68,6 +73,11 @@ sprint.line1("Select:")
 - Random notes for each bar determined at start of bar
 - Randomness/chaos amount should be per bar, not per note. eg: at low levels, only change a few notes occasionally
 - TODO randomness controls cover all pages - maybe they should be per-page?
+
+### Elaborator
+- Draw a beat/pattern on a page
+- Select which of the page repeats will be elaborated (eg every 4th)
+- Add randomness to that repeat, but only use notes that are already on the page
 
 ### Chord Sequencer
 - Specify chords on a timeline

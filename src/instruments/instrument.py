@@ -9,9 +9,6 @@ class Instrument(object):
     """docstring for Instrument."""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(Instrument, self).__init__()
-        if not isinstance(ins_num, int):
-            print("Instrument num {} must be an int".format(ins_num))
-            exit()
         self.type = "Generic Instrument"
         self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
         self.mport = mport
@@ -20,13 +17,7 @@ class Instrument(object):
         self.prev_loc_beat = 0
         self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
         self.speed = speed  # Relative speed of this instrument compared to global clock
-        if key not in KEYS:
-            print('Requested key {} not known'.format(key))
-            exit()
         self.key = key
-        if scale not in SCALES.keys():
-            print('Requested scale {} not known'.format(scale))
-            exit()
         self.scale = scale
         self.octave = octave  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step

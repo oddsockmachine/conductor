@@ -11,13 +11,7 @@ class DrumDeviator(DrumMachine):
     """docstring for DrumDeviator."""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(DrumDeviator, self).__init__(ins_num, mport, key, scale, octave, speed)
-        if not isinstance(ins_num, int):
-            print("DrumDeviator num {} must be an int".format(ins_num))
-            exit()
         self.type = "Drum Deviator"
-#         self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
-#         self.mport = mport
-#         # logging.info(mport)
         self.height = 8
         self.fire_chances = [0 for x in range(8)]
         self.transpose_chances = [0 for x in range(8)]

@@ -10,30 +10,21 @@ class DrumMachine(Instrument):
     """docstring for DrumMachine."""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(DrumMachine, self).__init__(ins_num, mport, key, scale, octave, speed)
-        if not isinstance(ins_num, int):
-            print("DrumMachine num {} must be an int".format(ins_num))
-            exit()
         self.type = "Drum Machine"
-        self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
-        self.mport = mport
-        self.height = 16
-        self.bars = 4 #min(bars, W/4)  # Option to reduce number of bars < 4
-        self.width = 16
+        # self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
+        # self.mport = mport
+        # self.height = 16
+        # self.bars = 4 #min(bars, W/4)  # Option to reduce number of bars < 4
+        # self.width = 16
         self.curr_page_num = 0
         self.curr_rept_num = 0
         self.prev_loc_beat = 0
         self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
-        self.speed = speed  # Relative speed of this instrument compared to global clock
+        # self.speed = speed  # Relative speed of this instrument compared to global clock
         self.random_pages = False  #  Pick page at random
         self.sustain = False  # Don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
-        if key not in KEYS:
-            print('Requested key {} not known'.format(key))
-            exit()
-        self.key = 'key'
-        if scale not in SCALES.keys():
-            print('Requested scale {} not known'.format(scale))
-            exit()
+        self.key = 'c'  # TODO find which starting note corresponds to pad 0
         self.scale = 'chromatic'
         self.octave = 0  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
