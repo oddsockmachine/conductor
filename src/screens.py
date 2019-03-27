@@ -23,6 +23,33 @@
 # S = Current scale (click left/right to inc/dec)
 # k = Current key (click left/right to inc/dec)
 
+# SSSSSS__RRRRRR______________PPPP
+# SS______RR__RR______________PPPP
+# SSSSSS__RRRR________________CCPP
+# ____SS__RR__RR__________PPPPPPPP
+# SSSSSS__RR__RR__________________
+# ________________________________
+# oooooo__________________________
+# oo__oo__________________________
+# oo__oo__________________________
+# OO__OO__________________________
+# OOOOOO__________________________
+# ________________________________
+# ________________________________
+# ________________________________
+# ________________________________
+# ________________________________
+
+# C curr_page_num
+# C curr_rept_num
+# R random_pages
+# S sustain
+# P pages
+# o/O octave
+# speed
+
+
+
 from constants import *
 
 def empty_grid():

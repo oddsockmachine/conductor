@@ -9,7 +9,7 @@ from screens import create_gbl_cfg_grid, generate_screen, gbl_cfg_grid_defn, get
 class Conductor(object):
     """docstring for Conductor."""
     # def __init__(self, mport, bars=int(W/4)):
-    def __init__(self, mport, saved=None, key="e", scale="pentatonic_maj", octave=2, bars=int(W/4), height=H):
+    def __init__(self, mport, key="e", scale="pentatonic_maj", octave=2, bars=int(W/4), height=H):
         super(Conductor, self).__init__()
         self.mport = mport
         self.key = key
@@ -27,13 +27,7 @@ class Conductor(object):
         self.instruments.append(instrument_lookup(7)(ins_num=14, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
         self.instruments.append(instrument_lookup(5)(ins_num=15, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
         self.current_visible_instrument_num = 0
-        if saved:
-            # If we're loading immediately, ignore all this setup and overwrite with info from file
-            self.load(saved)
-            self.current_state = 'play'  # Current state to be shown on display(s)
-        else:
-            # Otherwise, show load screen to select file (or empty)
-            self.current_state = 'load'  # Current state to be shown on display(s)
+        self.current_state = 'load'  # Current state to be shown on display(s)
         return
 
     def instrument_ctx(self):
@@ -108,7 +102,6 @@ class Conductor(object):
         led_grid[0][15] = LED_CURSOR
         return led_grid
 
-
     def save_screen(self):
         return self.load_screen()
 
@@ -139,7 +132,6 @@ class Conductor(object):
         }
         save_filenum(data, filenum)
 
-
     def load(self, saved):
         self.height = saved['height']
         self.width = saved['width']
@@ -152,44 +144,9 @@ class Conductor(object):
         self.current_state = 'play'
         return
 
-
-    ###### GETTERS/SETTERS ######
-
-    def get_curr_instrument(self):
-        return self.instruments[self.current_visible_instrument_num]
-
-    def set_curr_instrument(self, num):
-        self.current_visible_instrument_num = num
-
-    def get_curr_instrument_num(self):
-        return self.current_visible_instrument_num + 1
-
-    def get_total_instrument_num(self):
-        return len(self.instruments)
-
-    def cycle_key(self, up_down):
-        '''Find current key in master list, move on to prev/next key, set in all modal instruments'''
-        curr_key = KEYS.index(self.key)
-        new_key = (curr_key + up_down) % len(KEYS)
-        self.key = KEYS[new_key]
-        for i in self.instruments:
-            i.set_key(self.key)
-        return
-
-    def cycle_scale(self, up_down):
-        '''Find current scale in master list, move on to prev/next key, set in all modal instruments'''
-        curr_scale = list(SCALE_INTERVALS.keys()).index(self.scale)
-        new_scale = (curr_scale + up_down) % len(SCALE_INTERVALS.keys())
-        self.scale = list(SCALE_INTERVALS.keys())[new_scale]
-        for i in self.instruments:
-            # if not i.isdrum:
-            i.set_scale(self.scale)
-        return
-
-
     def touch_note(self, x, y):
         if self.current_state == 'play':
-            self.get_curr_instrument().touch_note(x, y)
+            self.get_curr_instrument().touch_note(self.current_state, x, y)
         elif self.current_state == 'load':
             filenum = filenum_from_touch(x, y)
             if not validate_filenum(filenum):
@@ -212,6 +169,7 @@ class Conductor(object):
             cb = get_cb_from_touch(get_ins_cfg_cb_grid(self.get_curr_instrument_num()), x, y)
         return
 
+    ###### CALLBACK METHODS ######
 
     def cb_scale_inc(self, x, y):
         self.cycle_scale(1)
@@ -232,39 +190,65 @@ class Conductor(object):
         self.current_state = 'save'
         return
     def cb_instrument_sel(self, x, y):
-        # logging.info(str(x))
-        # logging.info(str(y))
         if int(y) < self.get_total_instrument_num():
             self.set_curr_instrument(int(y))
             self.current_state = 'play'
         return
 
+    ###### GETTERS/SETTERS ######
+
+    def get_curr_instrument(self):
+        return self.instruments[self.current_visible_instrument_num]
+
+    def set_curr_instrument(self, num):
+        self.current_visible_instrument_num = num
+        self.current_state = 'play'
+
+    def get_curr_instrument_num(self):
+        return self.current_visible_instrument_num + 1
+
+    def get_total_instrument_num(self):
+        return len(self.instruments)
+
+    def cycle_key(self, up_down):
+        '''Find current key in master list, move on to prev/next key, set in all instruments'''
+        curr_key = KEYS.index(self.key)
+        new_key = (curr_key + up_down) % len(KEYS)
+        self.key = KEYS[new_key]
+        for i in self.instruments:
+            i.set_key(self.key)
+        return
+
+    def cycle_scale(self, up_down):
+        '''Find current scale in master list, move on to prev/next scale, set in all instruments'''
+        curr_scale = list(SCALE_INTERVALS.keys()).index(self.scale)
+        new_scale = (curr_scale + up_down) % len(SCALE_INTERVALS.keys())
+        self.scale = list(SCALE_INTERVALS.keys())[new_scale]
+        for i in self.instruments:
+            i.set_scale(self.scale)
+        return
+
     ###### CONTROL PASSTHROUGH METHODS ######
 
     def change_division(self, up_down):
-        '''Find current instrument, inc or dec its beat division as appropriate'''
         self.get_curr_instrument().change_division(up_down)
         return
 
     def change_octave(self, up_down):
-        '''Find current key in master list, move on to prev/next key, set in all modal instruments'''
         self.get_curr_instrument().change_octave(up_down)
         return
 
     def inc_rep(self, page):
-        ins = self.get_curr_instrument()
-        ins.inc_page_repeats(page)
-        pass
+        ins = self.get_curr_instrument().inc_page_repeats(page)
+        return
 
     def dec_rep(self, page):
-        ins = self.get_curr_instrument()
-        ins.dec_page_repeats(page)
-        pass
+        ins = self.get_curr_instrument().dec_page_repeats(page)
+        return
 
     def add_page(self):
-        ins = self.get_curr_instrument()
-        ins.add_page()
-        pass
+        ins = self.get_curr_instrument().add_page()
+        return
 
     def clear_page(self):
         self.get_curr_instrument().clear_page()

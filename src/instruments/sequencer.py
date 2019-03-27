@@ -5,28 +5,21 @@ from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
 import mido
 from random import choice, random, randint
+from screens import empty_grid
 
 class Sequencer(Instrument):
     """docstring for Sequencer."""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(Sequencer, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Sequencer"
-        # self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
-        # self.mport = mport
-        # self.height = 16
         self.bars = 4 #min(bars, W/4)  # Option to reduce number of bars < 4
-        # self.width = 16
         self.curr_page_num = 0
         self.curr_rept_num = 0
         self.prev_loc_beat = 0
         self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
-        # self.speed = speed  # Relative speed of this instrument compared to global clock
         self.random_pages = False  #  Pick page at random
         self.sustain = True  # Don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
-        # self.key = key
-        # self.scale = scale
-        # self.octave = octave  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)  # Function is cached for convenience
 
@@ -70,13 +63,16 @@ class Sequencer(Instrument):
         midi_note_num = self.note_converter[cell]
         return midi_note_num
 
-    def touch_note(self, x, y):
+    def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
-        page = self.get_curr_page()
-        if not page.validate_touch(x, y):
-            return False
-        page.touch_note(x, y)
-        return True
+        if state == 'play':
+            page = self.get_curr_page()
+            if not page.validate_touch(x, y):
+                return False
+            page.touch_note(x, y)
+            return True
+        elif state == 'ins_cfg':
+            return True  # TODO
 
     def get_notes_from_curr_beat(self):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)
@@ -86,10 +82,22 @@ class Sequencer(Instrument):
     #     return
 
     def get_led_grid(self, state):
-        led_grid = []
-        grid = self.get_curr_page().note_grid
-        for c, column in enumerate(grid):  # columnn counter
-            led_grid.append([self.get_led_status(x, c) for x in column])
+        if state == 'play':
+            led_grid = []
+            grid = self.get_curr_page().note_grid
+            for c, column in enumerate(grid):  # columnn counter
+                led_grid.append([self.get_led_status(x, c) for x in column])
+        elif state == 'ins_cfg':
+            led_grid = empty_grid()
+            led_grid[1][1] = LED_ACTIVE
+            led_grid[2][2] = LED_ACTIVE
+            # curr_page_num
+            # curr_rept_num
+            # random_pages
+            # sustain
+            # pages
+            # octave
+            # speed
         return led_grid
 
     def get_led_status(self, cell, beat_pos):

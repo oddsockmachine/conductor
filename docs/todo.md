@@ -2,9 +2,6 @@
 - sequencer could be 15 notes high, one row dedicated to pages/repeats
 - refactor display and controls - section for per-instrument controls
 - multi-instrument support (works, need controls to create/manage instruments)
-- create color engine, for different themes, brightnesses, background gradient, etc https://www.sweetwater.com/store/detail/Fire--akai-professional-fire-grid-controller-for-fl-studio
-- Show gridlines, root notes, pentatonic notes, etc in different colors/shades
-- call background(x, y) to get a color code for general background pixel, as chosen by some other setting/algo
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 
 
@@ -13,10 +10,10 @@
 
 
 ### Handle LED colors better
-- create color engine, for different themes, brightnesses etc
+- create color engine, for different themes, brightnesses, background gradient, etc https://www.sweetwater.com/store/detail/Fire--akai-professional-fire-grid-controller-for-fl-studio
+- Show gridlines, root notes, pentatonic notes, etc in different colors/shades
+- call background(x, y) to get a color code for general background pixel, as chosen by some other setting/algo
 - Show root notes, pentatonic notes, etc in different colors/shades
-- Root note for pentatonics
-- root and pentatonic for modes
 - Should be handled by instrument.get_led_status/get_led_grid, has access to scale and cell info
 
 ### Add small screen for better feedback

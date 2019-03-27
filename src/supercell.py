@@ -15,12 +15,7 @@ class Supercell(object):
         self.beat_clock_count = 0
         self.midi_clock_divider = 7
         self.mportin.callback = self.process_incoming_midi()
-        if saved_set:
-            with open(saved_set, 'r') as saved_file:
-                saved_data = load(saved_file)
-            self.conductor = Conductor(mport, saved=saved_data)
-        else:
-            self.conductor = Conductor(mport, saved=None)
+        self.conductor = Conductor(mport)
         self.last = time()
         self.display = display
         self.display.command_cb = self.command_cb
@@ -71,20 +66,10 @@ class Supercell(object):
             self.conductor.gbl_cfg_state()
         elif m['cmd'] == 'CONFIG_B':
             self.conductor.ins_cfg_state()
-        # elif m['cmd'] == 'LOAD':
-        #     self.conductor.load_state()
-        # elif m['cmd'] == 'SAVE':
-        #     self.conductor.save_state()
         elif m['cmd'] == 'step_beat':
             self.conductor.step_beat()
         elif m['cmd'] == 'clear_page':
             self.conductor.clear_page()
-        # elif m['cmd'] == 'cycle_key':
-        #     self.conductor.cycle_key(m['dir'])
-        # elif m['cmd'] == 'cycle_scale':
-        #     self.conductor.cycle_scale(m['dir'])
-        # elif m['cmd'] == 'swap_drum_inst':
-        #     self.conductor.swap_drum_inst()
         elif m['cmd'] == 'change_octave':
             self.conductor.change_octave(m['dir'])
         elif m['cmd'] == 'note':
@@ -103,8 +88,6 @@ class Supercell(object):
             self.conductor.get_curr_instrument().random_pages = False if self.conductor.get_curr_instrument().random_pages else True
         elif m['cmd'] == 'sustain':
             self.conductor.get_curr_instrument().sustain = False if self.conductor.get_curr_instrument().sustain else True
-        # elif m['cmd'] == 'chaos':
-        #     self.conductor.get_curr_instrument().update_chaos(m['dir'])
         elif m['cmd'] == 'z_mode':
             self.conductor.toggle_z_mode()
         elif m['cmd'] == 'add_instrument':
@@ -124,11 +107,11 @@ class Supercell(object):
         led_grid = self.conductor.get_led_grid()
         self.display.draw_all(status, led_grid)
 
-    def save(self):
-        # filename = './saved/' + str(datetime.now()).split('.')[0] + '.json'
-        filename = get_next_filename()
-        print("Saving current grid to {}".format(filename))
-        with open(filename, 'w') as savefile:
-            saved = self.conductor.save()
-            dump(saved, savefile)
-        print("Save number was: {}".format(filename))
+    # def save(self):
+    #     # filename = './saved/' + str(datetime.now()).split('.')[0] + '.json'
+    #     filename = get_next_filename()
+    #     print("Saving current grid to {}".format(filename))
+    #     with open(filename, 'w') as savefile:
+    #         saved = self.conductor.save()
+    #         dump(saved, savefile)
+    #     print("Save number was: {}".format(filename))
