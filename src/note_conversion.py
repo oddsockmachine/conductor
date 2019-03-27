@@ -5,18 +5,18 @@
 #
 # scale = list of intervals from root note, of any size
 SCALE_INTERVALS = {
-    "chromatic": [1,1,1,1,1,1,1,1,1,1,1,1],
+    "chromatic":  [1,1,1,1,1,1,1,1,1,1,1,1],
     "major":      [2,2,1,2,2,2,1],
     "minor":      [2,1,2,2,1,2,2],
     "pentatonic_min": [3,2,3,2,2],
     "pentatonic_maj": [2,2,3,2,3],
     'ionian':     [2,2,1,2,2,2,1],
-    'dorian':     [1,2,2,1,2,2,2],
-    'phrygian':   [2,1,2,2,1,2,2],
-    'lydian':     [2,2,1,2,2,1,2],
-    'mixolydian': [2,2,2,1,2,2,1],
-    'aeolian':    [1,2,2,2,1,2,2],
-    'locrian':    [2,1,2,2,2,1,2],
+    'dorian':     [2,1,2,2,2,1,2],
+    'phrygian':   [1,2,2,2,1,2,2],
+    'lydian':     [2,2,2,1,2,2,1],
+    'mixolydian': [2,2,1,2,2,1,2],
+    'aeolian':    [2,1,2,2,1,2,2],
+    'locrian':    [1,2,2,1,2,2,2],
 }
 
 KEYS = ['a','a#','b','c','c#','d','d#','e','f','f#','g','g#']

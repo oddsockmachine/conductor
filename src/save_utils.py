@@ -28,7 +28,7 @@ def get_all_set_file_numbers():
     return files
 
 ALL_FILE_NAMES = get_all_set_file_numbers()
-logging.info(str(ALL_FILE_NAMES))
+# logging.info(str(ALL_FILE_NAMES))
 
 def filenum_from_touch(x, y):
     num = str(255 - (y * 16 + (15 - x)))

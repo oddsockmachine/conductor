@@ -2,9 +2,9 @@
 from time import sleep
 from constants import *
 from instruments import instrument_lookup
-from note_conversion import *
+from note_conversion import SCALE_INTERVALS, KEYS
 from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum, save_filenum
-from screens import create_gbl_cfg_grid, generate_screen, gbl_cfg_grid_defn
+from screens import create_gbl_cfg_grid, generate_screen, gbl_cfg_grid_defn, get_cb_from_touch
 
 class Conductor(object):
     """docstring for Conductor."""
@@ -86,6 +86,7 @@ class Conductor(object):
 
     def gbl_cfg_screen(self):
         led_grid, cb_grid = generate_screen(gbl_cfg_grid_defn, {'scale_chars': SCALE_CHARS[self.scale], 'key':self.key+' '})
+        self.gbl_cfg_cb_grid = cb_grid
         return led_grid
         # return create_gbl_cfg_grid(range(len(self.instruments)), self.key, self.scale)
 
@@ -184,20 +185,7 @@ class Conductor(object):
             # if not i.isdrum:
             i.set_scale(self.scale)
         return
-    #
-    # def next_instrument(self):
-    #     if self.current_visible_instrument_num == len(self.instruments)-1:
-    #         return False
-    #     self.current_visible_instrument_num += 1
-    #     return
-    #
-    # def prev_instrument(self):
-    #     if self.current_visible_instrument_num == 0:
-    #         return False
-    #     self.current_visible_instrument_num -= 1
-    #     return
 
-    ###### CONTROL PASSTHROUGH METHODS ######
 
     def touch_note(self, x, y):
         if self.current_state == 'play':
@@ -215,12 +203,36 @@ class Conductor(object):
             self.save(filenum)
             self.current_state == 'play'  # TODO return to play, or stay in save?
         elif self.current_state == 'gbl_cfg':
-            if x == 15:
-                pass
-            if y < 5:
-                if x < 3:
-                    pass
+            cb_text, _x, _y = get_cb_from_touch(self.gbl_cfg_cb_grid, x, y)  # Find which area was touched
+            # logging.info(cb_text)
+            cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
+            cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
+        elif self.current_state == 'ins_cfg':
+            cb = get_cb_from_touch(get_ins_cfg_cb_grid(self.get_curr_instrument_num()), x, y)
         return
+
+
+    def cb_scale_inc(self, x, y):
+        self.cycle_scale(1)
+        return
+    def cb_scale_dec(self, x, y):
+        self.cycle_scale(-1)
+        return
+    def cb_key_inc(self, x, y):
+        self.cycle_key(1)
+        return
+    def cb_key_dec(self, x, y):
+        self.cycle_key(-1)
+        return
+    def cb_load(self, x, y):
+        self.current_state = 'load'
+        return
+    def cb_save(self, x, y):
+        self.current_state = 'save'
+        return
+
+
+    ###### CONTROL PASSTHROUGH METHODS ######
 
     def change_division(self, up_down):
         '''Find current instrument, inc or dec its beat division as appropriate'''

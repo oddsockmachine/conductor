@@ -65,8 +65,6 @@ class Display(object):
         if c == ord('b'):
             m['cmd'] = 'cycle_scale'
             m['dir'] = 1
-        if c == ord('c'):
-            m['cmd'] = 'swap_drum_inst'
         if c == ord('z'):
             m['cmd'] = 'change_octave'
             m['dir'] = -1
