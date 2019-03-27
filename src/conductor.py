@@ -85,7 +85,7 @@ class Conductor(object):
         return led_grid
 
     def gbl_cfg_screen(self):
-        led_grid, cb_grid = generate_screen(gbl_cfg_grid_defn, {'scale_chars': SCALE_CHARS[self.scale], 'key':self.key+' '})
+        led_grid, cb_grid = generate_screen(gbl_cfg_grid_defn, {'scale_chars': SCALE_CHARS[self.scale], 'key':self.key+' ', 'num_instruments': self.get_total_instrument_num()})
         self.gbl_cfg_cb_grid = cb_grid
         return led_grid
         # return create_gbl_cfg_grid(range(len(self.instruments)), self.key, self.scale)
@@ -204,7 +204,8 @@ class Conductor(object):
             self.current_state == 'play'  # TODO return to play, or stay in save?
         elif self.current_state == 'gbl_cfg':
             cb_text, _x, _y = get_cb_from_touch(self.gbl_cfg_cb_grid, x, y)  # Find which area was touched
-            # logging.info(cb_text)
+            if not cb_text:
+                return
             cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
         elif self.current_state == 'ins_cfg':
@@ -230,7 +231,13 @@ class Conductor(object):
     def cb_save(self, x, y):
         self.current_state = 'save'
         return
-
+    def cb_instrument_sel(self, x, y):
+        # logging.info(str(x))
+        # logging.info(str(y))
+        if int(y) < self.get_total_instrument_num():
+            self.set_curr_instrument(int(y))
+            self.current_state = 'play'
+        return
 
     ###### CONTROL PASSTHROUGH METHODS ######
 

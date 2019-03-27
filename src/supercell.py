@@ -71,20 +71,20 @@ class Supercell(object):
             self.conductor.gbl_cfg_state()
         elif m['cmd'] == 'CONFIG_B':
             self.conductor.ins_cfg_state()
-        elif m['cmd'] == 'LOAD':
-            self.conductor.load_state()
-        elif m['cmd'] == 'SAVE':
-            self.conductor.save_state()
+        # elif m['cmd'] == 'LOAD':
+        #     self.conductor.load_state()
+        # elif m['cmd'] == 'SAVE':
+        #     self.conductor.save_state()
         elif m['cmd'] == 'step_beat':
             self.conductor.step_beat()
         elif m['cmd'] == 'clear_page':
             self.conductor.clear_page()
-        elif m['cmd'] == 'cycle_key':
-            self.conductor.cycle_key(m['dir'])
-        elif m['cmd'] == 'cycle_scale':
-            self.conductor.cycle_scale(m['dir'])
-        elif m['cmd'] == 'swap_drum_inst':
-            self.conductor.swap_drum_inst()
+        # elif m['cmd'] == 'cycle_key':
+        #     self.conductor.cycle_key(m['dir'])
+        # elif m['cmd'] == 'cycle_scale':
+        #     self.conductor.cycle_scale(m['dir'])
+        # elif m['cmd'] == 'swap_drum_inst':
+        #     self.conductor.swap_drum_inst()
         elif m['cmd'] == 'change_octave':
             self.conductor.change_octave(m['dir'])
         elif m['cmd'] == 'note':

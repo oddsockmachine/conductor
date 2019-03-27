@@ -196,6 +196,27 @@ SPACE = [
 [0,0,0],
 ]
 
+INSTRUMENTS = [[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],]
+NUM_INSTRUMENTS = {
+    0: INSTRUMENTS[:0],
+    1: INSTRUMENTS[:1],
+    2: INSTRUMENTS[:2],
+    3: INSTRUMENTS[:3],
+    4: INSTRUMENTS[:4],
+    5: INSTRUMENTS[:5],
+    6: INSTRUMENTS[:6],
+    7: INSTRUMENTS[:7],
+    8: INSTRUMENTS[:8],
+    9: INSTRUMENTS[:9],
+    10: INSTRUMENTS[:10],
+    11: INSTRUMENTS[:11],
+    12: INSTRUMENTS[:12],
+    13: INSTRUMENTS[:13],
+    14: INSTRUMENTS[:14],
+    15: INSTRUMENTS[:15],
+    16: INSTRUMENTS[:16],
+}
+
 SCALE_CHARS = {
     'ionian':     'io',
     'dorian':     'do',
@@ -211,4 +232,4 @@ SCALE_CHARS = {
     'chromatic':  'ch',
 }
 
-LETTERS = {'a':A,'b':B,'c':C,'d':D,'e':E,'f':F,'g':G,'h':h,'i':I,'l':L,'m':M,'o':O,'p':P,'s':S,'x':X,'y':Y,'+':PLUS,'-':MINUS,'#':SHARP, ' ': SPACE}
+LETTERS = {'a':A,'b':B,'c':C,'d':D,'e':E,'f':F,'g':G,'h':h,'i':I,'l':L,'m':M,'o':O,'p':P,'s':S,'x':X,'y':Y,'+':PLUS,'-':MINUS,'#':SHARP, ' ': SPACE, 'num_instruments': INSTRUMENTS}

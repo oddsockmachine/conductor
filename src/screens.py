@@ -39,8 +39,8 @@ def gbl_cfg_grid_defn(args):
         ('key_inc', args['key'][1], 5, 4),
         ('load', 'l', 11, 0),
         ('save', 's', 11, 4),
-        # ('instrument_sel', args['instruments'], 15, 0),
-        # ('instrument_tyoe', args['instrument_types'], 14, 0),
+        ('instrument_sel', NUM_INSTRUMENTS[args['num_instruments']], 0, 15),
+        # ('instrument_type', args['num_instrument_types'], 14, 0),
     ]
     return gbl_cfg
 
@@ -48,9 +48,13 @@ def generate_screen(defn, args):
     defn = defn(args)
     led_grid = empty_grid()
     callback_grid = empty_grid()
-    for item in defn:
-        led_grid = add_char_to_grid(led_grid, LETTERS[item[1]], item[2], item[3])
-        callback_grid = add_callback_to_grid(callback_grid, LETTERS[item[1]], item[0], item[2], item[3])
+    for cb, char, x, y in defn:
+        if type(char) == str:
+            char = LETTERS[char]
+        else:
+            char = char
+        led_grid = add_char_to_grid(led_grid, char, x, y)
+        callback_grid = add_callback_to_grid(callback_grid, char, cb, x, y)
     return rotate_grid(led_grid), rotate_grid(callback_grid)
 
 def create_gbl_cfg_grid(instruments, key, scale):
@@ -83,6 +87,12 @@ def add_char_to_grid(grid, char, x, y, color=None):
         for n, j in enumerate(i):
             if j == 0:
                 continue
+            # logging.info('i' + str(i))
+            # logging.info('j' + str(j))
+            # logging.info('x' + str(x))
+            # logging.info('m' + str(m))
+            # logging.info('y' + str(y))
+            # logging.info('n' + str(n))
             grid[x+m][y+n] = j
             if color:
                 pass  # TODO  overwrite with color
@@ -101,13 +111,11 @@ def rotate_grid(grid):
     return new_grid
 
 def get_cb_from_touch(cb_grid, x, y):
-    # logging.info(str(x), str(y))
     cb = cb_grid[x][y]
-    # logging.info(cb)
     if cb == 0:
         return (None, None, None)
     cb_parts = cb.split('_')
-    return '_'.join(cb_parts[:~1]), cb_parts[~1], cb_parts[~0]  # (callback, x, y)
+    return '_'.join(cb_parts[:~1]), cb_parts[~0], cb_parts[~1]   # (callback, x, y)  (x and y are swapped, as coordinates are rotated)
 
 # pprint(create_gbl_cfg_grid([0,2,4,6,8,9,10], 'b#', 'mixolydian'))
 # led, cb = generate_screen(gbl_cfg_grid_defn, {'scale_chars': 'ab', 'key':'c#'})
