@@ -4,7 +4,7 @@ from constants import *
 from instruments import instrument_lookup
 from note_conversion import *
 from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum, save_filenum
-from screens import create_gbl_cfg_grid
+from screens import create_gbl_cfg_grid, generate_screen, gbl_cfg_grid_defn
 
 class Conductor(object):
     """docstring for Conductor."""
@@ -12,13 +12,7 @@ class Conductor(object):
     def __init__(self, mport, saved=None, key="e", scale="pentatonic_maj", octave=2, bars=int(W/4), height=H):
         super(Conductor, self).__init__()
         self.mport = mport
-        if key not in KEYS:
-            print('Requested key {} not known'.format(key))
-            exit()
         self.key = key
-        if scale not in SCALES.keys():
-            print('Requested scale {} not known'.format(scale))
-            exit()
         self.states = 'play save load ins_cfg gbl_cfg display'.split()  # Valid states for the display(s)
         self.beat_position = 0
         self.height = H
@@ -91,7 +85,9 @@ class Conductor(object):
         return led_grid
 
     def gbl_cfg_screen(self):
-        return create_gbl_cfg_grid(range(len(self.instruments)), self.key, self.scale)
+        led_grid, cb_grid = generate_screen(gbl_cfg_grid_defn, {'scale_chars': SCALE_CHARS[self.scale], 'key':self.key+' '})
+        return led_grid
+        # return create_gbl_cfg_grid(range(len(self.instruments)), self.key, self.scale)
 
     def ins_cfg_screen(self):
         led_grid = self.get_curr_instrument().get_led_grid('ins_cfg')
@@ -181,9 +177,9 @@ class Conductor(object):
 
     def cycle_scale(self, up_down):
         '''Find current scale in master list, move on to prev/next key, set in all modal instruments'''
-        curr_scale = list(SCALES.keys()).index(self.scale)
-        new_scale = (curr_scale + up_down) % len(SCALES.keys())
-        self.scale = list(SCALES.keys())[new_scale]
+        curr_scale = list(SCALE_INTERVALS.keys()).index(self.scale)
+        new_scale = (curr_scale + up_down) % len(SCALE_INTERVALS.keys())
+        self.scale = list(SCALE_INTERVALS.keys())[new_scale]
         for i in self.instruments:
             # if not i.isdrum:
             i.set_scale(self.scale)

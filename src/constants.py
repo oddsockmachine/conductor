@@ -128,7 +128,7 @@ L = [
 M = [
 [1,1,1],
 [1,1,1],
-[1,0,1],
+[1,1,1],
 [1,0,1],
 [1,0,1],
 ]
@@ -188,8 +188,15 @@ SHARP = [
 [1,1,1],
 [0,0,0],
 ]
+SPACE = [
+[0,0,0],
+[0,0,0],
+[0,0,0],
+[0,0,0],
+[0,0,0],
+]
 
-SCALES = {
+SCALE_CHARS = {
     'ionian':     'io',
     'dorian':     'do',
     'phrygian':   'ph',
@@ -204,4 +211,4 @@ SCALES = {
     'chromatic':  'ch',
 }
 
-LETTERS = {'a':A,'b':B,'c':C,'d':D,'e':E,'f':F,'g':G,'h':h,'i':I,'l':L,'m':M,'o':O,'p':P,'s':S,'x':X,'y':Y,'+':PLUS,'-':MINUS,'#':SHARP}
+LETTERS = {'a':A,'b':B,'c':C,'d':D,'e':E,'f':F,'g':G,'h':h,'i':I,'l':L,'m':M,'o':O,'p':P,'s':S,'x':X,'y':Y,'+':PLUS,'-':MINUS,'#':SHARP, ' ': SPACE}

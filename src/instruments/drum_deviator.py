@@ -3,7 +3,7 @@ from instruments.instrument import Instrument
 from instruments.drum_machine import DrumMachine
 from constants import *
 from note_grid import Note_Grid
-from note_conversion import create_cell_to_midi_note_lookup, SCALES, KEYS
+from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
 import mido
 from random import choice, random, randint
 

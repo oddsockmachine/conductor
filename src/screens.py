@@ -32,6 +32,7 @@ def empty_grid():
     return grid
 
 def gbl_cfg_grid_defn(args):
+    logging.info(args['scale_chars'])
     gbl_cfg = [
         ('scale_dec', args['scale_chars'][0], 0, 0),
         ('scale_inc', args['scale_chars'][1], 0, 4),
@@ -49,16 +50,17 @@ def generate_screen(defn, args):
     led_grid = empty_grid()
     callback_grid = empty_grid()
     for item in defn:
+        logging.info(item)
         led_grid = add_char_to_grid(led_grid, LETTERS[item[1]], item[2], item[3])
         callback_grid = add_callback_to_grid(callback_grid, LETTERS[item[1]], item[0], item[2], item[3])
-    return led_grid, callback_grid
+    return rotate_grid(led_grid), callback_grid
 
 def create_gbl_cfg_grid(instruments, key, scale):
     grid = []
     for x in range(16):
         grid.append([LED_BLANK for y in range(16)])
     # Scale
-    scale_chars = SCALES[scale]
+    scale_chars = SCALE_CHARS[scale]
     grid = add_char_to_grid(grid, LETTERS[scale_chars[0]], 0, 0)
     grid = add_char_to_grid(grid, LETTERS[scale_chars[1]], 0, 4)
     # Key
@@ -91,7 +93,7 @@ def add_char_to_grid(grid, char, x, y, color=None):
 def add_callback_to_grid(grid, char, cb, x, y):
     for m, i in enumerate(char):
         for n, j in enumerate(i):
-            grid[x+m][y+n] = cb
+            grid[x+m][y+n] = '_'.join([cb,str(m),str(n)])
     return grid
 
 def rotate_grid(grid):
@@ -101,11 +103,17 @@ def rotate_grid(grid):
     return new_grid
 
 def get_cb_from_touch(cb_grid, x, y):
-    cb_txt = cb_grid[x][y]
-    return cb_txt
+    cb = cb_grid[x][y]
+    if cb == 0:
+        return (None, None, None)
+    cb_parts = cb.split('_')
+    return cb_parts  # (callback, x, y)
 
 # pprint(create_gbl_cfg_grid([0,2,4,6,8,9,10], 'b#', 'mixolydian'))
-led, cb = generate_screen(gbl_cfg_grid_defn, {'scale_chars': 'ab', 'key':'c#'})
-from pprint import pprint
-pprint(led)
-pprint(cb)
+# led, cb = generate_screen(gbl_cfg_grid_defn, {'scale_chars': 'ab', 'key':'c#'})
+# from pprint import pprint
+# pprint(led)
+# pprint(cb)
+# print(get_cb_from_touch(cb, 0,15))
+# led, cb = generate_screen(gbl_cfg_grid_defn, {'scale_chars': 'ab', 'key':'c#'})
+# print(get_cb_from_touch(cb, 0,15))

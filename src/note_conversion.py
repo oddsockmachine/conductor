@@ -4,12 +4,19 @@
 # m21 = A0 , 1st note on piano
 #
 # scale = list of intervals from root note, of any size
-SCALES = {
+SCALE_INTERVALS = {
     "chromatic": [1,1,1,1,1,1,1,1,1,1,1,1],
-    "major": [2,2,1,2,2,2,1],
-    "minor": [2,1,2,2,1,2,2],
+    "major":      [2,2,1,2,2,2,1],
+    "minor":      [2,1,2,2,1,2,2],
     "pentatonic_min": [3,2,3,2,2],
     "pentatonic_maj": [2,2,3,2,3],
+    'ionian':     [2,2,1,2,2,2,1],
+    'dorian':     [1,2,2,1,2,2,2],
+    'phrygian':   [2,1,2,2,1,2,2],
+    'lydian':     [2,2,1,2,2,1,2],
+    'mixolydian': [2,2,2,1,2,2,1],
+    'aeolian':    [1,2,2,2,1,2,2],
+    'locrian':    [2,1,2,2,2,1,2],
 }
 
 KEYS = ['a','a#','b','c','c#','d','d#','e','f','f#','g','g#']
@@ -23,7 +30,7 @@ def get_starting_note(octave, key):
 
 def get_full_scale(height, scale_name):
     '''Extend a scale to cover the height of the grid'''
-    scale = SCALES[scale_name]  # Get the scale intervals
+    scale = SCALE_INTERVALS[scale_name]  # Get the scale intervals
     times = int(height/len(scale)) + 1  # How many times to repeat the intervals to fill up the grid height
     return (scale * times)[:height]  # Repeat the intervals, then trim to fit
 
