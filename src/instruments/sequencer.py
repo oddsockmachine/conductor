@@ -100,7 +100,7 @@ class Sequencer(Instrument):
                 led_grid.append([self.get_led_status(x, c) for x in column])
         elif state == 'ins_cfg':
             # TODO pages
-            led_grid, cb_grid = generate_screen(seq_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave)})
+            led_grid, cb_grid = generate_screen(seq_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num)})
             self.cb_grid = cb_grid
             return led_grid
         return led_grid

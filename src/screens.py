@@ -65,6 +65,14 @@ def get_char(**kwargs):
         array = COLUMN[:kwargs['column']]
         if 'selector' in kwargs.keys():
             array[kwargs['selector']] = [LED_SELECT]
+    elif 'pages' in kwargs.keys():
+        max_rpt = 8
+        array = [[0 for x in range(8)] for y in range(8)]
+        for i, rpts in enumerate(kwargs['pages']):
+            for r in range(rpts):
+                array[i][r] = LED_ACTIVE
+        c_r, c_p = kwargs['active']
+        array[c_r][c_p] = LED_SELECT
     # logging.info(str(kwargs))
     # logging.info(str(array))
     return array
@@ -77,12 +85,11 @@ def empty_grid():
 
 def seq_cfg_grid_defn(args):
     seqcfg = [
-        ('sustain', get_char(char='s'), 0, 0),
-        ('random_pages', get_char(char='r'), 0, 4),
-        # logging.info(str(args))
+        ('sustain', get_char(char='s'), 0, 9),
+        ('random_pages', get_char(char='r'), 0, 13),
         ('speed', get_char(row=5, selector=args['speed']), 15, 0),
         ('octave', get_char(row=5, selector=args['octave']), 14, 0),
-        ## Pages
+        ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
     ]
     return seqcfg
 
