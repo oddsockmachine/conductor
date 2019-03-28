@@ -56,7 +56,7 @@ class DrumMachine(Instrument):
         midi_note_num = self.note_converter[cell]
         return midi_note_num
 
-    def touch_note(self, x, y):
+    def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
         page = self.get_curr_page()
         if not page.validate_touch(x, y):

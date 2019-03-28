@@ -19,7 +19,7 @@ class Supercell(object):
         self.last = time()
         self.display = display
         self.display.command_cb = self.command_cb
-        self.save_on_exit = False
+        self.save_on_exit = True
 
     def run(self):
         self.draw()
@@ -55,13 +55,12 @@ class Supercell(object):
             return None
         if m['cmd'] == 'quit':
             if self.save_on_exit:
-                self.save()
+                self.conductor.save()
             exit()
         elif m['cmd'] == 'toggle_save':
             self.save_on_exit = not self.save_on_exit
-            logging.info(self.save_on_exit)
         elif m['cmd'] == 'save':
-            self.save()
+            self.conductor.save()
         elif m['cmd'] == 'CONFIG_A':
             self.conductor.gbl_cfg_state()
         elif m['cmd'] == 'CONFIG_B':
@@ -106,12 +105,3 @@ class Supercell(object):
         status = self.conductor.get_status()
         led_grid = self.conductor.get_led_grid()
         self.display.draw_all(status, led_grid)
-
-    # def save(self):
-    #     # filename = './saved/' + str(datetime.now()).split('.')[0] + '.json'
-    #     filename = get_next_filename()
-    #     print("Saving current grid to {}".format(filename))
-    #     with open(filename, 'w') as savefile:
-    #         saved = self.conductor.save()
-    #         dump(saved, savefile)
-    #     print("Save number was: {}".format(filename))

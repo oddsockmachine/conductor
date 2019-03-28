@@ -31,7 +31,7 @@ class DrumDeviator(DrumMachine):
         # Each new page, generate a temp page of notes (16 high) based on calculations
         # But display 8x16 notes and mods
 
-    def touch_note(self, x, y):
+    def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page - either a control, or a note'''
         # Is touch control or note?
         if y >= 8:

@@ -50,5 +50,6 @@ def save_filenum(data, filenum=None):
     else:
         filename = save_location + filenum + save_extension
     with open(filename, 'w') as savefile:
+        logging.info("Saving current grid to {}".format(filename))
         dump(data, savefile)
     return

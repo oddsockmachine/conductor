@@ -79,7 +79,7 @@ class Conductor(object):
         return led_grid
 
     def gbl_cfg_screen(self):
-        led_grid, cb_grid = generate_screen(gbl_cfg_grid_defn, {'scale_chars': SCALE_CHARS[self.scale], 'key':self.key+' ', 'num_instruments': self.get_total_instrument_num()})
+        led_grid, cb_grid = generate_screen(gbl_cfg_grid_defn, {'scale_chars': SCALE_CHARS[self.scale], 'key':self.key+' ', 'num_ins': self.get_total_instrument_num(), 'curr_ins': self.get_curr_instrument_num()-1})
         self.gbl_cfg_cb_grid = cb_grid
         return led_grid
         # return create_gbl_cfg_grid(range(len(self.instruments)), self.key, self.scale)

@@ -89,7 +89,7 @@ class Droplets(Instrument):
         midi_note_num = self.note_converter[cell]
         return midi_note_num
 
-    def touch_note(self, x, y):
+    def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
         # if y < 4:
         #     self.droplet_velocities[x] = y

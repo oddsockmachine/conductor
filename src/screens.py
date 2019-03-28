@@ -29,16 +29,16 @@
 # ____SS__RR__RR__________PPPPPPPP
 # SSSSSS__RR__RR__________________
 # ________________________________
-# oooooo__________________________
-# oo__oo__________________________
-# oo__oo__________________________
-# OO__OO__________________________
-# OOOOOO__________________________
 # ________________________________
 # ________________________________
 # ________________________________
 # ________________________________
 # ________________________________
+# ________________________________
+# ________________________________
+# ________________________________
+# OOOOOOoo________________________
+# SSSSSSss________________________
 
 # C curr_page_num
 # C curr_rept_num
@@ -46,11 +46,25 @@
 # S sustain
 # P pages
 # o/O octave
-# speed
+# S/s speed
 
 
 
 from constants import *
+
+def get_char(**kwargs):
+    '''Return a char bitmap as array, looked up from inputs'''
+    if 'char' in kwargs.keys():
+        array = LETTERS.get(kwargs['char'])
+    elif 'row' in kwargs.keys():
+        array = ROW[:kwargs['row']]
+        if 'selector' in kwargs.keys():
+            array[kwargs['selector']] = LED_SELECT
+    elif 'column' in kwargs.keys():
+        array = COLUMN[:kwargs['column']]
+        if 'selector' in kwargs.keys():
+            array[kwargs['selector']] = [LED_SELECT]
+    return array
 
 def empty_grid():
     grid = []
@@ -58,15 +72,24 @@ def empty_grid():
         grid.append([LED_BLANK for y in range(16)])
     return grid
 
+def seq_cfg_grid_defn(args):
+    seqcfg = [
+        ('sustain', 's', 0, 0),
+        ('repeat', 'r', 0, 4),
+        ('speed', get_char(row=5, selector=args['speed']), 15, 0),
+        ('octave', get_char(row=5, selector=args['octave']), 15, 1),
+    ]
+    return seqcfg
+
 def gbl_cfg_grid_defn(args):
     gbl_cfg = [
-        ('scale_dec', args['scale_chars'][0], 0, 0),
-        ('scale_inc', args['scale_chars'][1], 0, 4),
-        ('key_dec', args['key'][0], 5, 0),
-        ('key_inc', args['key'][1], 5, 4),
-        ('load', 'l', 11, 0),
-        ('save', 's', 11, 4),
-        ('instrument_sel', NUM_INSTRUMENTS[args['num_instruments']], 0, 15),
+        ('scale_dec', get_char(char=args['scale_chars'][0]), 0, 0),
+        ('scale_inc', get_char(char=args['scale_chars'][1]), 0, 4),
+        ('key_dec', get_char(char=args['key'][0]), 5, 0),
+        ('key_inc', get_char(char=args['key'][1]), 5, 4),
+        ('load', get_char(char='l'), 11, 0),
+        ('save', get_char(char='s'), 11, 4),
+        ('instrument_sel', get_char(column=args['num_ins'], selector=args['curr_ins']), 0, 15),
         # ('instrument_type', args['num_instrument_types'], 14, 0),
     ]
     return gbl_cfg
@@ -76,10 +99,11 @@ def generate_screen(defn, args):
     led_grid = empty_grid()
     callback_grid = empty_grid()
     for cb, char, x, y in defn:
-        if type(char) == str:
-            char = LETTERS[char]
-        else:
-            char = char
+        # if type(char) == str:
+        #     char = LETTERS[char]
+        # else:
+        char = char
+        # char = get_char(selector)
         led_grid = add_char_to_grid(led_grid, char, x, y)
         callback_grid = add_callback_to_grid(callback_grid, char, cb, x, y)
     return rotate_grid(led_grid), rotate_grid(callback_grid)
@@ -114,12 +138,6 @@ def add_char_to_grid(grid, char, x, y, color=None):
         for n, j in enumerate(i):
             if j == 0:
                 continue
-            # logging.info('i' + str(i))
-            # logging.info('j' + str(j))
-            # logging.info('x' + str(x))
-            # logging.info('m' + str(m))
-            # logging.info('y' + str(y))
-            # logging.info('n' + str(n))
             grid[x+m][y+n] = j
             if color:
                 pass  # TODO  overwrite with color
@@ -152,3 +170,20 @@ def get_cb_from_touch(cb_grid, x, y):
 # print(get_cb_from_touch(cb, 0,15))
 # led, cb = generate_screen(gbl_cfg_grid_defn, {'scale_chars': 'ab', 'key':'c#'})
 # print(get_cb_from_touch(cb, 0,15))
+
+
+
+
+import unittest
+class TestChars(unittest.TestCase):
+    def test_get_char(self):
+        # seq = Conductor(None)
+        self.assertEqual(get_char(char='s'), S)
+        self.assertEqual(get_char(char='+'), PLUS)
+        self.assertEqual(get_char(row=6), [1,1,1,1,1,1])
+        self.assertEqual(get_char(column=5), [[1],[1],[1],[1],[1]])
+        self.assertEqual(get_char(row=6, selector=2), [1,1,5,1,1,1])
+        self.assertEqual(get_char(column=5, selector=2), [[1],[1],[5],[1],[1]])
+
+if __name__ == '__main__':
+    unittest.main()
