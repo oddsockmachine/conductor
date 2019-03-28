@@ -87,6 +87,20 @@ class Sequencer(Instrument):
     def cb_octave(self, x, y):
         self.octave = x
         return
+    def cb_page(self, x, y):
+        page = y
+        if y >= len(self.pages):
+            self.add_page(pos=False)
+            return
+        if x == 0:
+            if self.pages[y].repeats == 1:
+                self.pages[y].repeats = 0
+            else:
+                self.pages[y].repeats = 1
+            return
+        else:
+            self.pages[y].repeats = x + 1
+        return
 
     def get_notes_from_curr_beat(self):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)

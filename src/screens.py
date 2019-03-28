@@ -144,7 +144,7 @@ def get_cb_from_touch(cb_grid, x, y):
     if cb == 0:
         return (None, None, None)
     cb_parts = cb.split('_')
-    return '_'.join(cb_parts[:~1]), cb_parts[~0], cb_parts[~1]   # (callback, x, y)  (x and y are swapped, as coordinates are rotated)
+    return '_'.join(cb_parts[:~1]), int(cb_parts[~0]), int(cb_parts[~1])   # (callback, x, y)  (x and y are swapped, as coordinates are rotated)
 
 # led, cb = generate_screen(gbl_cfg_grid_defn, {'scale_chars': 'ab', 'key':'c#'})
 # from pprint import pprint
