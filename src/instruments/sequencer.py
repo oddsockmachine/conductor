@@ -5,7 +5,7 @@ from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
 import mido
 from random import choice, random, randint
-from screens import empty_grid
+from screens import empty_grid, seq_cfg_grid_defn, generate_screen, get_cb_from_touch
 
 class Sequencer(Instrument):
     """docstring for Sequencer."""
@@ -24,23 +24,19 @@ class Sequencer(Instrument):
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)  # Function is cached for convenience
 
     def set_key(self, key):
-        self.key = key
-        # Converter is a cached lookup, we need to regenerate it
+        self.key = key # Converter is a cached lookup, we need to regenerate it
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
 
     def set_scale(self, scale):
-        self.scale = scale
-        # Converter is a cached lookup, we need to regenerate it
+        self.scale = scale # Converter is a cached lookup, we need to regenerate it
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
 
-    def change_octave(self, up_down):
-        self.octave = up_down  #TODO handle up and down as well as octave number
-        # self.octave = (self.octave + up_down) % 7
-        # Converter is a cached lookup, we need to regenerate it
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
+    # def change_octave(self, up_down):
+    #     self.octave = up_down  #TODO handle up and down as well as octave number
+    #     self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+    #     return True
 
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
@@ -72,14 +68,29 @@ class Sequencer(Instrument):
             page.touch_note(x, y)
             return True
         elif state == 'ins_cfg':
+            cb_text, _x, _y = get_cb_from_touch(self.cb_grid, x, y)
+            if not cb_text:
+                return
+            cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
+            cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
             return True  # TODO
+
+    def cb_sustain(self, x, y):
+        self.sustain = not self.sustain
+        return
+    def cb_random_pages(self, x, y):
+        self.random_pages = not self.random_pages
+        return
+    def cb_speed(self, x, y):
+        self.speed = x
+        return
+    def cb_octave(self, x, y):
+        self.octave = x
+        return
 
     def get_notes_from_curr_beat(self):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
-
-    # def get_curr_page_leds(self):
-    #     return
 
     def get_led_grid(self, state):
         if state == 'play':
@@ -88,16 +99,10 @@ class Sequencer(Instrument):
             for c, column in enumerate(grid):  # columnn counter
                 led_grid.append([self.get_led_status(x, c) for x in column])
         elif state == 'ins_cfg':
-            led_grid = empty_grid()
-            led_grid[1][1] = LED_ACTIVE
-            led_grid[2][2] = LED_ACTIVE
-            # curr_page_num
-            # curr_rept_num
-            # random_pages
-            # sustain
-            # pages
-            # octave
-            # speed
+            # TODO pages
+            led_grid, cb_grid = generate_screen(seq_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave)})
+            self.cb_grid = cb_grid
+            return led_grid
         return led_grid
 
     def get_led_status(self, cell, beat_pos):

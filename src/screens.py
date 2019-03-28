@@ -54,16 +54,19 @@ from constants import *
 
 def get_char(**kwargs):
     '''Return a char bitmap as array, looked up from inputs'''
+    # logging.info(str(kwargs))
     if 'char' in kwargs.keys():
         array = LETTERS.get(kwargs['char'])
     elif 'row' in kwargs.keys():
-        array = ROW[:kwargs['row']]
+        array = [ROW[0][:kwargs['row']]]
         if 'selector' in kwargs.keys():
-            array[kwargs['selector']] = LED_SELECT
+            array[0][kwargs['selector']] = LED_SELECT
     elif 'column' in kwargs.keys():
         array = COLUMN[:kwargs['column']]
         if 'selector' in kwargs.keys():
             array[kwargs['selector']] = [LED_SELECT]
+    # logging.info(str(kwargs))
+    # logging.info(str(array))
     return array
 
 def empty_grid():
@@ -74,10 +77,12 @@ def empty_grid():
 
 def seq_cfg_grid_defn(args):
     seqcfg = [
-        ('sustain', 's', 0, 0),
-        ('repeat', 'r', 0, 4),
+        ('sustain', get_char(char='s'), 0, 0),
+        ('random_pages', get_char(char='r'), 0, 4),
+        # logging.info(str(args))
         ('speed', get_char(row=5, selector=args['speed']), 15, 0),
-        ('octave', get_char(row=5, selector=args['octave']), 15, 1),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 0),
+        ## Pages
     ]
     return seqcfg
 
@@ -99,41 +104,13 @@ def generate_screen(defn, args):
     led_grid = empty_grid()
     callback_grid = empty_grid()
     for cb, char, x, y in defn:
-        # if type(char) == str:
-        #     char = LETTERS[char]
-        # else:
-        char = char
-        # char = get_char(selector)
         led_grid = add_char_to_grid(led_grid, char, x, y)
         callback_grid = add_callback_to_grid(callback_grid, char, cb, x, y)
     return rotate_grid(led_grid), rotate_grid(callback_grid)
 
-def create_gbl_cfg_grid(instruments, key, scale):
-    grid = []
-    for x in range(16):
-        grid.append([LED_BLANK for y in range(16)])
-    # Scale
-    scale_chars = SCALE_CHARS[scale]
-    grid = add_char_to_grid(grid, LETTERS[scale_chars[0]], 0, 0)
-    grid = add_char_to_grid(grid, LETTERS[scale_chars[1]], 0, 4)
-    # Key
-    sharp = '#' in key
-    key = key.replace('#','')
-    grid = add_char_to_grid(grid, LETTERS[key], 5, 0)
-    if sharp:
-        grid = add_char_to_grid(grid, LETTERS['#'], 5, 4)
-    # Load, Save
-    grid = add_char_to_grid(grid, LETTERS['l'], 11, 0)
-    grid = add_char_to_grid(grid, LETTERS['s'], 11, 4)
-    # Instruments
-    for i in instruments:
-        grid[i][15] = 1
-    for i in range(8):  # TODO dynamic lookup of different instruments, different colors
-        grid[i][14] = 1
-    return rotate_grid(grid)
-
 def add_char_to_grid(grid, char, x, y, color=None):
     '''Overlay a char bitmap to an existing grid, starting at top left x,y'''
+    # logging.info(str(char))
     for m, i in enumerate(char):
         for n, j in enumerate(i):
             if j == 0:
@@ -162,7 +139,6 @@ def get_cb_from_touch(cb_grid, x, y):
     cb_parts = cb.split('_')
     return '_'.join(cb_parts[:~1]), cb_parts[~0], cb_parts[~1]   # (callback, x, y)  (x and y are swapped, as coordinates are rotated)
 
-# pprint(create_gbl_cfg_grid([0,2,4,6,8,9,10], 'b#', 'mixolydian'))
 # led, cb = generate_screen(gbl_cfg_grid_defn, {'scale_chars': 'ab', 'key':'c#'})
 # from pprint import pprint
 # pprint(led)
@@ -170,9 +146,6 @@ def get_cb_from_touch(cb_grid, x, y):
 # print(get_cb_from_touch(cb, 0,15))
 # led, cb = generate_screen(gbl_cfg_grid_defn, {'scale_chars': 'ab', 'key':'c#'})
 # print(get_cb_from_touch(cb, 0,15))
-
-
-
 
 import unittest
 class TestChars(unittest.TestCase):

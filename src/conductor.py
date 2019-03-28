@@ -4,7 +4,7 @@ from constants import *
 from instruments import instrument_lookup
 from note_conversion import SCALE_INTERVALS, KEYS
 from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum, save_filenum
-from screens import create_gbl_cfg_grid, generate_screen, gbl_cfg_grid_defn, get_cb_from_touch
+from screens import generate_screen, gbl_cfg_grid_defn, get_cb_from_touch
 
 class Conductor(object):
     """docstring for Conductor."""
@@ -166,7 +166,8 @@ class Conductor(object):
             cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
         elif self.current_state == 'ins_cfg':
-            cb = get_cb_from_touch(get_ins_cfg_cb_grid(self.get_curr_instrument_num()), x, y)
+            self.get_curr_instrument().touch_note(self.current_state, x, y)
+            # cb = get_cb_from_touch(get_ins_cfg_cb_grid(self.get_curr_instrument_num()), x, y)
         return
 
     ###### CALLBACK METHODS ######
