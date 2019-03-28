@@ -4,12 +4,11 @@
 - multi-instrument support (works, need controls to create/manage instruments)
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 
-
 ### Global Controls
 - Add (/remove) instrument
 
-
 ### Handle LED colors better
+- different backgrounds for each instrument number and type
 - create color engine, for different themes, brightnesses, background gradient, etc https://www.sweetwater.com/store/detail/Fire--akai-professional-fire-grid-controller-for-fl-studio
 - Show gridlines, root notes, pentatonic notes, etc in different colors/shades
 - call background(x, y) to get a color code for general background pixel, as chosen by some other setting/algo

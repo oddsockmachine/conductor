@@ -65,6 +65,10 @@ def get_char(**kwargs):
         array = COLUMN[:kwargs['column']]
         if 'selector' in kwargs.keys():
             array[kwargs['selector']] = [LED_SELECT]
+    elif 'instrument' in kwargs.keys():
+        array = COLUMN[:kwargs['instrument']]
+        if 'selector' in kwargs.keys():
+            array[kwargs['selector']] = [LED_SELECT]
     elif 'pages' in kwargs.keys():
         max_rpt = 8
         array = [[0 for x in range(8)] for y in range(8)]
@@ -73,8 +77,6 @@ def get_char(**kwargs):
                 array[i][r] = LED_ACTIVE
         c_r, c_p = kwargs['active']
         array[c_r][c_p] = LED_SELECT
-    # logging.info(str(kwargs))
-    # logging.info(str(array))
     return array
 
 def empty_grid():
@@ -101,7 +103,8 @@ def gbl_cfg_grid_defn(args):
         ('key_inc', get_char(char=args['key'][1]), 5, 4),
         ('load', get_char(char='l'), 11, 0),
         ('save', get_char(char='s'), 11, 4),
-        ('instrument_sel', get_char(column=args['num_ins'], selector=args['curr_ins']), 0, 15),
+        ('instrument_sel', get_char(instrument=args['num_ins'], selector=args['curr_ins']), 0, 15),
+        ('instrument_type', get_char(instrument=8), 0, 14),
         # ('instrument_type', args['num_instrument_types'], 14, 0),
     ]
     return gbl_cfg
@@ -117,7 +120,6 @@ def generate_screen(defn, args):
 
 def add_char_to_grid(grid, char, x, y, color=None):
     '''Overlay a char bitmap to an existing grid, starting at top left x,y'''
-    # logging.info(str(char))
     for m, i in enumerate(char):
         for n, j in enumerate(i):
             if j == 0:
