@@ -1,11 +1,6 @@
 ## Top
-- sequencer could be 15 notes high, one row dedicated to pages/repeats
-- refactor display and controls - section for per-instrument controls
-- multi-instrument support (works, need controls to create/manage instruments)
+- multi-instrument support: program new ones, and add cfg pages
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
-
-### Global Controls
-- Add (/remove) instrument
 
 ### Handle LED colors better
 - different backgrounds for each instrument number and type
@@ -36,6 +31,8 @@ sprint.line1("Select:")
   - Add pages to extend sequence length
   - Pages can have repeats
   - Pages can be picked randomly, weighted by repeats
+  - sequencer could be 15 notes high, one row dedicated to pages/repeats
+
 
 ### Drum Machine
   - Like sequencer, but specifically for drums/samplers

@@ -21,11 +21,11 @@ class Conductor(object):
         self.max_beat_division = 8
         self.scale = scale
         self.octave = octave  # Starting octave
-        self.instruments = [instrument_lookup(1)(ins_num=x, **self.instrument_ctx()) for x in range(8)]
-        for x in range(6):
-            self.instruments.append(instrument_lookup(2)(ins_num=x+8, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
-        self.instruments.append(instrument_lookup(7)(ins_num=14, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
-        self.instruments.append(instrument_lookup(5)(ins_num=15, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
+        self.instruments = [instrument_lookup(1)(ins_num=x, **self.instrument_ctx()) for x in range(3)]
+        for x in range(4):
+            self.instruments.append(instrument_lookup(2)(ins_num=x+3, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
+        # self.instruments.append(instrument_lookup(7)(ins_num=14, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
+        # self.instruments.append(instrument_lookup(5)(ins_num=15, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
         self.current_visible_instrument_num = 0
         self.current_state = 'load'  # Current state to be shown on display(s)
         return
@@ -138,6 +138,7 @@ class Conductor(object):
         self.scale = saved['instruments'][0]['scale']
         self.octave = saved['instruments'][0]['octave']
         self.key = saved['instruments'][0]['key']
+        self.instruments = []  # Loading, so clear away all old instruments
         for i in range(len(saved['instruments'])):
             self.add_instrument(saved['instruments'][i]['type'])
             self.instruments[i].load(saved['instruments'][i])
@@ -195,6 +196,12 @@ class Conductor(object):
             self.set_curr_instrument(int(y))
             self.current_state = 'play'
         return
+    def cb_instrument_type(self, x, y):
+        if self.get_total_instrument_num() >= 16:
+            return
+        ins = instrument_lookup(y+1)
+        self.instruments.append(ins(ins_num=self.get_total_instrument_num(), **self.instrument_ctx()))
+
 
     ###### GETTERS/SETTERS ######
 

@@ -104,8 +104,7 @@ def gbl_cfg_grid_defn(args):
         ('load', get_char(char='l'), 11, 0),
         ('save', get_char(char='s'), 11, 4),
         ('instrument_sel', get_char(instrument=args['num_ins'], selector=args['curr_ins']), 0, 15),
-        ('instrument_type', get_char(instrument=8), 0, 14),
-        # ('instrument_type', args['num_instrument_types'], 14, 0),
+        ('instrument_type', get_char(instrument=8), 0, 14),  # TODO extend instrument adder, use diff colors for each
     ]
     return gbl_cfg
 

@@ -22,4 +22,13 @@ def instrument_lookup(num):
         6: BinarySequencer,
         7: Droplets,
         8: Transformer,
+        'Instrument': Instrument,  # Generic, fallback, no functionality
+        'Sequencer': Sequencer,
+        'Drum Machine': DrumMachine,
+        'Chord Sequencer': ChordSequencer,
+        'Beat Randomizer': BeatRandomizer,
+        'Drum Deviator': DrumDeviator,
+        'Binary Sequencer': BinarySequencer,
+        'Droplets': Droplets,
+        'Transformer': Transformer,
     }[num]
