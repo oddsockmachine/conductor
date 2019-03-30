@@ -7,7 +7,7 @@ from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KE
 import mido
 from random import choice, random, randint
 from copy import deepcopy
-from screens import empty_grid, seq_cfg_grid_defn, generate_screen, get_cb_from_touch
+from screens import empty_grid, dev_cfg_grid_defn, generate_screen, get_cb_from_touch
 
 class DrumDeviator(DrumMachine):
     """docstring for DrumDeviator."""
@@ -77,7 +77,7 @@ class DrumDeviator(DrumMachine):
                 led_grid[8+self.transpose_chances[y]][y+8] = LED_SELECT
                 led_grid[8][y+8] = LED_CURSOR
         elif state == 'ins_cfg':
-            led_grid, cb_grid = generate_screen(seq_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num)})
+            led_grid, cb_grid = generate_screen(dev_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num)})
             self.cb_grid = cb_grid
             return led_grid
         return led_grid

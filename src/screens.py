@@ -95,6 +95,15 @@ def seq_cfg_grid_defn(args):
     ]
     return seqcfg
 
+def dev_cfg_grid_defn(args):
+    seqcfg = [
+        ('random_pages', get_char(char='r'), 0, 13),
+        ('speed', get_char(row=5, selector=args['speed']), 15, 0),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 0),
+        ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
+    ]
+    return seqcfg
+
 def gbl_cfg_grid_defn(args):
     gbl_cfg = [
         ('scale_dec', get_char(char=args['scale_chars'][0]), 0, 0),
