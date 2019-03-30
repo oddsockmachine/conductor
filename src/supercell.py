@@ -19,7 +19,7 @@ class Supercell(object):
         self.last = time()
         self.display = display
         self.display.command_cb = self.command_cb
-        self.save_on_exit = True
+        self.save_on_exit = False
 
     def run(self):
         self.draw()

@@ -64,6 +64,8 @@ sprint.line1("Select:")
 - Random notes for each bar determined at start of bar
 - Randomness/chaos amount should be per bar, not per note. eg: at low levels, only change a few notes occasionally
 - TODO randomness controls cover all pages - maybe they should be per-page?
+- TODO apply_randomness doesn't show effects on LED grid
+- TODO maybe fire chance shouldn't add notes randomly, only add where there are already other notes
 
 ### Elaborator
 - Draw a beat/pattern on a page

@@ -6,6 +6,7 @@ from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
 import mido
 from random import choice, random, randint
+from copy import deepcopy
 
 class DrumDeviator(DrumMachine):
     """docstring for DrumDeviator."""
@@ -35,11 +36,9 @@ class DrumDeviator(DrumMachine):
         '''touch the x/y cell on the current page - either a control, or a note'''
         # Is touch control or note?
         if y >= 8:
-            # Control TODO
             y-=8
             if x < 8: # Fire chances
                 self.fire_chances[y] = 7 - x
-
             else:  # Transpose chances
                 self.transpose_chances[y] = x - 8
             return True
@@ -70,7 +69,6 @@ class DrumDeviator(DrumMachine):
 
         return led_grid
 
-
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
         local = self.calc_local_beat(global_beat)
@@ -84,28 +82,7 @@ class DrumDeviator(DrumMachine):
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
-#
-#     def get_next_page_num(self):
-#         '''Return the number of the next page that has a positive number of repeats
-#         or return a random page if wanted'''
-#         if self.random_pages:
-#             # Create a distribution of the pages and their repeats, pick one at random
-#             dist = []
-#             for index, page in enumerate(self.pages):
-#                 for r in range(page.repeats):
-#                     dist.append(index)
-#             next_page_num = choice(dist)
-#             return next_page_num
-#         for i in range(1, len(self.pages)):
-#             # Look through all the upcoming pages
-#             next_page_num = (self.curr_page_num + i) % len(self.pages)
-#             rpts = self.pages[next_page_num].repeats
-#             # logging.info("i{} p{} r{}".format(i, next_page_num, rpts))
-#             if rpts > 0:  # This one's good, return it
-#                 return next_page_num
-#         # All pages including curr_page are zero repeats, just stick with this one
-#         return self.curr_page_num
-#
+
     def advance_page(self):
         '''Go to next repeat or page'''
         if self.random_pages:
@@ -128,23 +105,32 @@ class DrumDeviator(DrumMachine):
 
     def apply_randomness(self):
         '''Page has turned, apply randomness using source page onto temp page'''
-        source_page = self.get_curr_page().note_grid
-        for x in range(self.width):  # Copy notes from source to temp
-            self.temp_page.note_grid[x] = source_page[x]
-        for x in range(self.width):
-            for y in range(8):
-                self.temp_page.note_grid[x][y+8] = self.temp_page.note_grid[x][y]
+        self.temp_page.note_grid = deepcopy(self.get_curr_page().note_grid)
+        for x, beat in enumerate(self.temp_page.note_grid):  # For each beat
+            logging.info(str(beat))
+            for y, note in enumerate(beat[:8]):  # For each note in beat
+                fire = self.calc_chance(self.fire_chances[y])
+                if fire:
+                    note = NOTE_ON if note == NOTE_OFF else NOTE_OFF
+                    self.temp_page.note_grid[x][y] = note
+                if note == NOTE_ON:
+                    if self.calc_chance(self.transpose_chances[y]):
+                        self.temp_page.note_grid[x][y+8] = NOTE_ON
+                        self.temp_page.note_grid[x][y] = NOTE_OFF
+
+                # self.temp_page.note_grid[x][y+8] = self.temp_page.note_grid[x][y]
         return
-#
+
+    def calc_chance(self, chance):
+        '''chance is int between 0 and 8'''
+        choices = [True] * chance + [False] * (20 - chance)
+        c = choice(choices)
+        return c
+
     def get_curr_notes(self):
         grid = self.temp_page.note_grid
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
-        # if self.chaos > 0:  # If using chaos, switch up some notes
-        #     if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
-        #         if random() < self.chaos:
-        #             rand_note = randint(0, self.height-1)
-        #             beat_notes[rand_note] = NOTE_ON if beat_notes[rand_note] != NOTE_ON else NOTE_OFF
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
 #
