@@ -7,6 +7,7 @@ from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KE
 import mido
 from random import choice, random, randint
 from copy import deepcopy
+from screens import empty_grid, seq_cfg_grid_defn, generate_screen, get_cb_from_touch
 
 class DrumDeviator(DrumMachine):
     """docstring for DrumDeviator."""
@@ -34,39 +35,51 @@ class DrumDeviator(DrumMachine):
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page - either a control, or a note'''
-        # Is touch control or note?
-        if y >= 8:
-            y-=8
-            if x < 8: # Fire chances
-                self.fire_chances[y] = 7 - x
-            else:  # Transpose chances
-                self.transpose_chances[y] = x - 8
-            return True
-        else:
-            # Apply touch to current temp page and source page
-            self.get_curr_page().touch_note(x, y)
-            self.temp_page.touch_note(x, y)
+        if state == 'play':
+            # Is touch control or note?
+            if y >= 8:
+                y-=8
+                if x < 8: # Fire chances
+                    self.fire_chances[y] = 7 - x
+                else:  # Transpose chances
+                    self.transpose_chances[y] = x - 8
+                return True
+            else:
+                # Apply touch to current temp page and source page
+                self.get_curr_page().touch_note(x, y)
+                self.temp_page.touch_note(x, y)
+        elif state == 'ins_cfg':
+            cb_text, _x, _y = get_cb_from_touch(self.cb_grid, x, y)
+            if not cb_text:
+                return
+            cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
+            cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
+
         return True
 
     def get_led_grid(self, state):
-        led_grid = []
-        grid = self.get_curr_page().note_grid
-        for c, column in enumerate(grid):
-            led_grid.append([self.get_led_status(x, c) for x in column])
-        # Draw control sliders
-        for y in range(8):
-            # reset slider area (removes beat cursor)
-            for x in range(16):
-                led_grid[x][y+8] = LED_BLANK
-            for a in range(self.fire_chances[y]+1):
-                led_grid[7-a][y+8] = LED_ACTIVE
-            led_grid[7-self.fire_chances[y]][y+8] = LED_SELECT
-            led_grid[7][y+8] = LED_CURSOR
-            for a in range(self.transpose_chances[y]):
-                led_grid[8+a][y+8] = LED_ACTIVE
-            led_grid[8+self.transpose_chances[y]][y+8] = LED_SELECT
-            led_grid[8][y+8] = LED_CURSOR
-
+        if state == 'play':
+            led_grid = []
+            grid = self.get_curr_page().note_grid
+            for c, column in enumerate(grid):
+                led_grid.append([self.get_led_status(x, c) for x in column])
+            # Draw control sliders
+            for y in range(8):
+                # reset slider area (removes beat cursor)
+                for x in range(16):
+                    led_grid[x][y+8] = LED_BLANK
+                for a in range(self.fire_chances[y]+1):
+                    led_grid[7-a][y+8] = LED_ACTIVE
+                led_grid[7-self.fire_chances[y]][y+8] = LED_SELECT
+                led_grid[7][y+8] = LED_CURSOR
+                for a in range(self.transpose_chances[y]):
+                    led_grid[8+a][y+8] = LED_ACTIVE
+                led_grid[8+self.transpose_chances[y]][y+8] = LED_SELECT
+                led_grid[8][y+8] = LED_CURSOR
+        elif state == 'ins_cfg':
+            led_grid, cb_grid = generate_screen(seq_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num)})
+            self.cb_grid = cb_grid
+            return led_grid
         return led_grid
 
     def step_beat(self, global_beat):
@@ -107,7 +120,6 @@ class DrumDeviator(DrumMachine):
         '''Page has turned, apply randomness using source page onto temp page'''
         self.temp_page.note_grid = deepcopy(self.get_curr_page().note_grid)
         for x, beat in enumerate(self.temp_page.note_grid):  # For each beat
-            logging.info(str(beat))
             for y, note in enumerate(beat[:8]):  # For each note in beat
                 fire = self.calc_chance(self.fire_chances[y])
                 if fire:

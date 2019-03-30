@@ -73,7 +73,7 @@ class Sequencer(Instrument):
                 return
             cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
-            return True  # TODO
+            return True
 
     def cb_sustain(self, x, y):
         self.sustain = not self.sustain
@@ -113,7 +113,6 @@ class Sequencer(Instrument):
             for c, column in enumerate(grid):  # columnn counter
                 led_grid.append([self.get_led_status(x, c) for x in column])
         elif state == 'ins_cfg':
-            # TODO pages
             led_grid, cb_grid = generate_screen(seq_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num)})
             self.cb_grid = cb_grid
             return led_grid
@@ -129,7 +128,6 @@ class Sequencer(Instrument):
         elif cell == NOTE_ON:
             led = LED_ACTIVE  # Otherwise if the cell is active (touched)
         return led
-
 
     def inc_page_repeats(self, page):
         '''Increase how many times the current page will loop'''

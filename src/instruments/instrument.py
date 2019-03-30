@@ -79,23 +79,21 @@ class Instrument(object):
         return self.speed
         # return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
 
-    def change_division(self, div):
-        '''Find current instrument, inc or dec its beat division as appropriate'''
-        if div == "-":
-            if self.speed == 0:
-                return
-            self.speed -= 1
-            return
-        if div == "+":
-            if self.speed == 4:
-                return
-            self.speed += 1
-            return
-
-        # Direct set
-        self.speed = div
-        return
-
+    # def change_division(self, div):
+    #     '''Find current instrument, inc or dec its beat division as appropriate'''
+    #     if div == "-":
+    #         if self.speed == 0:
+    #             return
+    #         self.speed -= 1
+    #         return
+    #     if div == "+":
+    #         if self.speed == 4:
+    #             return
+    #         self.speed += 1
+    #         return
+    #     # Direct set
+    #     self.speed = div
+    #     return
     #
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
@@ -158,4 +156,31 @@ class Instrument(object):
 
     def load(self, saved):
         self.load_default_info(saved)
+        return
+
+    def cb_sustain(self, x, y):
+        self.sustain = not self.sustain
+        return
+    def cb_random_pages(self, x, y):
+        self.random_pages = not self.random_pages
+        return
+    def cb_speed(self, x, y):
+        self.speed = x
+        return
+    def cb_octave(self, x, y):
+        self.octave = x
+        return
+    def cb_page(self, x, y):
+        page = y
+        if y >= len(self.pages):
+            self.add_page(pos=False)
+            return
+        if x == 0:
+            if self.pages[y].repeats == 1:
+                self.pages[y].repeats = 0
+            else:
+                self.pages[y].repeats = 1
+            return
+        else:
+            self.pages[y].repeats = x + 1
         return
