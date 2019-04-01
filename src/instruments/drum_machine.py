@@ -5,22 +5,18 @@ from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
 import mido
 from random import choice, random, randint
+from screens import empty_grid, drum_cfg_grid_defn, generate_screen, get_cb_from_touch
 
 class DrumMachine(Instrument):
     """docstring for DrumMachine."""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(DrumMachine, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Drum Machine"
-        # self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
-        # self.mport = mport
-        # self.height = 16
         self.bars = 4 #min(bars, W/4)  # Option to reduce number of bars < 4
-        # self.width = 16
         self.curr_page_num = 0
         self.curr_rept_num = 0
         self.prev_loc_beat = 0
         self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
-        # self.speed = speed  # Relative speed of this instrument compared to global clock
         self.random_pages = False  #  Pick page at random
         self.sustain = False  # Don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
@@ -58,21 +54,35 @@ class DrumMachine(Instrument):
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
-        page = self.get_curr_page()
-        if not page.validate_touch(x, y):
-            return False
-        page.touch_note(x, y)
-        return True
+        if state == 'play':
+            page = self.get_curr_page()
+            if not page.validate_touch(x, y):
+                return False
+            page.touch_note(x, y)
+            return True
+        elif state == 'ins_cfg':
+            cb_text, _x, _y = get_cb_from_touch(self.cb_grid, x, y)
+            if not cb_text:
+                return
+            cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
+            cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
+            return True
+
 
     def get_notes_from_curr_beat(self):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
 
     def get_led_grid(self, state):
-        led_grid = []
-        grid = self.get_curr_page().note_grid
-        for c, column in enumerate(grid):  # columnn counter
-            led_grid.append([self.get_led_status(x, c) for x in column])
+        if state == 'play':
+            led_grid = []
+            grid = self.get_curr_page().note_grid
+            for c, column in enumerate(grid):  # columnn counter
+                led_grid.append([self.get_led_status(x, c) for x in column])
+        elif state == 'ins_cfg':
+            led_grid, cb_grid = generate_screen(drum_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num)})
+            self.cb_grid = cb_grid
+            return led_grid
         return led_grid
 
     def get_led_status(self, cell, beat_pos):

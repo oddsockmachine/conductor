@@ -38,6 +38,7 @@ sprint.line1("Select:")
   - Like sequencer, but specifically for drums/samplers
   - Notes are chromatic, to fit 4x4 sample set
 - TODO! on controls page, make it easier to set up multiple pages, select next pages etc (like a "play-clip" mode)
+- Continue work on "clip control". For seq too. Move other controls across, allow 16 pages, 4x4 grid. Clicking one sets curr_page, all other repeats to 0
 
 ### Euclidean Beat Generator
 - For each drum-note/sample, set a bar length (<16), euclidean density, and offset

@@ -14,36 +14,13 @@ class Droplets(Instrument):
             print("Instrument num {} must be an int".format(ins_num))
             exit()
         self.type = "Droplets"
-        # self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
-        # self.mport = mport
-        # # logging.info(mport)
         self.height = 16
-        # self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
         self.width = 16
-        # self.curr_page_num = 0
-        # self.curr_rept_num = 0
-        # self.prev_loc_beat = 0
         self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
         self.speed = speed  # Relative speed of this instrument compared to global clock
-        # self.isdrum = False  # Chromatic instrument for drum tracks
-        # self.random_pages = False  #  Pick page at random
-        # self.sustain = True  # Don't retrigger notes if this is True
-        # self.chaos = 0.0  # Add some randomness to notes
-        # self.page = Note_Grid(self.bars, self.height)
         self.droplet_velocities = [1 for n in range(self.width)]
         self.droplet_positions = [0 for n in range(self.width)]
         self.droplet_starts = [0 for n in range(self.width)]
-        # if key not in KEYS:
-        #     print('Requested key {} not known'.format(key))
-        #     exit()
-        # self.key = key
-        # if scale not in SCALES.keys():
-        #     print('Requested scale {} not known'.format(scale))
-        #     exit()
-        # self.scale = scale
-        # self.octave = octave  # Starting octave
-        # self.old_notes = []  # Keep track of currently playing notes so we can off them next step
-        # self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, height)  # Function is cached for convenience
 
     def get_status(self):
         status = {

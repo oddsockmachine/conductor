@@ -6,66 +6,25 @@ from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KE
 import mido
 from random import choice, random, randint
 
-class ChordSequencer(object):
+class ChordSequencer(Instrument):
     """docstring for ChordSequencer."""
-    def __init__(self, ins_num, mport, key, scale, octave=1, speed=1, bars=W/4, height=H):
-        super(ChordSequencer, self).__init__()
-        if not isinstance(ins_num, int):
-            print("ChordSequencer num {} must be an int".format(ins_num))
-            exit()
+    def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
+        super(ChordSequencer, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Chord Sequencer"
-        self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
-        self.mport = mport
-        self.height = height
-        self.bars = bars #min(bars, W/4)  # Option to reduce number of bars < 4
-        self.width = self.bars * 4
+        self.bars = 4 #min(bars, W/4)  # Option to reduce number of bars < 4
         self.curr_page_num = 0
         self.curr_rept_num = 0
         self.prev_loc_beat = 0
         self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
-        self.speed = speed  # Relative speed of this instrument compared to global clock
-        self.isdrum = False  # Chromatic instrument for drum tracks
         self.random_pages = False  #  Pick page at random
-        self.sustain = True  # Don't retrigger notes if this is True
-        self.chaos = 0.0  # Add some randomness to notes
+        self.sustain = False  # Don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
-        if key not in KEYS:
-            print('Requested key {} not known'.format(key))
-            exit()
-        self.key = key
-        if scale not in SCALES.keys():
-            print('Requested scale {} not known'.format(scale))
-            exit()
-        self.scale = scale
-        self.octave = octave  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
-        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, height)  # Function is cached for convenience
-
-    def update_chaos(self, dir):
-        if dir == 1:
-            self.chaos += 0.01
-        elif self.chaos > 0.01:
-            self.chaos -= 0.01
-        return
-
-    def set_key(self, key):
-        self.key = key
-        # Converter is a cached lookup, we need to regenerate it
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
 
     def set_scale(self, scale):
-        self.scale = scale
-        # Converter is a cached lookup, we need to regenerate it
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
-
-    def change_octave(self, up_down):
-        self.octave = up_down  #TODO handle up and down as well as octave number
-        # self.octave = (self.octave + up_down) % 7
-        # Converter is a cached lookup, we need to regenerate it
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
+        return # Not used
+    def set_key(self, key):
+        return # Not used
 
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
@@ -88,23 +47,50 @@ class ChordSequencer(object):
         midi_note_num = self.note_converter[cell]
         return midi_note_num
 
-    def touch_note(self, x, y):
+    def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
-        page = self.get_curr_page()
-        if not page.validate_touch(x, y):
-            return False
-        page.touch_note(x, y)
-        return True
+        if state == 'play':
+            page = self.get_curr_page()
+            if not page.validate_touch(x, y):
+                return False
+            page.touch_note(x, y)
+            return True
+        elif state == 'ins_cfg':
+            cb_text, _x, _y = get_cb_from_touch(self.cb_grid, x, y)
+            if not cb_text:
+                return
+            cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
+            cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
+            return True
+
 
     def get_notes_from_curr_beat(self):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
 
-    def get_curr_page_leds(self):
-        return
+    def get_led_grid(self, state):
+        if state == 'play':
+            led_grid = []
+            grid = self.get_curr_page().note_grid
+            for c, column in enumerate(grid):  # columnn counter
+                led_grid.append([self.get_led_status(x, c) for x in column])
+        elif state == 'ins_cfg':
+            led_grid, cb_grid = generate_screen(drum_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num)})
+            self.cb_grid = cb_grid
+            return led_grid
+        return led_grid
 
-    def get_curr_page_grid(self):
-        return self.get_curr_page().note_grid
+    def get_led_status(self, cell, beat_pos):
+        '''Determine which type of LED should be shown for a given cell'''
+        led = LED_BLANK  # Start with blank / no led
+        if beat_pos == self.local_beat_position:
+            led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
+            if cell == NOTE_ON:
+                led = LED_SELECT  # Unless we want a selected + beat cell to be special
+        elif cell == NOTE_ON:
+            led = LED_ACTIVE  # Otherwise if the cell is active (touched)
+        return led
+
 
     def inc_page_repeats(self, page):
         '''Increase how many times the current page will loop'''
@@ -216,15 +202,9 @@ class ChordSequencer(object):
         return
 
     def get_curr_notes(self):
-        grid = self.get_curr_page_grid()
+        grid = self.get_led_grid('play')
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
-        if self.chaos > 0:  # If using chaos, switch up some notes
-            if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
-                if random() < self.chaos:
-                    rand_note = randint(0, self.height-1)
-                    beat_notes[rand_note] = NOTE_ON if beat_notes[rand_note] != NOTE_ON else NOTE_OFF
-                    # beat_notes = [n if random() < self.chaos else (NOTE_ON if n==NOTE_OFF else NOTE_OFF) for n in beat_notes]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
 
@@ -248,31 +228,20 @@ class ChordSequencer(object):
 
     def save(self):
         saved = {
-          "Octave": self.octave,
-          "Key": self.key,
-          "Scale": self.scale,
-          "Pages": [p.save() for p in self.pages],
-          "Speed": self.speed,
-          "IsDrum": self.isdrum,
-          "Sustain": self.sustain,
-          "Chaos": self.chaos,
-          "RandomRpt": self.random_pages,
+          "pages": [p.save() for p in self.pages],
+          "sustain": self.sustain,
+          "random_rpt": self.random_pages,
         }
+        saved.update(self.default_save_info())
         return saved
 
     def load(self, saved):
-        self.octave = saved["Octave"]
-        self.key = saved["Key"]
-        self.scale = saved["Scale"]
-        self.speed = saved["Speed"]
-        self.isdrum = saved["IsDrum"]
-        self.sustain = saved["Sustain"]
-        self.chaos = saved["Chaos"]
-        self.random_pages = saved["RandomRpt"]
+        self.load_default_info(saved)
+        self.sustain = saved["sustain"]
+        self.random_pages = saved["random_rpt"]
         self.pages = []
-        for p in saved["Pages"]:
+        for p in saved["pages"]:
             page = Note_Grid(self.bars, self.height)
-            print(p)
             page.load(p)
             self.pages.append(page)
         return
@@ -280,190 +249,3 @@ class ChordSequencer(object):
     def clear_page(self):
         self.get_curr_page().clear_page()
         return
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import unittest
-class TestSequencer(unittest.TestCase):
-
-    def test_instrument(self):
-        ins = Sequencer(8, None, "a", "pentatonic", octave=2, bars=4)
-        self.assertTrue(ins.touch_note(0,1))
-        self.assertTrue(ins.touch_note(0,3))
-        self.assertTrue(ins.touch_note(0,5))
-        self.assertTrue(ins.touch_note(2,6))
-        self.assertTrue(ins.touch_note(2,7))
-        self.assertTrue(ins.touch_note(2,8))
-        self.assertFalse(ins.touch_note(-1,-1))
-        self.assertFalse(ins.touch_note(99,-99))
-        self.assertTrue(ins.touch_note(1,0))
-        self.assertTrue(ins.touch_note(2,0))
-        ins.inc_curr_page_repeats()
-        ins.add_page(1)
-        ins.step_beat()
-
-    def test_multi_pages(self):
-        ins = Sequencer(8, None, "a", "pentatonic", octave=3, bars=4)
-        self.assertEqual(len(ins.pages), 1)
-        self.assertEqual(ins.curr_page_num, 0)
-        ins.touch_note(0,0)
-        ins.touch_note(0,1)
-        ins.touch_note(0,2)
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-
-        ins.add_page(1)  # Add a page _after_ current page
-        self.assertEqual(ins.curr_page_num, 0)
-        ins.touch_note(0,4)  # Still on first page
-        ins.touch_note(0,5)
-        ins.touch_note(0,6)
-        self.assertEqual(len(ins.pages), 2)
-        self.assertEqual(ins.get_curr_notes(), [0,1,2,4,5,6])
-
-        ins.add_page(0)  # Add a page _before_ current page
-        self.assertEqual(ins.curr_page_num, 0)  # on new page, prev page pushed back
-        self.assertEqual(len(ins.pages), 3)
-        ins.touch_note(0,3)
-        ins.touch_note(0,6)
-        ins.touch_note(0,9)
-        self.assertEqual(ins.get_curr_notes(), [3,6,9])
-
-    def test_stepping_and_pages(self):
-        ins = Sequencer(8, None, "a", "pentatonic", octave=3, bars=4)
-        ins.touch_note(0,0)
-        ins.touch_note(0,1)
-        ins.touch_note(0,2)
-        ins.touch_note(1,5)
-        ins.touch_note(1,6)
-        ins.touch_note(1,7)
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-        self.assertEqual(ins.local_beat_position, 0)
-        ins.step_beat()
-        self.assertEqual(ins.get_curr_notes(), [5,6,7])
-        self.assertEqual(ins.local_beat_position, 1)
-        ins.step_beat()
-        self.assertEqual(ins.get_curr_notes(), [])
-        self.assertEqual(ins.local_beat_position, 2)
-        self.assertEqual(ins.curr_page_num, 0)  # Still on page 0
-        for i in range(14):
-            ins.step_beat()
-        self.assertEqual(ins.local_beat_position, 0)
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, wrapped around
-        ins.add_page(1)
-        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, new page is next
-        for i in range(17):
-            ins.step_beat()
-        self.assertEqual(ins.local_beat_position, 1)
-        self.assertEqual(ins.curr_page_num, 1)  # Should still be on same page, wrapped around
-        self.assertEqual(ins.get_curr_notes(), [])
-        for i in range(15):
-            ins.step_beat()
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, wrapped around
-        self.assertEqual(ins.local_beat_position, 0)
-
-    def test_multi_repeats(self):
-        ins = Sequencer(8, None, "a", "pentatonic", octave=3, bars=4)
-        ins.touch_note(0,0)
-        ins.touch_note(0,1)
-        ins.touch_note(0,2)
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-        ins.add_page(1)
-        for i in range(17):
-            ins.step_beat()
-        self.assertEqual(ins.curr_page_num, 1)
-        self.assertEqual(ins.local_beat_position, 1)
-        ins.touch_note(1,5)
-        ins.touch_note(1,6)
-        ins.touch_note(1,7)
-        self.assertEqual(ins.get_curr_notes(), [5,6,7])
-        for i in range(16):
-            ins.step_beat()
-        self.assertEqual(ins.curr_page_num, 0) # Back to page 0
-        self.assertEqual(ins.local_beat_position, 1)
-        ins.inc_curr_page_repeats()
-        self.assertEqual(ins.curr_rept_num, 0)
-        for i in range(15):
-            ins.step_beat()
-        self.assertEqual(ins.get_curr_notes(), [0,1,2])
-        self.assertEqual(ins.curr_page_num, 0)  # Should still be on same page, 2nd repeat
-        self.assertEqual(ins.local_beat_position, 0)
-        self.assertEqual(ins.curr_rept_num, 1)
-        for i in range(17):
-            ins.step_beat()
-        self.assertEqual(ins.curr_page_num, 1)
-        self.assertEqual(ins.local_beat_position, 1)
-        self.assertEqual(ins.get_curr_notes(), [5,6,7])
-
-    def test_cell_to_midi(self):
-        ins1 = Sequencer(8, None, "a", "chromatic", octave=3, bars=4)
-        self.assertEqual(ins1.cell_to_midi(0), 57)
-        self.assertEqual(ins1.cell_to_midi(1), 58)
-        self.assertEqual(ins1.cell_to_midi(2), 59)
-        ins2 = Sequencer(8, None, "a", "major", octave=3, bars=4)
-        self.assertEqual(ins2.cell_to_midi(0), 57)
-        self.assertEqual(ins2.cell_to_midi(1), 59)
-        self.assertEqual(ins2.cell_to_midi(2), 61)
-        self.assertEqual(ins2.cell_to_midi(3), 62)
-
-    def test_midi_out(self):
-        from midi import MockMidiOut
-        fake_out = MockMidiOut()
-        ins = Sequencer(9, fake_out, "a", "chromatic", octave=3, bars=4)
-        ins.touch_note(1,0)
-        ins.touch_note(1,1)
-        ins.touch_note(2,14)
-        ins.touch_note(2,15)
-        ins.step_beat()
-        # print(fake_out.buffer)
-        self.assertEqual(len(fake_out.buffer), 2)
-        notes = fake_out.get_output()
-        self.assertEqual(len(notes), 2)
-        note1 = notes[0]
-        note2 = notes[1]
-        self.assertEqual(len(fake_out.buffer), 0)
-        self.assertEqual(note1.type, 'note_on')
-        self.assertEqual(note1.channel, 9)
-        self.assertEqual(note1.note, 57)
-        self.assertEqual(note2.note, 58)
-        ins.step_beat()
-        notes = fake_out.get_output()
-        note3 = notes[0]
-        note4 = notes[1]
-        note5 = notes[2]
-        note6 = notes[3]
-        self.assertEqual(note3.type, 'note_off')
-        self.assertEqual(note3.note, 57)
-        self.assertEqual(note4.type, 'note_off')
-        self.assertEqual(note4.note, 58)
-        self.assertEqual(note5.type, 'note_on')
-        self.assertEqual(note5.note, 71)
-        self.assertEqual(note6.type, 'note_on')
-        self.assertEqual(note6.note, 72)
-
-if __name__ == '__main__':
-    unittest.main()

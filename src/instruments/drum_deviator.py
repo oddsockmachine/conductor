@@ -33,21 +33,30 @@ class DrumDeviator(DrumMachine):
         # Each new page, generate a temp page of notes (16 high) based on calculations
         # But display 8x16 notes and mods
 
+    def apply_control(self, x, y):
+        if y >= 8:  # Control touch, but save it in the page, it's easier that way
+            y-=8
+            if x < 8: # Fire chances
+                self.fire_chances[y] = 7 - x
+            else:  # Transpose chances
+                self.transpose_chances[y] = x - 8
+
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page - either a control, or a note'''
         if state == 'play':
             # Is touch control or note?
-            if y >= 8:
-                y-=8
-                if x < 8: # Fire chances
-                    self.fire_chances[y] = 7 - x
-                else:  # Transpose chances
-                    self.transpose_chances[y] = x - 8
-                return True
-            else:
-                # Apply touch to current temp page and source page
-                self.get_curr_page().touch_note(x, y)
-                self.temp_page.touch_note(x, y)
+            self.apply_control(x, y)
+            # if y >= 8:  # Control touch, but save it in the page, it's easier that way
+            #     y-=8
+            #     if x < 8: # Fire chances
+            #         self.fire_chances[y] = 7 - x
+            #     else:  # Transpose chances
+            #         self.transpose_chances[y] = x - 8
+            #     return True
+            # else:
+            # Apply touch to current temp page and source page
+            self.get_curr_page().touch_note(x, y)
+            self.temp_page.touch_note(x, y)
         elif state == 'ins_cfg':
             cb_text, _x, _y = get_cb_from_touch(self.cb_grid, x, y)
             if not cb_text:
@@ -113,6 +122,12 @@ class DrumDeviator(DrumMachine):
         # If we're overfowing repeats, time to go to next available page
             self.curr_rept_num = 0  # Reset, for this page or next page
             self.curr_page_num = self.get_next_page_num()
+        # Take control figures from new page, apply to controls
+        notes = self.get_curr_page().note_grid
+        for y in range(8, 16):
+            for x in range(16):
+                if notes[x][y] == NOTE_ON:
+                    self.apply_control(x, y)
         self.apply_randomness()
         return
 
@@ -129,8 +144,6 @@ class DrumDeviator(DrumMachine):
                     if self.calc_chance(self.transpose_chances[y]):
                         self.temp_page.note_grid[x][y+8] = NOTE_ON
                         self.temp_page.note_grid[x][y] = NOTE_OFF
-
-                # self.temp_page.note_grid[x][y+8] = self.temp_page.note_grid[x][y]
         return
 
     def calc_chance(self, chance):
@@ -142,7 +155,7 @@ class DrumDeviator(DrumMachine):
     def get_curr_notes(self):
         grid = self.temp_page.note_grid
         beat_pos = self.local_beat_position
-        beat_notes = [n for n in grid[beat_pos]]
+        beat_notes = [n for n in grid[beat_pos][:8]]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
 #

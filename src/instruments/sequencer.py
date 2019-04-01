@@ -23,20 +23,7 @@ class Sequencer(Instrument):
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)  # Function is cached for convenience
 
-    def set_key(self, key):
-        self.key = key # Converter is a cached lookup, we need to regenerate it
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
 
-    def set_scale(self, scale):
-        self.scale = scale # Converter is a cached lookup, we need to regenerate it
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
-
-    # def change_octave(self, up_down):
-    #     self.octave = up_down  #TODO handle up and down as well as octave number
-    #     self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-    #     return True
 
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
@@ -74,33 +61,6 @@ class Sequencer(Instrument):
             cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
             return True
-
-    def cb_sustain(self, x, y):
-        self.sustain = not self.sustain
-        return
-    def cb_random_pages(self, x, y):
-        self.random_pages = not self.random_pages
-        return
-    def cb_speed(self, x, y):
-        self.speed = x
-        return
-    def cb_octave(self, x, y):
-        self.octave = x
-        return
-    def cb_page(self, x, y):
-        page = y
-        if y >= len(self.pages):
-            self.add_page(pos=False)
-            return
-        if x == 0:
-            if self.pages[y].repeats == 1:
-                self.pages[y].repeats = 0
-            else:
-                self.pages[y].repeats = 1
-            return
-        else:
-            self.pages[y].repeats = x + 1
-        return
 
     def get_notes_from_curr_beat(self):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)

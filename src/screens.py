@@ -69,6 +69,10 @@ def get_char(**kwargs):
         array = COLUMN[:kwargs['instrument']]
         if 'selector' in kwargs.keys():
             array[kwargs['selector']] = [LED_SELECT]
+    # elif 'clip' in kwargs.keys():
+    #     array = [[],[]]
+    #     if 'selector' in kwargs.keys():
+    #         array[kwargs['selector']] = [LED_SELECT]
     elif 'pages' in kwargs.keys():
         max_rpt = 8
         array = [[0 for x in range(8)] for y in range(8)]
@@ -96,13 +100,23 @@ def seq_cfg_grid_defn(args):
     return seqcfg
 
 def dev_cfg_grid_defn(args):
-    seqcfg = [
+    devcfg = [
         ('random_pages', get_char(char='r'), 0, 13),
         ('speed', get_char(row=5, selector=args['speed']), 15, 0),
         ('octave', get_char(row=5, selector=args['octave']), 14, 0),
         ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
     ]
-    return seqcfg
+    return devcfg
+
+def drum_cfg_grid_defn(args):
+    drumcfg = [
+        ('random_pages', get_char(char='r'), 0, 13),
+        ('speed', get_char(row=5, selector=args['speed']), 15, 0),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 0),
+        ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
+        # ('clip', get_char(clips=args['clips']), 0, 0),
+    ]
+    return drumcfg
 
 def gbl_cfg_grid_defn(args):
     gbl_cfg = [

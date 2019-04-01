@@ -28,6 +28,21 @@ class Instrument(object):
     #     midi_note_num = self.note_converter[cell]
     #     return midi_note_num
 
+    def set_key(self, key):
+        self.key = key # Converter is a cached lookup, we need to regenerate it
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        return True
+
+    def set_scale(self, scale):
+        self.scale = scale # Converter is a cached lookup, we need to regenerate it
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        return True
+
+    def change_octave(self, up_down):
+        self.octave = up_down  #TODO handle up and down as well as octave number
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        return True
+
     def get_status(self):
         status = {
             'ins_num': self.ins_num+1,
@@ -166,9 +181,11 @@ class Instrument(object):
         return
     def cb_speed(self, x, y):
         self.speed = x
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return
     def cb_octave(self, x, y):
         self.octave = x
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return
     def cb_page(self, x, y):
         page = y
