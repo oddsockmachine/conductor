@@ -142,7 +142,7 @@ class Conductor(object):
         for i in range(len(saved['instruments'])):
             self.add_instrument(saved['instruments'][i]['type'])
             self.instruments[i].load(saved['instruments'][i])
-        self.current_state = 'play'
+        self.current_state = 'gbl_cfg'
         return
 
     def touch_note(self, x, y):
@@ -175,6 +175,16 @@ class Conductor(object):
 
     def cb_reset(self, x, y):
         # TODO reset all beatpos to 0
+        for i in self.instruments:
+            i.local_beat_position = 0
+            try:
+                i.curr_page_num = 0
+                i.curr_rept_num = 0
+            except:
+                pass
+            if i.type == 'Droplets':
+                i.droplet_positions = [d for d in i.droplet_starts]
+        self.current_state = 'play'
         return
     def cb_scale_inc(self, x, y):
         self.cycle_scale(1)
