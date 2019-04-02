@@ -1,6 +1,11 @@
 ## Top
 - multi-instrument support: program new ones, and add cfg pages
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
+- or, gbl_cfg button to set all beatpos to 0, ready for ableton to start
+
+### Add small screen for better feedback
+from screen import sprint
+sprint.line1("Select:")
 
 ### Handle LED colors better
 - different backgrounds for each instrument number and type
@@ -10,9 +15,6 @@
 - Show root notes, pentatonic notes, etc in different colors/shades
 - Should be handled by instrument.get_led_status/get_led_grid, has access to scale and cell info
 
-### Add small screen for better feedback
-from screen import sprint
-sprint.line1("Select:")
 
 ### Inspirations for new instruments
 - Arc https://www.youtube.com/watch?v=HM0EBvJe1s0
@@ -37,8 +39,8 @@ sprint.line1("Select:")
 ### Drum Machine
   - Like sequencer, but specifically for drums/samplers
   - Notes are chromatic, to fit 4x4 sample set
-- TODO! on controls page, make it easier to set up multiple pages, select next pages etc (like a "play-clip" mode)
-- Continue work on "clip control". For seq too. Move other controls across, allow 16 pages, 4x4 grid. Clicking one sets curr_page, all other repeats to 0
+    - TODO! on controls page, make it easier to set up multiple pages, select next pages etc (like a "play-clip" mode)
+    - Continue work on "clip control". For seq too. Move other controls across, allow 16 pages, 4x4 grid. Clicking one sets curr_page, all other repeats to 0
 
 ### Euclidean Beat Generator
 - For each drum-note/sample, set a bar length (<16), euclidean density, and offset

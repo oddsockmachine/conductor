@@ -1,5 +1,5 @@
 from constants import *
-from note_conversion import SCALES
+from note_conversion import SCALE_INTERVALS
 # from time import perf_counter
 print("Importing hardware connections")
 from board import SCL, SDA, D13, D6

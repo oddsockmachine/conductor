@@ -173,6 +173,9 @@ class Conductor(object):
 
     ###### CALLBACK METHODS ######
 
+    def cb_reset(self, x, y):
+        # TODO reset all beatpos to 0
+        return
     def cb_scale_inc(self, x, y):
         self.cycle_scale(1)
         return
