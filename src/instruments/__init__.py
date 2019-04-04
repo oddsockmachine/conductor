@@ -7,6 +7,7 @@ from instruments.binary_sequencer import BinarySequencer
 from instruments.chord_sequencer import ChordSequencer
 from instruments.droplets import Droplets
 from instruments.transformer import Transformer
+from instruments.elaborator import Elaborator
 
 
 
@@ -22,6 +23,7 @@ def instrument_lookup(num):
         6: BinarySequencer,
         7: Droplets,
         8: Transformer,
+        9: Elaborator,
         'Instrument': Instrument,  # Generic, fallback, no functionality
         'Sequencer': Sequencer,
         'Drum Machine': DrumMachine,
@@ -31,4 +33,5 @@ def instrument_lookup(num):
         'Binary Sequencer': BinarySequencer,
         'Droplets': Droplets,
         'Transformer': Transformer,
+        'Elaborator': Elaborator,
     }[num]

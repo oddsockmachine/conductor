@@ -64,18 +64,7 @@ class Display(object):
 
     def draw_gui(self, status):
         self.stdscr.addstr(1, self.grid_x+2, "S U P E R C E L L")#, curses.color_pair(4))
-        status_strs = {
-            'key': status.get('key'),
-            'scale': status.get('scale')[:5].rjust(5),
-            'octave': status.get('octave'),
-            'type': status.get('type'),
-            'division': status.get('division'),
-            'rpt': "R" if status.get('random_rpt') else " ",
-            'sustain': "S" if status.get('sustain') else " ",
-        }
-        status_line_2 = "{key} {scale} +{octave}ve {type} >{division}  {rpt} {sustain}".format(**status_strs)
-
-        lines = ["{}: {}".format(k,v) for k, v in status.items()]
+        lines = ["{}: {}        ".format(k,v) for k, v in status.items()]
         for i, line in enumerate(lines):
             self.stdscr.addstr(self.grid_y+18+i, self.grid_x+2, line)#, curses.color_pair(4))
         return
