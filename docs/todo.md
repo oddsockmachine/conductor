@@ -1,7 +1,6 @@
 ## Top
 - multi-instrument support: program new ones, and add cfg pages
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
-- or, gbl_cfg button to set all beatpos to 0, ready for ableton to start
 
 ### Add small screen for better feedback
 from screen import sprint

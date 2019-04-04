@@ -69,13 +69,23 @@ def get_char(**kwargs):
         array = COLUMN[:kwargs['instrument']]
         if 'selector' in kwargs.keys():
             array[kwargs['selector']] = [LED_SELECT]
-    # elif 'clip' in kwargs.keys():
-    #     array = [[],[]]
-    #     if 'selector' in kwargs.keys():
-    #         array[kwargs['selector']] = [LED_SELECT]
+    elif 'clips' in kwargs.keys():
+        logging.info(str(kwargs))
+        array = [[0 for x in range(4)] for y in range(4)]
+        pages = kwargs['clips']
+        for p in range(pages+1):
+            y, x = (p % 4, int(p / 4))
+            array[x][y] = LED_CURSOR
+        if 'curr_page' in kwargs.keys():
+            y, x = (kwargs['curr_page'] % 4, int(kwargs['curr_page'] / 4))
+            array[x][y] = LED_SELECT
+        if 'next_page' in kwargs.keys():
+            y, x = (kwargs['next_page'] % 4, int(kwargs['next_page'] / 4))
+            array[x][y] = LED_ACTIVE
     elif 'pages' in kwargs.keys():
-        max_rpt = 8
-        array = [[0 for x in range(8)] for y in range(8)]
+        max_rpts = 8
+        max_pages = 16
+        array = [[0 for x in range(max_rpts)] for y in range(max_pages)]
         for i, rpts in enumerate(kwargs['pages']):
             for r in range(rpts):
                 array[i][r] = LED_ACTIVE
@@ -105,16 +115,17 @@ def dev_cfg_grid_defn(args):
         ('speed', get_char(row=5, selector=args['speed']), 15, 0),
         ('octave', get_char(row=5, selector=args['octave']), 14, 0),
         ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
+        ('clip', get_char(clips=len(args['pages']), curr_page=args['curr_page'], next_page=args['next_page']), 9, 9),
     ]
     return devcfg
 
 def drum_cfg_grid_defn(args):
     drumcfg = [
         ('random_pages', get_char(char='r'), 0, 13),
-        ('speed', get_char(row=5, selector=args['speed']), 15, 0),
-        ('octave', get_char(row=5, selector=args['octave']), 14, 0),
+        ('speed', get_char(row=5, selector=args['speed']), 15, 11),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 11),
         ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
-        # ('clip', get_char(clips=args['clips']), 0, 0),
+        ('clip', get_char(clips=len(args['pages']), curr_page=args['curr_page'], next_page=args['next_page']), 9, 9),
     ]
     return drumcfg
 

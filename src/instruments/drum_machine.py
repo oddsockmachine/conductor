@@ -43,7 +43,7 @@ class DrumMachine(Instrument):
 
     def add_page(self, pos=True):
         '''Add or insert a new blank page into the list of pages'''
-        if len(self.pages) == 8:
+        if len(self.pages) == 16:
             return False
         if pos:
             self.pages.insert(self.curr_page_num+1, Note_Grid(self.bars, self.height))
@@ -84,7 +84,7 @@ class DrumMachine(Instrument):
             for c, column in enumerate(grid):  # columnn counter
                 led_grid.append([self.get_led_status(x, c) for x in column])
         elif state == 'ins_cfg':
-            led_grid, cb_grid = generate_screen(drum_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num)})
+            led_grid, cb_grid = generate_screen(drum_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num), 'curr_page': self.curr_page_num, 'next_page': self.get_next_page_num()})
             self.cb_grid = cb_grid
             return led_grid
         return led_grid
