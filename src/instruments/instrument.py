@@ -44,6 +44,16 @@ class Instrument(object):
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
 
+    def add_page(self, pos=True):
+        '''Add or insert a new blank page into the list of pages'''
+        if len(self.pages) == 16:
+            return False
+        if pos:
+            self.pages.insert(self.curr_page_num+1, Note_Grid(self.bars, self.height))
+        else:
+            self.pages.append(Note_Grid(self.bars, self.height))
+        return True
+
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
 
@@ -81,6 +91,49 @@ class Instrument(object):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
 
+    def get_next_page_num(self):
+        '''Return the number of the next page that has a positive number of repeats
+        or return a random page if wanted'''
+        if self.selected_next_page_num != None:
+            p = self.selected_next_page_num
+            return p
+        if self.random_pages:
+            # Create a distribution of the pages and their repeats, pick one at random
+            dist = []
+            for index, page in enumerate(self.pages):
+                for r in range(page.repeats):
+                    dist.append(index)
+            next_page_num = choice(dist)
+            return next_page_num
+        for i in range(1, len(self.pages)):
+            # Look through all the upcoming pages
+            next_page_num = (self.curr_page_num + i) % len(self.pages)
+            rpts = self.pages[next_page_num].repeats
+            if rpts > 0:  # This one's good, return it
+                return next_page_num
+        # All pages including curr_page are zero repeats, just stick with this one
+        return self.curr_page_num
+
+    def advance_page(self):
+        '''Go to next repeat or page'''
+        if self.random_pages:
+            # Create a distribution of the pages and their repeats, pick one at random
+            dist = []
+            for index, page in enumerate(self.pages):
+                for r in range(page.repeats):
+                    dist.append(index)
+            next_page_num = choice(dist)
+            self.curr_page_num = next_page_num
+            self.curr_rept_num = 0  # Reset, for this page or next page
+            return
+        self.curr_rept_num += 1  # inc repeat number
+        if self.curr_rept_num >= self.get_curr_page().repeats:
+        # If we're overfowing repeats, time to go to next available page
+            self.curr_rept_num = 0  # Reset, for this page or next page
+            self.curr_page_num = self.get_next_page_num()
+            self.selected_next_page_num = None
+        return
+
     def get_curr_notes(self):
         grid = self.get_led_grid()
         beat_pos = self.local_beat_position
@@ -99,24 +152,7 @@ class Instrument(object):
 
     def get_beat_division_str(self):
         return self.speed
-        # return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
 
-    # def change_division(self, div):
-    #     '''Find current instrument, inc or dec its beat division as appropriate'''
-    #     if div == "-":
-    #         if self.speed == 0:
-    #             return
-    #         self.speed -= 1
-    #         return
-    #     if div == "+":
-    #         if self.speed == 4:
-    #             return
-    #         self.speed += 1
-    #         return
-    #     # Direct set
-    #     self.speed = div
-    #     return
-    #
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
         local = self.calc_local_beat(global_beat)
@@ -130,12 +166,11 @@ class Instrument(object):
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
-    #
+
     def calc_local_beat(self, global_beat):
         '''Calc local_beat_pos for this instrument'''
         div = self.get_beat_division()
         local_beat = int(global_beat / div) % self.width
-        # logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
         return int(local_beat)
 
     def output(self, old_notes, new_notes):

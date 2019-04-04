@@ -41,16 +41,6 @@ class DrumMachine(Instrument):
     def get_page_stats(self):
         return [x.repeats for x in self.pages]
 
-    def add_page(self, pos=True):
-        '''Add or insert a new blank page into the list of pages'''
-        if len(self.pages) == 16:
-            return False
-        if pos:
-            self.pages.insert(self.curr_page_num+1, Note_Grid(self.bars, self.height))
-        else:
-            self.pages.append(Note_Grid(self.bars, self.height))
-        return True
-
     def cell_to_midi(self, cell):
         '''convert a cell height to a midi note based on key, scale, octave'''
         midi_note_num = self.note_converter[cell]
@@ -145,50 +135,6 @@ class DrumMachine(Instrument):
             return True
         self.prev_loc_beat = local_beat
         return False
-
-    def get_next_page_num(self):
-        '''Return the number of the next page that has a positive number of repeats
-        or return a random page if wanted'''
-        if self.selected_next_page_num != None:
-            p = self.selected_next_page_num
-            return p
-        if self.random_pages:
-            # Create a distribution of the pages and their repeats, pick one at random
-            dist = []
-            for index, page in enumerate(self.pages):
-                for r in range(page.repeats):
-                    dist.append(index)
-            next_page_num = choice(dist)
-            return next_page_num
-        for i in range(1, len(self.pages)):
-            # Look through all the upcoming pages
-            next_page_num = (self.curr_page_num + i) % len(self.pages)
-            rpts = self.pages[next_page_num].repeats
-            # logging.info("i{} p{} r{}".format(i, next_page_num, rpts))
-            if rpts > 0:  # This one's good, return it
-                return next_page_num
-        # All pages including curr_page are zero repeats, just stick with this one
-        return self.curr_page_num
-
-    def advance_page(self):
-        '''Go to next repeat or page'''
-        if self.random_pages:
-            # Create a distribution of the pages and their repeats, pick one at random
-            dist = []
-            for index, page in enumerate(self.pages):
-                for r in range(page.repeats):
-                    dist.append(index)
-            next_page_num = choice(dist)
-            self.curr_page_num = next_page_num
-            self.curr_rept_num = 0  # Reset, for this page or next page
-            return
-        self.curr_rept_num += 1  # inc repeat number
-        if self.curr_rept_num >= self.get_curr_page().repeats:
-        # If we're overfowing repeats, time to go to next available page
-            self.curr_rept_num = 0  # Reset, for this page or next page
-            self.curr_page_num = self.get_next_page_num()
-            self.selected_next_page_num = None
-        return
 
     def get_beat_division(self):
         return 2**self.speed

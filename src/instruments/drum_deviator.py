@@ -98,7 +98,9 @@ class DrumDeviator(DrumMachine):
                 led_grid[8+self.transpose_chances[y]][y+8] = LED_SELECT
                 led_grid[8][y+8] = LED_CURSOR
         elif state == 'ins_cfg':
-            led_grid, cb_grid = generate_screen(dev_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num)})
+            led_grid, cb_grid = generate_screen(dev_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num), 'curr_page': self.curr_page_num, 'next_page': self.get_next_page_num()})
+
+
             self.cb_grid = cb_grid
             return led_grid
         return led_grid
@@ -134,6 +136,8 @@ class DrumDeviator(DrumMachine):
         # If we're overfowing repeats, time to go to next available page
             self.curr_rept_num = 0  # Reset, for this page or next page
             self.curr_page_num = self.get_next_page_num()
+            self.selected_next_page_num = None
+
         # Take control figures from new page, apply to controls
         notes = self.get_curr_page().note_grid
         for y in range(8, 16):
@@ -170,25 +174,7 @@ class DrumDeviator(DrumMachine):
         beat_notes = [n for n in grid[beat_pos][:8]]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
-#
-#     def output(self, old_notes, new_notes):
-#         """Return all note-ons from the current beat, and all note-offs from the last"""
-#         notes_off = [self.cell_to_midi(c) for c in old_notes]
-#         notes_on = [self.cell_to_midi(c) for c in new_notes]
-#         if self.sustain:
-#             _notes_off = [n for n in notes_off if n not in notes_on]
-#             _notes_on = [n for n in notes_on if n not in notes_off]
-#             notes_off = _notes_off
-#             notes_on = _notes_on
-#         notes_off = [n for n in notes_off if n<128 and n>0]
-#         notes_on = [n for n in notes_on if n<128 and n>0]
-#         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
-#         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
-#         msgs = off_msgs + on_msgs
-#         if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
-#             for msg in msgs:
-#                 self.mport.send(msg)
-#
+
     def save(self):
         saved = {
           "pages": [p.save() for p in self.pages],

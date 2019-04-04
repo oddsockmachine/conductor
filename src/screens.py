@@ -1,55 +1,3 @@
-# GBL_CFG_SCREEN
-# SSSSSS____SS________________iiII
-# SS__SS____SS________________iiII
-# SSSSSS__SSSSSS______________iiII
-# SS________SS________________iiII
-# SS________SS________________iiII
-# ____kk______________________iiII
-# ____kk__kk__________________iiII
-# kkkkkk__kkkk________________iiII
-# kk__kk__kkkk________________iiII
-# kkkkkk______________________iiII
-# ____________________________iiII
-# ##______######______________iiII
-# ##______##__________________iiII
-# ##______######______________iiII
-# ##__________##______________iiII
-# ######__######______________iiII
-#
-# L = Load
-# s = Save
-# I = Select instrument
-# i = new instrument type
-# S = Current scale (click left/right to inc/dec)
-# k = Current key (click left/right to inc/dec)
-
-# SSSSSS__RRRRRR______________PPPP
-# SS______RR__RR______________PPPP
-# SSSSSS__RRRR________________CCPP
-# ____SS__RR__RR__________PPPPPPPP
-# SSSSSS__RR__RR__________________
-# ________________________________
-# ________________________________
-# ________________________________
-# ________________________________
-# ________________________________
-# ________________________________
-# ________________________________
-# ________________________________
-# ________________________________
-# OOOOOOoo________________________
-# SSSSSSss________________________
-
-# C curr_page_num
-# C curr_rept_num
-# R random_pages
-# S sustain
-# P pages
-# o/O octave
-# S/s speed
-
-
-
 from constants import *
 
 def get_char(**kwargs):
@@ -102,17 +50,18 @@ def seq_cfg_grid_defn(args):
     seqcfg = [
         ('sustain', get_char(char='s'), 0, 9),
         ('random_pages', get_char(char='r'), 0, 13),
-        ('speed', get_char(row=5, selector=args['speed']), 15, 0),
-        ('octave', get_char(row=5, selector=args['octave']), 14, 0),
+        ('speed', get_char(row=5, selector=args['speed']), 15, 11),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 11),
         ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
+        ('clip', get_char(clips=len(args['pages']), curr_page=args['curr_page'], next_page=args['next_page']), 9, 9),
     ]
     return seqcfg
 
 def dev_cfg_grid_defn(args):
     devcfg = [
         ('random_pages', get_char(char='r'), 0, 13),
-        ('speed', get_char(row=5, selector=args['speed']), 15, 0),
-        ('octave', get_char(row=5, selector=args['octave']), 14, 0),
+        ('speed', get_char(row=5, selector=args['speed']), 15, 11),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 11),
         ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
         ('clip', get_char(clips=len(args['pages']), curr_page=args['curr_page'], next_page=args['next_page']), 9, 9),
     ]
