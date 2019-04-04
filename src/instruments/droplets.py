@@ -7,7 +7,16 @@ import mido
 from random import choice, random, randint
 
 class Droplets(Instrument):
-    """docstring for Droplets."""
+    """Droplets
+    - Like Flin
+    - Droplets fall vertically
+    - Pitch is horizontal
+    - Touch high up, droplet falls with high velocity
+    - Touch low down, droplet falls with low velocity
+    - Pitch is triggered when droplet reaches bottom
+    - Touch above note to drag/extend it
+    - Touch below note to catch/remove it
+    - Add multiple drops per line?"""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(Droplets, self).__init__(ins_num, mport, key, scale, octave, speed)
         if not isinstance(ins_num, int):

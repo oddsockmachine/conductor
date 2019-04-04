@@ -23,10 +23,10 @@ class Instrument(object):
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)  # Function is cached for convenience
 
-    # def cell_to_midi(self, cell):
-    #     '''convert a cell height to a midi note based on key, scale, octave'''
-    #     midi_note_num = self.note_converter[cell]
-    #     return midi_note_num
+    def cell_to_midi(self, cell):
+        '''convert a cell height to a midi note based on key, scale, octave'''
+        midi_note_num = self.note_converter[cell]
+        return midi_note_num
 
     def set_key(self, key):
         self.key = key # Converter is a cached lookup, we need to regenerate it
@@ -42,6 +42,12 @@ class Instrument(object):
         self.octave = up_down  #TODO handle up and down as well as octave number
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
+
+    def get_curr_page(self):
+        return self.pages[self.curr_page_num]
+
+    def get_page_stats(self):
+        return [x.repeats for x in self.pages]
 
     def get_status(self):
         status = {

@@ -29,18 +29,11 @@ sprint.line1("Select:")
 - general https://monome.org/docs/grid-studies/python/
 
 ### Grid Sequencer
-  - 16x16 sequencer
-  - Add pages to extend sequence length
-  - Pages can have repeats
-  - Pages can be picked randomly, weighted by repeats
-  - sequencer could be 15 notes high, one row dedicated to pages/repeats
-
+- sequencer could be 15 notes high, one row dedicated to pages/repeats
 
 ### Drum Machine
-  - Like sequencer, but specifically for drums/samplers
-  - Notes are chromatic, to fit 4x4 sample set
-    - TODO! on controls page, make it easier to set up multiple pages, select next pages etc (like a "play-clip" mode)
-    - Continue work on "clip control". For seq too. Move other controls across, allow 16 pages, 4x4 grid. Clicking one sets curr_page, all other repeats to 0
+- on controls page, make it easier to set up multiple pages, select next pages etc (like a "play-clip" mode)
+- Continue work on "clip control". For seq too. Move other controls across, allow 16 pages, 4x4 grid. Clicking one sets curr_page, all other repeats to 0
 
 ### Euclidean Beat Generator
 - For each drum-note/sample, set a bar length (<16), euclidean density, and offset
@@ -57,14 +50,8 @@ sprint.line1("Select:")
 - TopRight 8x8 shows pages and controls. Save, select, clear pages
 
 ### Drum Deviator - Random Deviation Beat Sequencer
-  - Draw a beat on a sequencer grid
-- Each drum-note/sample has a separate random chance of suppressing/firing or transposing
-  - Show drum sequencer along bottom 16x8, with notes that are modified for this bar highlighted
 - (suppressed: slightly darker - triggered: slightly brighter - transposed: different color)
-  - Use the top 16x8 for controls like randomness per note
 - Allow multiple pages per instrument
-- Transposition could/should be predictable, eg to +8 notes
-- Random notes for each bar determined at start of bar
 - Randomness/chaos amount should be per bar, not per note. eg: at low levels, only change a few notes occasionally
 - TODO randomness controls cover all pages - maybe they should be per-page?
 - TODO apply_randomness doesn't show effects on LED grid
@@ -84,12 +71,8 @@ sprint.line1("Select:")
 - Like Orca, but maybe use it for arpeggios and chords
 
 ### Droplets
-- Like Flin
-  - Droplets fall vertically
-  - Pitch is horizontal
 - Touch high up, droplet falls with high velocity
 - Touch low down, droplet falls with low velocity
-  - Pitch is triggered when droplet reaches bottom
 - Touch above note to drag/extend it
 - Touch below note to catch/remove it
 - Add multiple drops per line?

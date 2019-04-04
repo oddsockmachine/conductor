@@ -8,7 +8,12 @@ from random import choice, random, randint
 from screens import empty_grid, seq_cfg_grid_defn, generate_screen, get_cb_from_touch
 
 class Sequencer(Instrument):
-    """docstring for Sequencer."""
+    """Grid Sequencer
+      - 16x16 sequencer
+      - Add pages to extend sequence length
+      - Pages can have repeats
+      - Pages can be picked randomly, weighted by repeats
+      - sequencer could be 15 notes high, one row dedicated to pages/repeats"""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(Sequencer, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Sequencer"
@@ -20,16 +25,7 @@ class Sequencer(Instrument):
         self.random_pages = False  #  Pick page at random
         self.sustain = True  # Don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
-        self.old_notes = []  # Keep track of currently playing notes so we can off them next step
-        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)  # Function is cached for convenience
-
-
-
-    def get_curr_page(self):
-        return self.pages[self.curr_page_num]
-
-    def get_page_stats(self):
-        return [x.repeats for x in self.pages]
+        # self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)  # Function is cached for convenience
 
     def add_page(self, pos=True):
         '''Add or insert a new blank page into the list of pages'''
@@ -40,11 +36,6 @@ class Sequencer(Instrument):
         else:
             self.pages.append(Note_Grid(self.bars, self.height))
         return True
-
-    def cell_to_midi(self, cell):
-        '''convert a cell height to a midi note based on key, scale, octave'''
-        midi_note_num = self.note_converter[cell]
-        return midi_note_num
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
@@ -102,7 +93,7 @@ class Sequencer(Instrument):
             return False
         self.pages[page].dec_repeats()
         return True
-    #
+
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
         local = self.calc_local_beat(global_beat)
@@ -116,13 +107,6 @@ class Sequencer(Instrument):
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
-    #
-    # def calc_local_beat(self, global_beat):
-    #     '''Calc local_beat_pos for this instrument'''
-    #     div = self.get_beat_division()
-    #     local_beat = int(global_beat / div) % self.width
-    #     # logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
-    #     return int(local_beat)
 
     def is_page_end(self):
         return self.local_beat_position == 0
@@ -173,30 +157,6 @@ class Sequencer(Instrument):
             self.curr_rept_num = 0  # Reset, for this page or next page
             self.curr_page_num = self.get_next_page_num()
         return
-    #
-    # def get_beat_division(self):
-    #     return 2**self.speed
-    #
-    # def get_beat_division_str(self):
-    #     return self.speed
-    #     # return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
-    #
-    # def change_division(self, div):
-    #     '''Find current instrument, inc or dec its beat division as appropriate'''
-    #     if div == "-":
-    #         if self.speed == 0:
-    #             return
-    #         self.speed -= 1
-    #         return
-    #     if div == "+":
-    #         if self.speed == 4:
-    #             return
-    #         self.speed += 1
-    #         return
-    #
-    #     # Direct set
-    #     self.speed = div
-    #     return
 
     def get_curr_notes(self):
         grid = self.get_led_grid('play')

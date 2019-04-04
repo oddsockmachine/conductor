@@ -8,7 +8,11 @@ from random import choice, random, randint
 from screens import empty_grid, drum_cfg_grid_defn, generate_screen, get_cb_from_touch
 
 class DrumMachine(Instrument):
-    """docstring for DrumMachine."""
+    """Drum Machine
+      - Like sequencer, but specifically for drums/samplers
+      - Notes are chromatic, to fit 4x4 sample set
+      - TODO! on controls page, make it easier to set up multiple pages, select next pages etc (like a "play-clip" mode)
+      - Continue work on "clip control". For seq too. Move other controls across, allow 16 pages, 4x4 grid. Clicking one sets curr_page, all other repeats to 0"""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(DrumMachine, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Drum Machine"

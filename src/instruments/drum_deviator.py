@@ -10,7 +10,19 @@ from copy import deepcopy
 from screens import empty_grid, dev_cfg_grid_defn, generate_screen, get_cb_from_touch
 
 class DrumDeviator(DrumMachine):
-    """docstring for DrumDeviator."""
+    """Drum Deviator - Random Deviation Beat Sequencer
+    - Draw a beat on a sequencer grid
+    - Each drum-note/sample has a separate random chance of suppressing/firing or transposing
+    - Show drum sequencer along bottom 16x8, with notes that are modified for this bar highlighted
+    - (suppressed: slightly darker - triggered: slightly brighter - transposed: different color)
+    - Use the top 16x8 for controls like randomness per note
+    - Allow multiple pages per instrument
+    - Transposition could/should be predictable, eg to +8 notes
+    - Random notes for each bar determined at start of bar
+    - Randomness/chaos amount should be per bar, not per note. eg: at low levels, only change a few notes occasionally
+    - TODO randomness controls cover all pages - maybe they should be per-page?
+    - TODO apply_randomness doesn't show effects on LED grid
+    - TODO maybe fire chance shouldn't add notes randomly, only add where there are already other notes"""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(DrumDeviator, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Drum Deviator"
