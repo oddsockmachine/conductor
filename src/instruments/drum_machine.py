@@ -149,6 +149,9 @@ class DrumMachine(Instrument):
     def get_next_page_num(self):
         '''Return the number of the next page that has a positive number of repeats
         or return a random page if wanted'''
+        if self.selected_next_page_num != None:
+            p = self.selected_next_page_num
+            return p
         if self.random_pages:
             # Create a distribution of the pages and their repeats, pick one at random
             dist = []
@@ -184,6 +187,7 @@ class DrumMachine(Instrument):
         # If we're overfowing repeats, time to go to next available page
             self.curr_rept_num = 0  # Reset, for this page or next page
             self.curr_page_num = self.get_next_page_num()
+            self.selected_next_page_num = None
         return
 
     def get_beat_division(self):

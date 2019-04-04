@@ -70,10 +70,9 @@ def get_char(**kwargs):
         if 'selector' in kwargs.keys():
             array[kwargs['selector']] = [LED_SELECT]
     elif 'clips' in kwargs.keys():
-        logging.info(str(kwargs))
         array = [[0 for x in range(4)] for y in range(4)]
         pages = kwargs['clips']
-        for p in range(pages+1):
+        for p in range(pages):
             y, x = (p % 4, int(p / 4))
             array[x][y] = LED_CURSOR
         if 'curr_page' in kwargs.keys():

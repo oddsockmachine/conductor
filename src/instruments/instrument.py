@@ -22,6 +22,7 @@ class Instrument(object):
         self.octave = octave  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)  # Function is cached for convenience
+        self.selected_next_page_num = None
 
     def cell_to_midi(self, cell):
         '''convert a cell height to a midi note based on key, scale, octave'''
@@ -193,6 +194,11 @@ class Instrument(object):
         self.octave = x
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return
+    def cb_clip(self, x, y):
+        page_num = (4*y) + x
+        self.selected_next_page_num = page_num
+        return
+
     def cb_page(self, x, y):
         page = y
         if y >= len(self.pages):
