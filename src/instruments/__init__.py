@@ -1,13 +1,15 @@
 from instruments.instrument import Instrument
-from instruments.sequencer import Sequencer
-from instruments.drum_machine import DrumMachine
-from instruments.drum_deviator import DrumDeviator
-from instruments.beat_randomizer import BeatRandomizer
+from instruments.beatmaker import BeatMaker
 from instruments.binary_sequencer import BinarySequencer
 from instruments.chord_sequencer import ChordSequencer
 from instruments.droplets import Droplets
-from instruments.transformer import Transformer
+from instruments.drum_deviator import DrumDeviator
+from instruments.drum_machine import DrumMachine
 from instruments.elaborator import Elaborator
+from instruments.euclidean_generator import EuclideanGenerator
+from instruments.octopus import Octopus
+from instruments.sequencer import Sequencer
+from instruments.transformer import Transformer
 
 
 
@@ -15,23 +17,27 @@ from instruments.elaborator import Elaborator
 def instrument_lookup(num):
     return {
         0: Instrument,  # Generic, fallback, no functionality
-        1: Sequencer,
-        2: DrumMachine,
+        1: BeatMaker,
+        2: BinarySequencer,
         3: ChordSequencer,
-        4: BeatRandomizer,
+        4: Droplets,
         5: DrumDeviator,
-        6: BinarySequencer,
-        7: Droplets,
-        8: Transformer,
-        9: Elaborator,
+        6: DrumMachine,
+        7: Elaborator,
+        8: EuclideanGenerator,
+        9: Octopus,
+        10: Sequencer,
+        11: Transformer,
         'Instrument': Instrument,  # Generic, fallback, no functionality
-        'Sequencer': Sequencer,
-        'Drum Machine': DrumMachine,
-        'Chord Sequencer': ChordSequencer,
-        'Beat Randomizer': BeatRandomizer,
-        'Drum Deviator': DrumDeviator,
+        'BeatMaker': BeatMaker,
         'Binary Sequencer': BinarySequencer,
+        'Chord Sequencer': ChordSequencer,
         'Droplets': Droplets,
-        'Transformer': Transformer,
+        'Drum Deviator': DrumDeviator,
+        'Drum Machine': DrumMachine,
         'Elaborator': Elaborator,
+        'Euclidean': EuclideanGenerator,
+        'Octopus': Octopus,
+        'Sequencer': Sequencer,
+        'Transformer': Transformer,
     }[num]

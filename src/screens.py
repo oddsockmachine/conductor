@@ -1,4 +1,6 @@
 from constants import *
+from instruments import instrument_lookup
+total_num_instruments = int((len(instrument_lookup.keys())/2))-1
 
 def get_char(**kwargs):
     '''Return a char bitmap as array, looked up from inputs'''
@@ -87,7 +89,7 @@ def gbl_cfg_grid_defn(args):
         ('save', get_char(char='s'), 11, 4),
         ('reset', get_char(char='x'), 11, 8),
         ('instrument_sel', get_char(instrument=args['num_ins'], selector=args['curr_ins']), 0, 15),
-        ('instrument_type', get_char(instrument=8), 0, 14),  # TODO extend instrument adder, use diff colors for each
+        ('instrument_type', get_char(instrument=total_num_instruments), 0, 14),  # TODO extend instrument adder, use diff colors for each
     ]
     return gbl_cfg
 

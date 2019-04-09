@@ -27,24 +27,27 @@ sprint.line1("Select:")
 - Meadowphysics https://monome.org/docs/modular/meadowphysics/
 - general https://monome.org/docs/grid-studies/python/
 
-### Grid Sequencer
-- sequencer could be 15 notes high, one row dedicated to pages/repeats
+### BeatMaker
+- Each drum instrument has a horizontal track
+- Each horizontal cell is a different pattern (or no pattern) for each instrument
+- Select a set of patterns for each instrument, change on the fly
+- Show hits and highlight beatpos as normal
+- 4x4 grid for saved pattern combos. Touch current to reset, touch other to load next page and save previous
 
-### Drum Machine
+### Binary Sequencer?
+- Like Orca, but maybe use it for arpeggios and chords
 
-### Euclidean Beat Generator
-- For each drum-note/sample, set a bar length (<16), euclidean density, and offset
-- Bottom 16x8 shows 8 bar lengths, with hits highlighted. Beatpos moves across, or bar rotates? Clicking on a bar determines its bar length
-- TopLeft 8x8 shows sliders for euclidean density. Clicking on a slider sets density
-- TopRight 8x8 shows sliders for offset. Is this necessary?
+### Chord Sequencer
+- Specify chords on a timeline
+- Specify how chord is played (tight, wide etc)
+- Each step, chord voicing is generated on the fly for variation
 
-### Random Beat Generator
-- For each drum-note/sample, the ability to generate a random sequence with specific sparsity/density
-- Each note line can be regenerated at will
-- Create multiple pages once happy with a particular page
-- Bottom 16x8 shows drum sequence. Clicking on a note toggles it manually.
-- TopLeft 8x8 shows sliders for randomness density. Clicking on a value regenerates that track.
-- TopRight 8x8 shows pages and controls. Save, select, clear pages
+### Droplets
+- Touch high up, droplet falls with high velocity
+- Touch low down, droplet falls with low velocity
+- Touch above note to drag/extend it
+- Touch below note to catch/remove it
+- Add multiple drops per line?
 
 ### Drum Deviator - Random Deviation Beat Sequencer
 - (suppressed: slightly darker - triggered: slightly brighter - transposed: different color)
@@ -54,40 +57,32 @@ sprint.line1("Select:")
 - TODO apply_randomness doesn't show effects on LED grid
 - TODO maybe fire chance shouldn't add notes randomly, only add where there are already other notes
 
+### Drum Machine
+
 ### Elaborator
 - Draw a beat/pattern on a page
 - Select which of the page repeats will be elaborated (eg every 4th)
 - Add randomness to that repeat, but only use notes that are already on the page
 
-### Chord Sequencer
-- Specify chords on a timeline
-- Specify how chord is played (tight, wide etc)
-- Each step, chord voicing is generated on the fly for variation
+### Euclidean Beat Generator
+- For each drum-note/sample, set a bar length (<16), euclidean density, and offset
+- Bottom 16x8 shows 8 bar lengths, with hits highlighted. Beatpos moves across, or bar rotates? Clicking on a bar determines its bar length
+- TopLeft 8x8 shows sliders for euclidean density. Clicking on a slider sets density
+- TopRight 8x8 shows sliders for offset. Is this necessary?
 
-### Binary Sequencer?
-- Like Orca, but maybe use it for arpeggios and chords
+### Octopus
+- For each separate drum-note/sample/row, the ability to generate a random sequence with specific sparsity/density
+- Each note line can be regenerated at will
+- Create multiple pages once happy with a particular page
+- Bottom 16x8 shows drum sequence. Clicking on a note toggles it manually.
+- TopLeft 8x8 shows sliders for randomness density. Clicking on a value regenerates that track.
+- TopRight 8x8 shows pages and controls. Save, select, clear pages
 
-### Droplets
-- Touch high up, droplet falls with high velocity
-- Touch low down, droplet falls with low velocity
-- Touch above note to drag/extend it
-- Touch below note to catch/remove it
-- Add multiple drops per line?
-
-### BeatMaker
-- Each drum instrument has a horizontal track
-- Each horizontal cell is a different pattern (or no pattern) for each instrument
-- Select a set of patterns for each instrument, change on the fly
-- Show hits and highlight beatpos as normal
-- 4x4 grid for saved pattern combos. Touch current to reset, touch other to load next page and save previous
+### Sequencer
+- sequencer could be 15 notes high, one row dedicated to pages/repeats
 
 ### Transformer
 - Take a sequencer pattern, press one button to mutate by a set amount, another button to save the current state
-
-### Matrix
-- 8x16 sequencer, plus an 8x8 in/out grid - so outputs can be re-routed to different notes
-
-
 
 ### Z-Mode
 - Use for display only
