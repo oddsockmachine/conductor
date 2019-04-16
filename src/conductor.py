@@ -21,9 +21,11 @@ class Conductor(object):
         self.max_beat_division = 8
         self.scale = scale
         self.octave = octave  # Starting octave
-        self.instruments = [instrument_lookup(1)(ins_num=x, **self.instrument_ctx()) for x in range(3)]
+        self.instruments = [instrument_lookup(10)(ins_num=x, **self.instrument_ctx()) for x in range(3)]
         for x in range(4):
-            self.instruments.append(instrument_lookup(2)(ins_num=x+3, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
+            self.instruments.append(instrument_lookup(4)(ins_num=x+3, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
+        self.instruments.append(instrument_lookup(9)(ins_num=x+3, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
+
         # self.instruments.append(instrument_lookup(7)(ins_num=14, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
         # self.instruments.append(instrument_lookup(5)(ins_num=15, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
         self.current_visible_instrument_num = 0

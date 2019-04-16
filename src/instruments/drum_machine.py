@@ -41,10 +41,6 @@ class DrumMachine(Instrument):
     def get_page_stats(self):
         return [x.repeats for x in self.pages]
 
-    def cell_to_midi(self, cell):
-        '''convert a cell height to a midi note based on key, scale, octave'''
-        midi_note_num = self.note_converter[cell]
-        return midi_note_num
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
@@ -105,19 +101,19 @@ class DrumMachine(Instrument):
         self.pages[page].dec_repeats()
         return True
 
-    def step_beat(self, global_beat):
-        '''Increment the beat counter, and do the math on pages and repeats'''
-        local = self.calc_local_beat(global_beat)
-        if not self.has_beat_changed(local):
-            # Intermediate beat for this instrument, do nothing
-            return
-        self.local_beat_position = local
-        if self.is_page_end():
-            self.advance_page()
-        new_notes = self.get_curr_notes()
-        self.output(self.old_notes, new_notes)
-        self.old_notes = new_notes  # Keep track of which notes need stopping next beat
-        return
+    # def step_beat(self, global_beat):
+    #     '''Increment the beat counter, and do the math on pages and repeats'''
+    #     local = self.calc_local_beat(global_beat)
+    #     if not self.has_beat_changed(local):
+    #         # Intermediate beat for this instrument, do nothing
+    #         return
+    #     self.local_beat_position = local
+    #     if self.is_page_end():
+    #         self.advance_page()
+    #     new_notes = self.get_curr_notes()
+    #     self.output(self.old_notes, new_notes)
+    #     self.old_notes = new_notes  # Keep track of which notes need stopping next beat
+    #     return
 
     def calc_local_beat(self, global_beat):
         '''Calc local_beat_pos for this instrument'''
@@ -166,24 +162,6 @@ class DrumMachine(Instrument):
         beat_notes = [n for n in grid[beat_pos]]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
-
-    def output(self, old_notes, new_notes):
-        """Return all note-ons from the current beat, and all note-offs from the last"""
-        notes_off = [self.cell_to_midi(c) for c in old_notes]
-        notes_on = [self.cell_to_midi(c) for c in new_notes]
-        if self.sustain:
-            _notes_off = [n for n in notes_off if n not in notes_on]
-            _notes_on = [n for n in notes_on if n not in notes_off]
-            notes_off = _notes_off
-            notes_on = _notes_on
-        notes_off = [n for n in notes_off if n<128 and n>0]
-        notes_on = [n for n in notes_on if n<128 and n>0]
-        off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
-        on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
-        msgs = off_msgs + on_msgs
-        if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
-            for msg in msgs:
-                self.mport.send(msg)
 
     def save(self):
         saved = {

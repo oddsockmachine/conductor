@@ -58,14 +58,6 @@ class DrumDeviator(DrumMachine):
         if state == 'play':
             # Is touch control or note?
             self.apply_control(x, y)
-            # if y >= 8:  # Control touch, but save it in the page, it's easier that way
-            #     y-=8
-            #     if x < 8: # Fire chances
-            #         self.fire_chances[y] = 7 - x
-            #     else:  # Transpose chances
-            #         self.transpose_chances[y] = x - 8
-            #     return True
-            # else:
             # Apply touch to current temp page and source page
             self.get_curr_page().touch_note(x, y)
             self.temp_page.touch_note(x, y)
@@ -75,7 +67,6 @@ class DrumDeviator(DrumMachine):
                 return
             cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
-
         return True
 
     def get_led_grid(self, state):

@@ -1,6 +1,6 @@
 from constants import *
-from instruments import instrument_lookup
-total_num_instruments = int((len(instrument_lookup.keys())/2))-1
+# from instruments import instrument_lookup
+total_num_instruments = 10
 
 def get_char(**kwargs):
     '''Return a char bitmap as array, looked up from inputs'''
@@ -68,6 +68,17 @@ def dev_cfg_grid_defn(args):
         ('clip', get_char(clips=len(args['pages']), curr_page=args['curr_page'], next_page=args['next_page']), 9, 9),
     ]
     return devcfg
+
+def oct_cfg_grid_defn(args):
+    octcfg = [
+        ('random_pages', get_char(char='r'), 0, 13),
+        ('copy_page', get_char(char='c'), 0, 9),
+        ('speed', get_char(row=5, selector=args['speed']), 15, 11),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 11),
+        ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
+        ('clip', get_char(clips=len(args['pages']), curr_page=args['curr_page'], next_page=args['next_page']), 9, 9),
+    ]
+    return octcfg
 
 def drum_cfg_grid_defn(args):
     drumcfg = [

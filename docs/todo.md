@@ -1,5 +1,6 @@
 ## Top
 - multi-instrument support: program new ones, and add cfg pages
+- multi-color support
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 
 ### Add small screen for better feedback
@@ -71,11 +72,6 @@ sprint.line1("Select:")
 - TopRight 8x8 shows sliders for offset. Is this necessary?
 
 ### Octopus
-- For each separate drum-note/sample/row, the ability to generate a random sequence with specific sparsity/density
-- Each note line can be regenerated at will
-- Create multiple pages once happy with a particular page
-- Bottom 16x8 shows drum sequence. Clicking on a note toggles it manually.
-- TopLeft 8x8 shows sliders for randomness density. Clicking on a value regenerates that track.
 - TopRight 8x8 shows pages and controls. Save, select, clear pages
 
 ### Sequencer

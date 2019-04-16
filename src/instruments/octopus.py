@@ -1,13 +1,13 @@
 #coding=utf-8
-from instruments.instrument import Instrument
+from instruments.drum_deviator import DrumDeviator
 from constants import *
 from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
 import mido
 from random import choice, random, randint
-from screens import empty_grid, seq_cfg_grid_defn, generate_screen, get_cb_from_touch
+from screens import empty_grid, oct_cfg_grid_defn, generate_screen, get_cb_from_touch
 
-class Octopus(Instrument):
+class Octopus(DrumDeviator):
     """Octopus
     - For each separate drum-note/sample/row, the ability to generate a random sequence with specific sparsity/density
     - Each note line can be regenerated at will
@@ -19,42 +19,58 @@ class Octopus(Instrument):
         super(Octopus, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Octopus"
         self.bars = 4 #min(bars, W/4)  # Option to reduce number of bars < 4
-        self.curr_page_num = 0
-        self.curr_rept_num = 0
-        self.prev_loc_beat = 0
-        self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
-        self.random_pages = False  #  Pick page at random
-        self.sustain = True  # Don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
+        self.densities = [0 for x in range(8)]
+
+    def apply_control(self, x, y):
+        if y >= 8:  # Control touch, but save it in the page, it's easier that way
+            y-=8
+            if x < 8:
+                self.densities[y] = x
+                self.regen(x, y)
+
+    def regen(self, amt, note):
+        '''A randomize menu bar has been clicked, regen that bar's notes'''
+        gen_notes = [self.calc_chance(amt) for x in range(16)]
+        page = self.get_curr_page()
+        gen_notes = [{True: NOTE_ON, False: NOTE_OFF}[note] for note in gen_notes]
+        for i, beat in enumerate(page.note_grid):
+            beat[note] = gen_notes[i]
+        return
 
     def touch_note(self, state, x, y):
-        '''touch the x/y cell on the current page'''
+        '''touch the x/y cell on the current page - either a control, or a note'''
         if state == 'play':
-            page = self.get_curr_page()
-            if not page.validate_touch(x, y):
-                return False
-            page.touch_note(x, y)
-            return True
+            # Is touch control or note?
+            self.apply_control(x, y)
+            # Apply touch to current temp page and source page
+            self.get_curr_page().touch_note(x, y)
+            # self.temp_page.touch_note(x, y)
         elif state == 'ins_cfg':
             cb_text, _x, _y = get_cb_from_touch(self.cb_grid, x, y)
             if not cb_text:
                 return
             cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
-            return True
-
-    def get_notes_from_curr_beat(self):
-        self.get_curr_page().get_notes_from_beat(self.local_beat_position)
-        return
+        return True
 
     def get_led_grid(self, state):
         if state == 'play':
             led_grid = []
             grid = self.get_curr_page().note_grid
-            for c, column in enumerate(grid):  # columnn counter
+            for c, column in enumerate(grid):
                 led_grid.append([self.get_led_status(x, c) for x in column])
+            # Draw control sliders
+            for y in range(8):
+                # reset slider area (removes beat cursor)
+                for x in range(16):
+                    led_grid[x][y+8] = LED_BLANK
+                for a in range(self.densities[y]+1):
+                    led_grid[a][y+8] = LED_ACTIVE
+                led_grid[self.densities[y]][y+8] = LED_SELECT
+                # led_grid[7][y+8] = LED_CURSOR
         elif state == 'ins_cfg':
-            led_grid, cb_grid = generate_screen(seq_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num), 'curr_page': self.curr_page_num, 'next_page': self.get_next_page_num()})
+            led_grid, cb_grid = generate_screen(oct_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num), 'curr_page': self.curr_page_num, 'next_page': self.get_next_page_num()})
             self.cb_grid = cb_grid
             return led_grid
         return led_grid
@@ -109,29 +125,30 @@ class Octopus(Instrument):
         return False
 
     def get_curr_notes(self):
-        grid = self.get_led_grid('play')
+        grid = self.temp_page.note_grid
         beat_pos = self.local_beat_position
-        beat_notes = [n for n in grid[beat_pos]]
+        beat_notes = [n for n in grid[beat_pos][:8]]
         notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
         return notes_on
 
-    def output(self, old_notes, new_notes):
-        """Return all note-ons from the current beat, and all note-offs from the last"""
-        notes_off = [self.cell_to_midi(c) for c in old_notes]
-        notes_on = [self.cell_to_midi(c) for c in new_notes]
-        if self.sustain:
-            _notes_off = [n for n in notes_off if n not in notes_on]
-            _notes_on = [n for n in notes_on if n not in notes_off]
-            notes_off = _notes_off
-            notes_on = _notes_on
-        notes_off = [n for n in notes_off if n<128 and n>0]
-        notes_on = [n for n in notes_on if n<128 and n>0]
-        off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
-        on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
-        msgs = off_msgs + on_msgs
-        if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
-            for msg in msgs:
-                self.mport.send(msg)
+
+    # def output(self, old_notes, new_notes):
+    #     """Return all note-ons from the current beat, and all note-offs from the last"""
+    #     notes_off = [self.cell_to_midi(c) for c in old_notes]
+    #     notes_on = [self.cell_to_midi(c) for c in new_notes]
+    #     if self.sustain:
+    #         _notes_off = [n for n in notes_off if n not in notes_on]
+    #         _notes_on = [n for n in notes_on if n not in notes_off]
+    #         notes_off = _notes_off
+    #         notes_on = _notes_on
+    #     notes_off = [n for n in notes_off if n<128 and n>0]
+    #     notes_on = [n for n in notes_on if n<128 and n>0]
+    #     off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
+    #     on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
+    #     msgs = off_msgs + on_msgs
+    #     if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
+    #         for msg in msgs:
+    #             self.mport.send(msg)
 
     def save(self):
         saved = {

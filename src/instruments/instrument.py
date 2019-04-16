@@ -4,6 +4,7 @@ from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
 import mido
 from random import choice, random, randint
+from copy import deepcopy
 
 class Instrument(object):
     """docstring for Instrument."""
@@ -233,6 +234,21 @@ class Instrument(object):
         page_num = (4*y) + x
         self.selected_next_page_num = page_num
         return
+    def cb_copy_page(self, x, y):
+        page = y
+        if y >= len(self.pages):
+            logging.info(self.curr_page_num)
+            logging.info(str(len(self.pages)))
+            self.add_page(pos=False)
+            self.pages[self.curr_page_num+1].note_grid = deepcopy(self.pages[self.curr_page_num].note_grid)
+            logging.info(self.curr_page_num)
+            logging.info(str(len(self.pages)))
+            return
+
+        page_num = (4*y) + x
+        self.selected_next_page_num = page_num
+        return
+
 
     def cb_page(self, x, y):
         page = y
