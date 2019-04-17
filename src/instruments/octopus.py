@@ -75,62 +75,62 @@ class Octopus(DrumDeviator):
             return led_grid
         return led_grid
 
-    def get_led_status(self, cell, beat_pos):
-        '''Determine which type of LED should be shown for a given cell'''
-        led = LED_BLANK  # Start with blank / no led
-        if beat_pos == self.local_beat_position:
-            led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
-            if cell == NOTE_ON:
-                led = LED_SELECT  # Unless we want a selected + beat cell to be special
-        elif cell == NOTE_ON:
-            led = LED_ACTIVE  # Otherwise if the cell is active (touched)
-        return led
-
-    def inc_page_repeats(self, page):
-        '''Increase how many times the current page will loop'''
-        if page > len(self.pages)-1:
-            return False
-        self.pages[page].inc_repeats()
-        return True
-
-    def dec_page_repeats(self, page):
-        '''Reduce how many times the current page will loop'''
-        if page > len(self.pages)-1:
-            return False
-        self.pages[page].dec_repeats()
-        return True
-
-    def step_beat(self, global_beat):
-        '''Increment the beat counter, and do the math on pages and repeats'''
-        local = self.calc_local_beat(global_beat)
-        if not self.has_beat_changed(local):
-            # Intermediate beat for this instrument, do nothing
-            return
-        self.local_beat_position = local
-        if self.is_page_end():
-            self.advance_page()
-        new_notes = self.get_curr_notes()
-        self.output(self.old_notes, new_notes)
-        self.old_notes = new_notes  # Keep track of which notes need stopping next beat
-        return
-
-    def is_page_end(self):
-        return self.local_beat_position == 0
-
-    def has_beat_changed(self, local_beat):
-        if self.prev_loc_beat != local_beat:
-            self.prev_loc_beat = local_beat
-            return True
-        self.prev_loc_beat = local_beat
-        return False
-
-    def get_curr_notes(self):
-        grid = self.temp_page.note_grid
-        beat_pos = self.local_beat_position
-        beat_notes = [n for n in grid[beat_pos][:8]]
-        notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
-        return notes_on
-
+    # # def get_led_status(self, cell, beat_pos):
+    # #     '''Determine which type of LED should be shown for a given cell'''
+    # #     led = LED_BLANK  # Start with blank / no led
+    # #     if beat_pos == self.local_beat_position:
+    # #         led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
+    # #         if cell == NOTE_ON:
+    # #             led = LED_SELECT  # Unless we want a selected + beat cell to be special
+    # #     elif cell == NOTE_ON:
+    # #         led = LED_ACTIVE  # Otherwise if the cell is active (touched)
+    # #     return led
+    # #
+    # # def inc_page_repeats(self, page):
+    # #     '''Increase how many times the current page will loop'''
+    # #     if page > len(self.pages)-1:
+    # #         return False
+    # #     self.pages[page].inc_repeats()
+    # #     return True
+    # #
+    # # def dec_page_repeats(self, page):
+    # #     '''Reduce how many times the current page will loop'''
+    # #     if page > len(self.pages)-1:
+    # #         return False
+    # #     self.pages[page].dec_repeats()
+    # #     return True
+    # #
+    # # def step_beat(self, global_beat):
+    # #     '''Increment the beat counter, and do the math on pages and repeats'''
+    # #     local = self.calc_local_beat(global_beat)
+    # #     if not self.has_beat_changed(local):
+    # #         # Intermediate beat for this instrument, do nothing
+    # #         return
+    # #     self.local_beat_position = local
+    # #     if self.is_page_end():
+    # #         self.advance_page()
+    # #     new_notes = self.get_curr_notes()
+    # #     self.output(self.old_notes, new_notes)
+    # #     self.old_notes = new_notes  # Keep track of which notes need stopping next beat
+    # #     return
+    #
+    # def is_page_end(self):
+    #     return self.local_beat_position == 0
+    #
+    # def has_beat_changed(self, local_beat):
+    #     if self.prev_loc_beat != local_beat:
+    #         self.prev_loc_beat = local_beat
+    #         return True
+    #     self.prev_loc_beat = local_beat
+    #     return False
+    #
+    # def get_curr_notes(self):
+    #     grid = self.temp_page.note_grid
+    #     beat_pos = self.local_beat_position
+    #     beat_notes = [n for n in grid[beat_pos][:8]]
+    #     notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
+    #     return notes_on
+    #
 
     # def output(self, old_notes, new_notes):
     #     """Return all note-ons from the current beat, and all note-offs from the last"""
@@ -151,6 +151,7 @@ class Octopus(DrumDeviator):
     #             self.mport.send(msg)
 
     def save(self):
+        # TODO
         saved = {
           "pages": [p.save() for p in self.pages],
           "sustain": self.sustain,
