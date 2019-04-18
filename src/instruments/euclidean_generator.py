@@ -91,10 +91,12 @@ class EuclideanGenerator(DrumDeviator):
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
 
-    def get_led_status(self, cell, beat_pos):
+    def get_led_status(self, cell, y, col_num):
         '''Determine which type of LED should be shown for a given cell'''
         led = LED_BLANK  # Start with blank / no led
-        if beat_pos == self.curr_notes_pos[cell]:
+        if y >= 8:
+            return led
+        if col_num == self.curr_notes_pos[y]:
             led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
             if cell == NOTE_ON:
                 led = LED_SELECT  # Unless we want a selected + beat cell to be special
@@ -106,8 +108,8 @@ class EuclideanGenerator(DrumDeviator):
         if state == 'play':
             led_grid = []
             grid = self.get_curr_page().note_grid
-            for c, column in enumerate(grid):
-                led_grid.append([self.get_led_status(x, c) for x in column])
+            for col_num, column in enumerate(grid):
+                led_grid.append([self.get_led_status(x, y, col_num) for y, x in enumerate(column)])
             # Draw control sliders
             for y in range(8):
                 # reset slider area (removes beat cursor)
