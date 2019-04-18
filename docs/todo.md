@@ -66,10 +66,6 @@ sprint.line1("Select:")
 - Add randomness to that repeat, but only use notes that are already on the page
 
 ### Euclidean Beat Generator
-- For each drum-note/sample, set a bar length (<16), euclidean density, and offset
-- Bottom 16x8 shows 8 bar lengths, with hits highlighted. Beatpos moves across, or bar rotates? Clicking on a bar determines its bar length
-- TopLeft 8x8 shows sliders for euclidean density. Clicking on a slider sets density
-- TopRight 8x8 shows sliders for offset. Is this necessary?
 
 ### Octopus
 - TopRight 8x8 shows pages and controls. Save, select, clear pages
