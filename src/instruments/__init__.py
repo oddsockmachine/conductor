@@ -6,7 +6,7 @@ from instruments.droplets import Droplets
 from instruments.drum_deviator import DrumDeviator
 from instruments.drum_machine import DrumMachine
 from instruments.elaborator import Elaborator
-from instruments.euclidean_generator import EuclideanGenerator
+from instruments.euclidean_generator import Euclidean
 from instruments.octopus import Octopus
 from instruments.sequencer import Sequencer
 from instruments.transformer import Transformer
@@ -24,7 +24,7 @@ def instrument_lookup(num):
         5: DrumDeviator,
         6: DrumMachine,
         7: Elaborator,
-        8: EuclideanGenerator,
+        8: Euclidean,
         9: Octopus,
         10: Sequencer,
         11: Transformer,
@@ -36,7 +36,7 @@ def instrument_lookup(num):
         'Drum Deviator': DrumDeviator,
         'Drum Machine': DrumMachine,
         'Elaborator': Elaborator,
-        'Euclidean': EuclideanGenerator,
+        'Euclidean': Euclidean,
         'Octopus': Octopus,
         'Sequencer': Sequencer,
         'Transformer': Transformer,

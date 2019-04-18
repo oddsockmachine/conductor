@@ -69,6 +69,13 @@ def dev_cfg_grid_defn(args):
     ]
     return devcfg
 
+def euc_cfg_grid_defn(args):
+    euccfg = [
+        ('speed', get_char(row=5, selector=args['speed']), 15, 11),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 11),
+    ]
+    return euccfg
+
 def oct_cfg_grid_defn(args):
     octcfg = [
         ('random_pages', get_char(char='r'), 0, 13),

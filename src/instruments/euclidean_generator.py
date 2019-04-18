@@ -5,17 +5,17 @@ from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
 import mido
 from random import choice, random, randint
-from screens import empty_grid, seq_cfg_grid_defn, generate_screen, get_cb_from_touch
+from screens import empty_grid, euc_cfg_grid_defn, generate_screen, get_cb_from_touch
 
-class EuclideanGenerator(DrumDeviator):
+class Euclidean(DrumDeviator):
     """Euclidean Beat Generator
     - For each drum-note/sample, set a bar length (<16), euclidean density, and offset
     - Bottom 16x8 shows 8 bar lengths, with hits highlighted. Beatpos moves across, or bar rotates? Clicking on a bar determines its bar length
     - TopLeft 8x8 shows sliders for euclidean density. Clicking on a slider sets density
     - TopRight 8x8 shows sliders for offset. Is this necessary?"""
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
-        super(EuclideanGenerator, self).__init__(ins_num, mport, key, scale, octave, speed)
-        self.type = "EuclideanGenerator"
+        super(Euclidean, self).__init__(ins_num, mport, key, scale, octave, speed)
+        self.type = "Euclidean"
         self.densities = [0 for x in range(8)]
         self.offsets = [0 for x in range(8)]
         self.lengths = [16 for x in range(8)]
@@ -124,7 +124,7 @@ class EuclideanGenerator(DrumDeviator):
                 led_grid[8+self.offsets[y]][y+8] = LED_SELECT
                 led_grid[8][y+8] = LED_CURSOR
         elif state == 'ins_cfg':
-            led_grid, cb_grid = generate_screen(dev_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num), 'curr_page': self.curr_page_num, 'next_page': self.get_next_page_num()})
+            led_grid, cb_grid = generate_screen(euc_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num), 'curr_page': self.curr_page_num, 'next_page': self.get_next_page_num()})
 
 
             self.cb_grid = cb_grid
@@ -138,6 +138,10 @@ class EuclideanGenerator(DrumDeviator):
           "pages": [p.save() for p in self.pages],
           "sustain": self.sustain,
           "random_rpt": self.random_pages,
+          "densities": self.densities,
+          "offsets": self.offsets,
+          "lengths": self.lengths,
+          "curr_notes_pos": self.curr_notes_pos,
         }
         saved.update(self.default_save_info())
         return saved
@@ -151,6 +155,11 @@ class EuclideanGenerator(DrumDeviator):
             page = Note_Grid(self.bars, self.height)
             page.load(p)
             self.pages.append(page)
+        self.densities = saved["densities"]
+        self.offsets = saved["offsets"]
+        self.lengths = saved["lengths"]
+        self.curr_notes_pos = saved["curr_notes_pos"]
+
         return
 
     def clear_page(self):
