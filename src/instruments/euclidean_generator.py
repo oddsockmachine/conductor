@@ -81,13 +81,9 @@ class Euclidean(DrumDeviator):
         for i, n in enumerate(self.curr_notes_pos):
             n += 1
             if n >= self.lengths[i]:
-                logging.info("Resetting note {} to {}".format(str(i),str(n)))
                 n = 0
             self.curr_notes_pos[i] = n
-            logging.info(str(i))
-            logging.info(str(note_grid[i]))
             if note_grid[n][i] == NOTE_ON:
-                logging.info("adding {}".format(i))
                 new_notes.append(i)
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
@@ -133,6 +129,15 @@ class Euclidean(DrumDeviator):
             return led_grid
         return led_grid
 
+    def set_key(self, key):
+        self.key = key # Converter is a cached lookup, we need to regenerate it
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        return True
+
+    def set_scale(self, scale):
+        self.scale = scale # Converter is a cached lookup, we need to regenerate it
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        return True
 
     def save(self):
         # TODO
