@@ -68,6 +68,7 @@ class Euclidean(DrumDeviator):
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
         return True
 
+    # @pysnooper.snoop('./logz.log')
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
         local = self.calc_local_beat(global_beat)
@@ -80,13 +81,14 @@ class Euclidean(DrumDeviator):
         for i, n in enumerate(self.curr_notes_pos):
             n += 1
             if n >= self.lengths[i]:
+                logging.info("Resetting note {} to {}".format(str(i),str(n)))
                 n = 0
             self.curr_notes_pos[i] = n
-            if note_grid[i][n] == NOTE_ON:
-                new_notes.append(n)
-
-
-        # new_notes = self.get_curr_notes()
+            logging.info(str(i))
+            logging.info(str(note_grid[i]))
+            if note_grid[n][i] == NOTE_ON:
+                logging.info("adding {}".format(i))
+                new_notes.append(i)
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return

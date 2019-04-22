@@ -76,6 +76,10 @@ sprint.line1("Select:")
 ### Transformer
 - Take a sequencer pattern, press one button to mutate by a set amount, another button to save the current state
 
+### CC Controller
+- Send CC messages
+- Set up LFOs or timed transitions
+
 ### Z-Mode
 - Use for display only
 - Maybe a screensaver?
