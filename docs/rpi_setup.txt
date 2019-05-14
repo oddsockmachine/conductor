@@ -3,6 +3,7 @@ mkdir .ssh
 echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfiP1UWlRcexJbep5kD1ju89eegLintJs5WM4a0MliLWt0xTRauq+34o/y4eySrVLA3JoKJFyEl0RM+6iXCfAA0zLw2c5gHjSHMCSxHIwUyNNQZlN5EirRONeH8BxoHuKO2xO/pme2w24bES/89nkH042fgUAUcnN6QgAEcjAdfQQC/2ZBkepVRLtekhuPCp1h5OlTqr6kNJ93yZlijrs9OiR6m8zWMcjzyjOadNo4yt+dDz4+kWn04MqsNHWJAjU70Cg5Weqrao7UgNRd0jCTT9HjNc/nLEZwIJFPWzgZptYuZDcsMbkaTzhWESa8OXgO/b257QCCFV6uMYLYTHvF david.walker@anaplan.com" > .ssh/authorized_keys
 
 # i2c
+sudo apt-get update
 sudo apt-get install -y git vim
 sudo apt-get install -y python3-smbus
 python3 --version
@@ -44,8 +45,8 @@ sudo modprobe g_midi
 echo "heartbeat" | sudo tee -a /sys/class/leds/led0/trigger
 sudo reboot
 ls /dev/snd/midi*
-# git clone  https://github.com/TaylorTMusic/MIDI2GPIO.git
 
+sudo apt install -y python3-pip
 git clone https://github.com/oddsockmachine/supercell.git
 cd supercell
 pip3 install -r requirements.txt

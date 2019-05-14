@@ -3,7 +3,7 @@ from board import SCL, SDA
 import busio
 from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
-
+import random
 
 #create the i2c object for the trellis
 i2c_bus = busio.I2C(SCL, SDA)
@@ -57,3 +57,15 @@ sleep(5)
 print("off")
 set_all(wait, OFF)
 print("done")
+
+while True:
+    color = (random.randint(100), random.randint(100), random.randint(100))
+    x = random.randint(8)
+    y = random.randint(8)
+    print(color)
+    print(x, y)
+    trellis.color(x, y, color)
+    for ts in trelli:
+        for t in ts:
+            t.pixels.show()
+    sleep(0.5)
