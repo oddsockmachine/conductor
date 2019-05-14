@@ -49,7 +49,7 @@ class Display(object):
                 print(t)
                 print(type(t))
                 t.pixels.auto_write = False
-        self.trelli = MultiTrellis(trelli)
+        self.trellis = MultiTrellis(trelli)
 
         print("Done")
         self.grid_h = h
