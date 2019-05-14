@@ -20,6 +20,9 @@ class Euclidean(DrumDeviator):
         self.offsets = [0 for x in range(8)]
         self.lengths = [16 for x in range(8)]
         self.curr_notes_pos = [0 for x in range(8)]
+        self.scale = scale
+        self.octave = octave
+        self.key = key
         for i in range(8):
             self.regen(i)
     def regen(self, note):
@@ -131,16 +134,17 @@ class Euclidean(DrumDeviator):
 
     def set_key(self, key):
         self.key = key # Converter is a cached lookup, we need to regenerate it
+        self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
 
     def set_scale(self, scale):
         self.scale = scale # Converter is a cached lookup, we need to regenerate it
+        self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
 
     def save(self):
-        # TODO
         saved = {
           "pages": [p.save() for p in self.pages],
           "sustain": self.sustain,
@@ -166,7 +170,6 @@ class Euclidean(DrumDeviator):
         self.offsets = saved["offsets"]
         self.lengths = saved["lengths"]
         self.curr_notes_pos = saved["curr_notes_pos"]
-
         return
 
     def clear_page(self):

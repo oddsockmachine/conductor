@@ -1,13 +1,11 @@
 #coding=utf-8
-from instruments.instrument import Instrument
 from instruments.drum_machine import DrumMachine
 from constants import *
 from note_grid import Note_Grid
-from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
-import mido
-from random import choice, random, randint
+from random import choice
 from copy import deepcopy
-from screens import empty_grid, dev_cfg_grid_defn, generate_screen, get_cb_from_touch
+from screens import dev_cfg_grid_defn, generate_screen, get_cb_from_touch
+
 
 class DrumDeviator(DrumMachine):
     """Drum Deviator - Random Deviation Beat Sequencer
@@ -47,8 +45,8 @@ class DrumDeviator(DrumMachine):
 
     def apply_control(self, x, y):
         if y >= 8:  # Control touch, but save it in the page, it's easier that way
-            y-=8
-            if x < 8: # Fire chances
+            y -= 8
+            if x < 8:  # Fire chances
                 self.fire_chances[y] = 7 - x
             else:  # Transpose chances
                 self.transpose_chances[y] = x - 8
@@ -122,7 +120,7 @@ class DrumDeviator(DrumMachine):
             return
         self.curr_rept_num += 1  # inc repeat number
         if self.curr_rept_num >= self.get_curr_page().repeats:
-        # If we're overfowing repeats, time to go to next available page
+            # If we're overfowing repeats, time to go to next available page
             self.curr_rept_num = 0  # Reset, for this page or next page
             self.curr_page_num = self.get_next_page_num()
             self.selected_next_page_num = None

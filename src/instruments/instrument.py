@@ -32,16 +32,19 @@ class Instrument(object):
 
     def set_key(self, key):
         self.key = key # Converter is a cached lookup, we need to regenerate it
+        self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
 
     def set_scale(self, scale):
         self.scale = scale # Converter is a cached lookup, we need to regenerate it
+        self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
 
     def change_octave(self, up_down):
         self.octave = up_down  #TODO handle up and down as well as octave number
+        self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
 

@@ -14,7 +14,7 @@ sprint.line1("Select:")
 - call background(x, y) to get a color code for general background pixel, as chosen by some other setting/algo
 - Show root notes, pentatonic notes, etc in different colors/shades
 - Should be handled by instrument.get_led_status/get_led_grid, has access to scale and cell info
-
+- semi-transparent config screens? See underlying instrument underneath
 
 ### Inspirations for new instruments
 - Arc https://www.youtube.com/watch?v=HM0EBvJe1s0
@@ -72,6 +72,7 @@ sprint.line1("Select:")
 
 ### Sequencer
 - sequencer could be 15 notes high, one row dedicated to pages/repeats
+- Copy page functionality
 
 ### Transformer
 - Take a sequencer pattern, press one button to mutate by a set amount, another button to save the current state

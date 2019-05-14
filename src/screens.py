@@ -52,6 +52,7 @@ def seq_cfg_grid_defn(args):
     seqcfg = [
         ('sustain', get_char(char='s'), 0, 9),
         ('random_pages', get_char(char='r'), 0, 13),
+        ('copy_page', get_char(char='c'), 6, 13),
         ('speed', get_char(row=5, selector=args['speed']), 15, 11),
         ('octave', get_char(row=5, selector=args['octave']), 14, 11),
         ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
