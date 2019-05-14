@@ -59,9 +59,9 @@ set_all(wait, OFF)
 print("done")
 
 while True:
-    color = (random.randint(100), random.randint(100), random.randint(100))
-    x = random.randint(8)
-    y = random.randint(8)
+    color = (random.randint(0,100), random.randint(0,100), random.randint(0,100))
+    x = random.randint(0,8)
+    y = random.randint(0,8)
     print(color)
     print(x, y)
     trellis.color(x, y, color)
