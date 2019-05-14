@@ -63,10 +63,10 @@ while True:
     g = random.randint(r,100)
     b = random.randint(r+g,100)
     color = (random.randint(0,100), random.randint(0,100), random.randint(0,100))
+    print(color)
     x = random.randint(0,16)
     y = random.randint(0,16)
-    print(color)
-    print(x, y)
+    # print(x, y)
     trellis.color(x, y, color)
     for ts in trelli:
         for t in ts:
