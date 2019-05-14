@@ -67,9 +67,9 @@ while True:
     # print(b)
     color = (random.randint(0,100), random.randint(0,100), random.randint(0,100))
     print(color)
-    x = random.randint(0,16)
-    y = random.randint(0,16)
-    # print(x, y)
+    x = random.randint(0,15)
+    y = random.randint(0,15)
+    print(x, y)
     trellis.color(x, y, color)
     for ts in trelli:
         for t in ts:
