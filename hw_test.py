@@ -53,7 +53,7 @@ def set_all(wait=0.1, col=YELLOW):
 print("low")
 set_all(wait, LOW)
 print("done")
-sleep(5)
+sleep(2)
 print("off")
 set_all(wait, OFF)
 print("done")
