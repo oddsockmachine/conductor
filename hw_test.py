@@ -74,4 +74,4 @@ while True:
     for ts in trelli:
         for t in ts:
             t.pixels.show()
-    sleep(0.5)
+    sleep(0.1)
