@@ -43,7 +43,7 @@ class Display(object):
             [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],
             ]
 
-        self.trellis = MultiTrellis(trelli)
+        self.trelli = MultiTrellis(trelli)
 
         for ts in self.trelli:
             for t in ts:
