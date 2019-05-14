@@ -1,11 +1,17 @@
+# Add public key
+mkdir .ssh
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfiP1UWlRcexJbep5kD1ju89eegLintJs5WM4a0MliLWt0xTRauq+34o/y4eySrVLA3JoKJFyEl0RM+6iXCfAA0zLw2c5gHjSHMCSxHIwUyNNQZlN5EirRONeH8BxoHuKO2xO/pme2w24bES/89nkH042fgUAUcnN6QgAEcjAdfQQC/2ZBkepVRLtekhuPCp1h5OlTqr6kNJ93yZlijrs9OiR6m8zWMcjzyjOadNo4yt+dDz4+kWn04MqsNHWJAjU70Cg5Weqrao7UgNRd0jCTT9HjNc/nLEZwIJFPWzgZptYuZDcsMbkaTzhWESa8OXgO/b257QCCFV6uMYLYTHvF david.walker@anaplan.com" > .ssh/authorized_keys
 
 # i2c
 sudo apt-get install -y git vim
 sudo apt-get install -y python3-smbus
+python3 --version
 sudo apt-get install -y i2c-tools
 echo "interfacing > i2c > enable"
 sleep(10)
+
 sudo raspi-config
+	enable spi, i2c, gpio
 
 sudo vim /etc/modules
 	i2c-dev
@@ -14,7 +20,7 @@ sudo vim /etc/modules
 sudo vim /boot/config.txt
 dtparam=spi=on
 
-apt-get install libasound2-dev
+sudo apt-get install libasound2-dev
 
 sudo reboot
 
@@ -35,6 +41,11 @@ echo "dtoverlay=dwc2" | sudo tee -a /boot/config.txt
 echo "dwc2" | sudo tee -a /etc/modules
 echo "g_midi" | sudo tee -a /etc/modules
 sudo modprobe g_midi
+echo "heartbeat" | sudo tee -a /sys/class/leds/led0/trigger
 sudo reboot
 ls /dev/snd/midi*
-git clone  https://github.com/TaylorTMusic/MIDI2GPIO.git
+# git clone  https://github.com/TaylorTMusic/MIDI2GPIO.git
+
+git clone https://github.com/oddsockmachine/supercell.git
+cd supercell
+pip3 install -r requirements.txt

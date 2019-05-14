@@ -1,0 +1,7 @@
+Adafruit-Blinka==0.4.0
+adafruit-circuitpython-busdevice==2.2.7
+adafruit-circuitpython-neotrellis==1.0.3
+adafruit-circuitpython-seesaw==1.2.6
+Adafruit-GPIO==1.0.3
+Adafruit-PureIO==0.2.3
+mido==1.2.9
