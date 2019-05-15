@@ -26,8 +26,7 @@ class Supercell(object):
         self.draw()
         while True:
             self.get_cmds()
-            sleep(0.5)  # TODO REMOVE TODO
-            print(".")
+            sleep(0.1)  # TODO REMOVE TODO
             # self.conductor.step_beat()  # TODO REMOVE TODO
             self.draw()  # TODO REMOVE TODO
         pass
@@ -53,7 +52,6 @@ class Supercell(object):
         self.process_cmds(m)
 
     def process_cmds(self, m):
-        print(m)
         if m['cmd'] == None:
             return None
         if m['cmd'] == 'quit':

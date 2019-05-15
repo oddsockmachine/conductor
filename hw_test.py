@@ -5,13 +5,12 @@ from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 import random
 
-#create the i2c object for the trellis
+# create the i2c object for the trellis
 i2c_bus = busio.I2C(SCL, SDA)
 
-#create the trellis
+# create the trellis
 trellis = NeoTrellis(i2c_bus)
 
-from time import sleep
 trelli = [
     [NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
     [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
@@ -29,7 +28,6 @@ for ts in trelli:
 
 print('ready')
 wait = 0.05
-#some color definitions
 OFF = (0, 0, 0)
 LOW = (5,5,5)
 RED = (255, 0, 0)
@@ -37,7 +35,6 @@ YELLOW = (255, 150, 0)
 GREEN = (0, 255, 0)
 CYAN = (0, 255, 255)
 BLUE = (0, 0, 255)
-from time import sleep
 PURPLE = (180, 0, 255)
 
 def set_all(wait=0.1, col=YELLOW):
@@ -65,13 +62,13 @@ while True:
     # print(g)
     # b = random.randint(r+g,100)
     # print(b)
-    color = (random.randint(0,100), random.randint(0,100), random.randint(0,100))
+    color = (random.randint(0, 250), random.randint(0, 250), random.randint(0, 250))
     print(color)
-    x = random.randint(0,15)
-    y = random.randint(0,15)
+    x = random.randint(0, 15)
+    y = random.randint(0, 15)
     print(x, y)
     trellis.color(x, y, color)
     for ts in trelli:
         for t in ts:
             t.pixels.show()
-    sleep(0.1)
+    sleep(3)
