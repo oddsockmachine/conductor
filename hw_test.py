@@ -63,12 +63,16 @@ while True:
     # b = random.randint(r+g,100)
     # print(b)
     color = (random.randint(0, 250), random.randint(0, 250), random.randint(0, 250))
-    print(color)
+    # print(color)
     x = random.randint(0, 15)
     y = random.randint(0, 15)
-    print(x, y)
+    # print(x, y)
     trellis.color(x, y, color)
     for ts in trelli:
         for t in ts:
             t.pixels.show()
+    if random.randint(0,1) > 0:
+        x = random.randint(0, 15)
+        y = random.randint(0, 15)
+        trellis.color(x, y, (0, 0, 0))
     sleep(3)
