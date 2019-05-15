@@ -10,6 +10,7 @@ parser.add_argument("--hw",  help="Use real hardware", type=bool)
 args = parser.parse_args()
 print(args)
 
+
 def console_main(stdscr):
     from interfaces.console import Display
     m = curses.mousemask(1)
@@ -20,6 +21,7 @@ def console_main(stdscr):
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
             supercell = Supercell(display, mport, mportin, args.set)
             supercell.run()
+
 
 def hardware_main():
     from interfaces.hardware import Display
@@ -33,19 +35,8 @@ def hardware_main():
             print(mportin)
             print(mport)
             supercell = Supercell(display, mport, mportin, args.set)
-            supercell.conductor.instruments[0].add_page(0)
-            supercell.conductor.instruments[0].add_page(1)
-            supercell.conductor.instruments[0].add_page(1)
-            supercell.conductor.instruments[0].inc_page_repeats(0)
-            supercell.conductor.instruments[0].inc_page_repeats(0)
-            supercell.conductor.instruments[0].add_page(1)
-            supercell.conductor.instruments[0].inc_page_repeats(1)
-            supercell.conductor.instruments[0].inc_page_repeats(0)
-            supercell.conductor.instruments[3].add_page(1)
-            supercell.conductor.instruments[3].add_page(1)
-            supercell.conductor.instruments[3].inc_page_repeats(0)
-            supercell.conductor.instruments[6].add_page(1)
             supercell.run()
+
 
 if __name__ == '__main__':
     if not args.hw:
