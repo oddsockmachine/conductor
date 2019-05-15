@@ -75,4 +75,4 @@ while True:
         x = random.randint(0, 15)
         y = random.randint(0, 15)
         trellis.color(x, y, (0, 0, 0))
-    sleep(3)
+    sleep(0.05)
