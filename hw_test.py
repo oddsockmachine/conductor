@@ -72,7 +72,7 @@ while True:
     # print(color)
     x = random.randint(0, sizeX-1)
     y = random.randint(0, sizeY-1)
-    # print(x, y)
+    print(x, y)
     try:
         trellis.color(x, y, color)
     except Exception as e:
@@ -93,4 +93,4 @@ while True:
         except Exception as e:
             print(e)
             print("fail blank")
-    sleep(0.1)
+    sleep(1)
