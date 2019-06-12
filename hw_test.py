@@ -62,7 +62,7 @@ def set_all(wait=0.1, col=YELLOW):
 print("low")
 set_all(wait, LOW)
 print("done")
-sleep(0.1)
+sleep(2)
 print("off")
 set_all(wait, OFF)
 print("done")
@@ -93,4 +93,4 @@ while True:
         except Exception as e:
             print(e)
             print("fail blank")
-    sleep(1)
+    sleep(0.1)
