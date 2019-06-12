@@ -45,14 +45,16 @@ def set_all(wait=0.1, col=YELLOW):
         for y in range(sizeY):
             try:
                 trellis.color(x, y, col)
-            except:
+            except Exception as e:
+                print(e)
                 print("fail 1")
             # sleep(wait)
     try:
         for ts in trelli:
             for t in ts:
                 t.pixels.show()
-    except:
+    except Exception as e:
+        print(e)
         print("fail 2")
     return
 
@@ -73,19 +75,22 @@ while True:
     # print(x, y)
     try:
         trellis.color(x, y, color)
-    except:
+    except Exception as e:
+        print(e)
         print("fail color")
     try:
         for ts in trelli:
             for t in ts:
                 t.pixels.show()
-    except:
+    except Exception as e:
+        print(e)
         print("fail show")
     if random.randint(0,1) > 0:
         x = random.randint(0, sizeX-1)
         y = random.randint(0, sizeY-1)
         try:
             trellis.color(x, y, (0, 0, 0))
-        except:
+        except Exception as e:
+            print(e)
             print("fail blank")
     sleep(0.1)
