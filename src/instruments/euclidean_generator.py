@@ -20,6 +20,7 @@ class Euclidean(DrumDeviator):
         self.offsets = [0 for x in range(8)]
         self.lengths = [16 for x in range(8)]
         self.curr_notes_pos = [0 for x in range(8)]
+        self.fill = True
         self.scale = scale
         self.octave = octave
         self.key = key
@@ -83,7 +84,8 @@ class Euclidean(DrumDeviator):
         new_notes = []
         for i, n in enumerate(self.curr_notes_pos):
             n += 1
-            if n >= self.lengths[i]:
+            limit = 16 if self.fill else self.lengths[i]
+            if n >= limit:
                 n = 0
             self.curr_notes_pos[i] = n
             if note_grid[n][i] == NOTE_ON:
@@ -125,7 +127,7 @@ class Euclidean(DrumDeviator):
                 led_grid[8+self.offsets[y]][y+8] = LED_SELECT
                 led_grid[8][y+8] = LED_CURSOR
         elif state == 'ins_cfg':
-            led_grid, cb_grid = generate_screen(euc_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num), 'curr_page': self.curr_page_num, 'next_page': self.get_next_page_num()})
+            led_grid, cb_grid = generate_screen(euc_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num), 'curr_page': self.curr_page_num, 'next_page': self.get_next_page_num(), 'fill':self.fill})
 
 
             self.cb_grid = cb_grid

@@ -59,6 +59,8 @@ sprint.line1("Select:")
 - TODO maybe fire chance shouldn't add notes randomly, only add where there are already other notes
 
 ### Drum Machine
+Steal ideas from eg TR8s
+Volume Faders for each instrument?
 
 ### Elaborator
 - Draw a beat/pattern on a page
@@ -80,6 +82,8 @@ sprint.line1("Select:")
 ### CC Controller
 - Send CC messages
 - Set up LFOs or timed transitions
+
+### Marbles?
 
 ### Z-Mode
 - Use for display only

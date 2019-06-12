@@ -237,6 +237,9 @@ class Instrument(object):
         page_num = (4*y) + x
         self.selected_next_page_num = page_num
         return
+    def cb_fill(self, x, y):
+        self.fill = False if self.fill else True
+        return
     def cb_copy_page(self, x, y):
         page = y
         if y >= len(self.pages):

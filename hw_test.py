@@ -12,10 +12,7 @@ i2c_bus = busio.I2C(SCL, SDA)
 trellis = NeoTrellis(i2c_bus)
 
 trelli = [
-    [NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
-    [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
-    [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
-    [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],
+     [NeoTrellis(i2c_bus, False, addr=0x3D)],
     ]
 
 trellis = MultiTrellis(trelli)
@@ -38,13 +35,20 @@ BLUE = (0, 0, 255)
 PURPLE = (180, 0, 255)
 
 def set_all(wait=0.1, col=YELLOW):
-    for x in range(16):
-        for y in range(16):
-            trellis.color(x, y, col)
+    for x in range(4):
+        for y in range(4):
+            try:
+                trellis.color(x, y, col)
+            except:
+                print("fail 1")
             # sleep(wait)
-    for ts in trelli:
-        for t in ts:
-            t.pixels.show()
+    try:
+        for ts in trelli:
+            for t in ts:
+                t.pixels.show()
+    except:
+        print("fail 2")
+    return
 
 # set_all(wait, OFF)
 print("low")
@@ -62,17 +66,26 @@ while True:
     # print(g)
     # b = random.randint(r+g,100)
     # print(b)
-    color = (random.randint(0, 250), random.randint(0, 250), random.randint(0, 250))
+    color = (random.randint(0, 100), random.randint(0, 100), random.randint(0, 100))
     # print(color)
-    x = random.randint(0, 15)
-    y = random.randint(0, 15)
+    x = random.randint(0, 3)
+    y = random.randint(0, 3)
     # print(x, y)
-    trellis.color(x, y, color)
-    for ts in trelli:
-        for t in ts:
-            t.pixels.show()
+    try:
+        trellis.color(x, y, color)
+    except:
+        print("fail color")
+    try:
+        for ts in trelli:
+            for t in ts:
+                t.pixels.show()
+    except:
+        print("fail show")
     if random.randint(0,1) > 0:
-        x = random.randint(0, 15)
-        y = random.randint(0, 15)
-        trellis.color(x, y, (0, 0, 0))
-    sleep(3)
+        x = random.randint(0, 3)
+        y = random.randint(0, 3)
+        try:
+            trellis.color(x, y, (0, 0, 0))
+        except:
+            print("fail blank")
+    sleep(0.1)

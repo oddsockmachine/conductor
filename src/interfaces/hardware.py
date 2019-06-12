@@ -75,8 +75,12 @@ class Display(object):
             self.trellis.sync()  # TODO undo? Fails if called too often
         except:
             print("HW error")
-            return {'cmd': None}
-        return {'cmd': None}
+        m = {'cmd': None}
+        if self.ins_button.value:
+            m['cmd'] = "CONFIG_A"
+        elif self.seq_button.value:
+            m['cmd'] = "CONFIG_B"
+        return m
 
     def draw_all(self, status, led_grid):
         if self.ins_button.value:
