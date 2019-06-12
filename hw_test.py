@@ -6,7 +6,7 @@ from adafruit_neotrellis.multitrellis import MultiTrellis
 import random
 
 sizeX = 4
-sizeY = 4
+sizeY = 16
 
 # create the i2c object for the trellis
 i2c_bus = busio.I2C(SCL, SDA)
