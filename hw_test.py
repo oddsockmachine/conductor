@@ -13,6 +13,9 @@ i2c_bus = busio.I2C(SCL, SDA)
 
 # create the trellis
 trelli = [
+     [NeoTrellis(i2c_bus, False, addr=0x31)],
+     [NeoTrellis(i2c_bus, False, addr=0x35)],
+     [NeoTrellis(i2c_bus, False, addr=0x39)],
      [NeoTrellis(i2c_bus, False, addr=0x3D)],
     ]
 
@@ -61,7 +64,7 @@ set_all(wait, OFF)
 print("done")
 
 while True:
-    color = (random.randint(0, 100), random.randint(0, 100), random.randint(0, 100))
+    color = (random.randint(0, 50), random.randint(0, 50), random.randint(0, 50))
     # print(color)
     x = random.randint(0, sizeX-1)
     y = random.randint(0, sizeY-1)
