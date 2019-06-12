@@ -17,8 +17,8 @@ trelli = [
     ]
 
 
-sizeX = len(trelli) * 4
-sizeY = len(trelli[0]) * 4
+sizeY = len(trelli) * 4
+sizeX = len(trelli[0]) * 4
 
 
 trellis = MultiTrellis(trelli)
@@ -70,8 +70,8 @@ print("done")
 while True:
     color = (random.randint(0, 50), random.randint(0, 50), random.randint(0, 50))
     # print(color)
-    x = random.randint(0, sizeY-1)
-    y = random.randint(0, sizeX-1)
+    x = random.randint(0, sizeX-1)
+    y = random.randint(0, sizeY-1)
     print(x, y)
     try:
         trellis.color(x, y, color)
