@@ -8,13 +8,16 @@ class LCD(object):
 
     def __init__(self):
         super(LCD, self).__init__()
+        self.line1 = ""
+        self.line2 = ""
+        self.flash_line = ""
+
+    def setup_hw(self, i2c_bus):
         # self.disp = Adafruit_SSD1306.SSD1306_128_64(rst=RST, i2c_address=0x3C)
         # self.disp.begin()
         # self.disp.clear()
         # self.disp.display()
-        self.line1 = ""
-        self.line2 = ""
-        self.flash_line = ""
+        return
 
     def print1(self, text):
         self.line1 = text

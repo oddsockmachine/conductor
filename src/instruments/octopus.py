@@ -1,11 +1,9 @@
-#coding=utf-8
+# coding=utf-8
 from instruments.drum_deviator import DrumDeviator
-from constants import *
+import constants as c
 from note_grid import Note_Grid
-from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
-import mido
-from random import choice, random, randint
-from screens import empty_grid, oct_cfg_grid_defn, generate_screen, get_cb_from_touch
+from screens import oct_cfg_grid_defn, generate_screen, get_cb_from_touch
+
 
 class Octopus(DrumDeviator):
     """Octopus
@@ -15,16 +13,17 @@ class Octopus(DrumDeviator):
     - Bottom 16x8 shows drum sequence. Clicking on a note toggles it manually.
     - TopLeft 8x8 shows sliders for randomness density. Clicking on a value regenerates that track.
     - TopRight 8x8 shows pages and controls. Save, select, clear pages"""
+
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(Octopus, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Octopus"
-        self.bars = 4 #min(bars, W/4)  # Option to reduce number of bars < 4
+        self.bars = 4
         self.pages = [Note_Grid(self.bars, self.height)]
         self.densities = [0 for x in range(8)]
 
     def apply_control(self, x, y):
         if y >= 8:  # Control touch, but save it in the page, it's easier that way
-            y-=8
+            y -= 8
             if x < 8:
                 self.densities[y] = x
                 self.regen(x, y)
@@ -33,7 +32,7 @@ class Octopus(DrumDeviator):
         '''A randomize menu bar has been clicked, regen that bar's notes'''
         gen_notes = [self.calc_chance(amt) for x in range(16)]
         page = self.get_curr_page()
-        gen_notes = [{True: NOTE_ON, False: NOTE_OFF}[note] for note in gen_notes]
+        gen_notes = [{True: c.NOTE_ON, False: c.NOTE_OFF}[note] for note in gen_notes]
         for i, beat in enumerate(page.note_grid):
             beat[note] = gen_notes[i]
         return
@@ -58,19 +57,26 @@ class Octopus(DrumDeviator):
         if state == 'play':
             led_grid = []
             grid = self.get_curr_page().note_grid
-            for c, column in enumerate(grid):
-                led_grid.append([self.get_led_status(x, c) for x in column])
+            for i, column in enumerate(grid):
+                led_grid.append([self.get_led_status(x, i) for x in column])
             # Draw control sliders
             for y in range(8):
                 # reset slider area (removes beat cursor)
                 for x in range(16):
-                    led_grid[x][y+8] = LED_BLANK
+                    led_grid[x][y+8] = c.LED_BLANK
                 for a in range(self.densities[y]+1):
-                    led_grid[a][y+8] = LED_ACTIVE
-                led_grid[self.densities[y]][y+8] = LED_SELECT
+                    led_grid[a][y+8] = c.LED_ACTIVE
+                led_grid[self.densities[y]][y+8] = c.LED_SELECT
                 # led_grid[7][y+8] = LED_CURSOR
         elif state == 'ins_cfg':
-            led_grid, cb_grid = generate_screen(oct_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num), 'curr_page': self.curr_page_num, 'next_page': self.get_next_page_num()})
+            led_grid, cb_grid = generate_screen(oct_cfg_grid_defn, {
+                'speed': int(self.speed),
+                'octave': int(self.octave),
+                'pages': [x.repeats for x in self.pages],
+                'curr_p_r': (self.curr_page_num, self.curr_rept_num),
+                'curr_page': self.curr_page_num,
+                'next_page': self.get_next_page_num()
+                })
             self.cb_grid = cb_grid
             return led_grid
         return led_grid
@@ -98,7 +104,7 @@ class Octopus(DrumDeviator):
     #     # notes = self.get_curr_page().note_grid
     #     # for y in range(8, 16):
     #         # for x in range(16):
-    #             # if notes[x][y] == NOTE_ON:
+    #             # if notes[x][y] ==c.NOTE_ON:
     #                 # self.apply_control(x, y)
     #     # self.apply_randomness()
     #     return
@@ -108,9 +114,9 @@ class Octopus(DrumDeviator):
     # #     led = LED_BLANK  # Start with blank / no led
     # #     if beat_pos == self.local_beat_position:
     # #         led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
-    # #         if cell == NOTE_ON:
+    # #         if cell ==c.NOTE_ON:
     # #             led = LED_SELECT  # Unless we want a selected + beat cell to be special
-    # #     elif cell == NOTE_ON:
+    # #     elif cell ==c.NOTE_ON:
     # #         led = LED_ACTIVE  # Otherwise if the cell is active (touched)
     # #     return led
     # #

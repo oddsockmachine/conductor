@@ -106,6 +106,8 @@ class Conductor(object):
         for f in files:
             if f > 254:  # TODO add a slot for empty/new
                 continue
+            if f == 0:
+                continue
             x = int(f / 16)
             y = int(f % 16)
             led_grid[y][15-x] = c.LED_ACTIVE
@@ -161,6 +163,8 @@ class Conductor(object):
         elif self.current_state == 'load':
             filenum = filenum_from_touch(x, y)
             if not validate_filenum(filenum):
+                return
+            if filenum == 1:
                 return
             self.load(load_filenum(filenum))
             self.current_state == 'play'  # TODO return to play, or stay in load?

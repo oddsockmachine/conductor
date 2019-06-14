@@ -1,14 +1,14 @@
 import constants as c
-from note_conversion import SCALE_INTERVALS
 # from time import perf_counter
-print("Importing hardware connections")
 from board import SCL, SDA, D13, D6
 import busio
 import digitalio
 from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
-print("Done")
 from time import sleep
+from interfaces.lcd import lcd
+print("Imported hardware connections")
+
 AUTO_WRITE = True
 
 
@@ -19,6 +19,7 @@ class Display(object):
         super(Display, self).__init__()
         print("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
+        lcd.setup_hw(i2c_bus)
         print("Done")
         print("Creating Trelli")
         # trelli = []
@@ -83,12 +84,12 @@ class Display(object):
         return m
 
     def draw_all(self, status, led_grid):
-        if self.ins_button.value:
-            self.draw_ins_menu(status)
-        elif self.seq_button.value:
-            self.draw_seq_menu(status)
-        else:
-            self.draw_note_grid(led_grid)
+        # if self.ins_button.value:
+        #     self.draw_ins_menu(status)
+        # elif self.seq_button.value:
+        #     self.draw_seq_menu(status)
+        # else:
+        self.draw_note_grid(led_grid)
         self.redraw_diff()
         return
 
@@ -125,78 +126,78 @@ class Display(object):
                 col = c.PALLETE[led_grid[x][y]]
                 self.led_matrix[x][self.grid_h-1-y] = col
         return
-
-    def draw_seq_menu(self, status):
-        # menu for sequencer: instrument num on right column, pages on left, repeats pointing right
-        # #O##  #
-        # ##    #
-        # ###   O
-        # ###   #
-        self.blank_screen()
-        # Draw instrument selector
-        for i in range(status['ins_total']):
-            self.led_matrix[self.grid_w-1][i] = c.RED
-        self.led_matrix[self.grid_w-1][status['ins_num']-1] = c.GREEN
-        # Draw page/repeats info
-        page_stats = status['page_stats']
-        page_num = status['page_num']
-        repeat_total = status['repeat_total']
-        repeat_num = status['repeat_num']
-        if status['random_rpt']:
-            self.led_matrix[0][7] = c.RED
-        else:
-            self.led_matrix[0][7] = c.GREEN
-        for i, page_reps in enumerate(page_stats):
-            for rep in range(page_reps):
-                self.led_matrix[rep][i] = c.RED
-        for i in range(repeat_total):
-            self.led_matrix[i][page_num-1] = c.YELLOW
-        self.led_matrix[repeat_num-1][page_num-1] = c.GREEN
-        # self.led_matrix[status['repeat_total']-1][status['page_num']-1] = GREEN
-        return
-
-    def draw_ins_menu(self, status):
-        # Menu for instrument settings (key, scale, octave, speed) spelled out
-                # >>>>
-                # ____#___
-                #
-                # ### #  X
-                # #   #  O
-                # ### #  X
-                # #      X
-                # ###    X
-        self.blank_screen()
-        # Speed:
-        speed = status['division']
-        for i in range(5):
-            self.led_matrix[i][0] = c.RED
-        for i in range(speed):
-            self.led_matrix[i][0] = c.GREEN
-        # Scale:  # TODO may have to wrap around to second line
-        scale = status['scale']
-        scales = list(c.SCALES.keys())
-        scale_i = scales.index(scale)
-        for i in range(len(scales)):
-            self.led_matrix[i][1] = c.BLUE
-        self.led_matrix[scale_i][1] = c.CYAN
-        # Key
-        key = status['key']
-        sharp = "#" in key
-        key = key.replace('#', '')
-        letter = c.LETTERS[key]
-        for r, row in enumerate(letter):
-            for i, col in enumerate(row):
-                if letter[r][i] == 1:
-                    self.led_matrix[c][3+r] = c.INDIGO
-        if sharp:
-            self.led_matrix[4][3] = c.INDIGO
-            self.led_matrix[4][4] = c.INDIGO
-        # Octave:
-        octave = int(status['octave'])
-        for i in range(7):
-            self.led_matrix[7][self.grid_w-1-i] = c.ORANGE
-        self.led_matrix[7][self.grid_w-1-octave] = c.RED
-        return
+    #
+    # def draw_seq_menu(self, status):
+    #     # menu for sequencer: instrument num on right column, pages on left, repeats pointing right
+    #     # #O##  #
+    #     # ##    #
+    #     # ###   O
+    #     # ###   #
+    #     self.blank_screen()
+    #     # Draw instrument selector
+    #     for i in range(status['ins_total']):
+    #         self.led_matrix[self.grid_w-1][i] = c.RED
+    #     self.led_matrix[self.grid_w-1][status['ins_num']-1] = c.GREEN
+    #     # Draw page/repeats info
+    #     page_stats = status['page_stats']
+    #     page_num = status['page_num']
+    #     repeat_total = status['repeat_total']
+    #     repeat_num = status['repeat_num']
+    #     if status['random_rpt']:
+    #         self.led_matrix[0][7] = c.RED
+    #     else:
+    #         self.led_matrix[0][7] = c.GREEN
+    #     for i, page_reps in enumerate(page_stats):
+    #         for rep in range(page_reps):
+    #             self.led_matrix[rep][i] = c.RED
+    #     for i in range(repeat_total):
+    #         self.led_matrix[i][page_num-1] = c.YELLOW
+    #     self.led_matrix[repeat_num-1][page_num-1] = c.GREEN
+    #     # self.led_matrix[status['repeat_total']-1][status['page_num']-1] = GREEN
+    #     return
+    #
+    # def draw_ins_menu(self, status):
+    #     # Menu for instrument settings (key, scale, octave, speed) spelled out
+    #             # >>>>
+    #             # ____#___
+    #             #
+    #             # ### #  X
+    #             # #   #  O
+    #             # ### #  X
+    #             # #      X
+    #             # ###    X
+    #     self.blank_screen()
+    #     # Speed:
+    #     speed = status['division']
+    #     for i in range(5):
+    #         self.led_matrix[i][0] = c.RED
+    #     for i in range(speed):
+    #         self.led_matrix[i][0] = c.GREEN
+    #     # Scale:  # TODO may have to wrap around to second line
+    #     scale = status['scale']
+    #     scales = list(c.SCALES.keys())
+    #     scale_i = scales.index(scale)
+    #     for i in range(len(scales)):
+    #         self.led_matrix[i][1] = c.BLUE
+    #     self.led_matrix[scale_i][1] = c.CYAN
+    #     # Key
+    #     key = status['key']
+    #     sharp = "#" in key
+    #     key = key.replace('#', '')
+    #     letter = c.LETTERS[key]
+    #     for r, row in enumerate(letter):
+    #         for i, col in enumerate(row):
+    #             if letter[r][i] == 1:
+    #                 self.led_matrix[c][3+r] = c.INDIGO
+    #     if sharp:
+    #         self.led_matrix[4][3] = c.INDIGO
+    #         self.led_matrix[4][4] = c.INDIGO
+    #     # Octave:
+    #     octave = int(status['octave'])
+    #     for i in range(7):
+    #         self.led_matrix[7][self.grid_w-1-i] = c.ORANGE
+    #     self.led_matrix[7][self.grid_w-1-octave] = c.RED
+    #     return
 
     def make_cb(self):
         def button_cb(xcoord, ycoord, edge):

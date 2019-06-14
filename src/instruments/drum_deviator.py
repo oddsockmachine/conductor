@@ -1,6 +1,6 @@
-#coding=utf-8
+# coding=utf-8
 from instruments.drum_machine import DrumMachine
-from constants import *
+import constants as c
 from note_grid import Note_Grid
 from random import choice
 from copy import deepcopy
@@ -21,6 +21,7 @@ class DrumDeviator(DrumMachine):
     - TODO randomness controls cover all pages - maybe they should be per-page?
     - TODO apply_randomness doesn't show effects on LED grid
     - TODO maybe fire chance shouldn't add notes randomly, only add where there are already other notes"""
+
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(DrumDeviator, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Drum Deviator"
@@ -29,7 +30,6 @@ class DrumDeviator(DrumMachine):
         self.transpose_chances = [0 for x in range(8)]
         self.temp_page = Note_Grid(self.bars, self.height)  # Temporary page used for upcoming notes
         self.pages = [Note_Grid(self.bars, self.height)]
-
 
         # each time page changes/restarts, calculate random chance of _either_:
         #     suppressing active note
@@ -71,23 +71,30 @@ class DrumDeviator(DrumMachine):
         if state == 'play':
             led_grid = []
             grid = self.get_curr_page().note_grid
-            for c, column in enumerate(grid):
-                led_grid.append([self.get_led_status(x, c) for x in column])
+            for i, column in enumerate(grid):
+                led_grid.append([self.get_led_status(x, i) for x in column])
             # Draw control sliders
             for y in range(8):
                 # reset slider area (removes beat cursor)
                 for x in range(16):
-                    led_grid[x][y+8] = LED_BLANK
+                    led_grid[x][y+8] = c.LED_BLANK
                 for a in range(self.fire_chances[y]+1):
-                    led_grid[7-a][y+8] = LED_ACTIVE
-                led_grid[7-self.fire_chances[y]][y+8] = LED_SELECT
-                led_grid[7][y+8] = LED_CURSOR
+                    led_grid[7-a][y+8] = c.LED_ACTIVE
+                led_grid[7-self.fire_chances[y]][y+8] = c.LED_SELECT
+                led_grid[7][y+8] = c.LED_CURSOR
                 for a in range(self.transpose_chances[y]):
-                    led_grid[8+a][y+8] = LED_ACTIVE
-                led_grid[8+self.transpose_chances[y]][y+8] = LED_SELECT
-                led_grid[8][y+8] = LED_CURSOR
+                    led_grid[8+a][y+8] = c.LED_ACTIVE
+                led_grid[8+self.transpose_chances[y]][y+8] = c.LED_SELECT
+                led_grid[8][y+8] = c.LED_CURSOR
         elif state == 'ins_cfg':
-            led_grid, cb_grid = generate_screen(dev_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num), 'curr_page': self.curr_page_num, 'next_page': self.get_next_page_num()})
+            led_grid, cb_grid = generate_screen(dev_cfg_grid_defn, {
+                'speed': int(self.speed),
+                'octave': int(self.octave),
+                'pages': [x.repeats for x in self.pages],
+                'curr_p_r': (self.curr_page_num, self.curr_rept_num),
+                'curr_page': self.curr_page_num,
+                'next_page': self.get_next_page_num()
+                })
             self.cb_grid = cb_grid
             return led_grid
         return led_grid
@@ -129,7 +136,7 @@ class DrumDeviator(DrumMachine):
         notes = self.get_curr_page().note_grid
         for y in range(8, 16):
             for x in range(16):
-                if notes[x][y] == NOTE_ON:
+                if notes[x][y] == c.NOTE_ON:
                     self.apply_control(x, y)
         self.apply_randomness()
         return
@@ -141,12 +148,12 @@ class DrumDeviator(DrumMachine):
             for y, note in enumerate(beat[:8]):  # For each note in beat
                 fire = self.calc_chance(self.fire_chances[y])
                 if fire:
-                    note = NOTE_ON if note == NOTE_OFF else NOTE_OFF
+                    note = c.NOTE_ON if note == c.NOTE_OFF else c.NOTE_OFF
                     self.temp_page.note_grid[x][y] = note
-                if note == NOTE_ON:
+                if note == c.NOTE_ON:
                     if self.calc_chance(self.transpose_chances[y]):
-                        self.temp_page.note_grid[x][y+8] = NOTE_ON
-                        self.temp_page.note_grid[x][y] = NOTE_OFF
+                        self.temp_page.note_grid[x][y+8] = c.NOTE_ON
+                        self.temp_page.note_grid[x][y] = c.NOTE_OFF
         return
 
     def calc_chance(self, chance):
@@ -159,7 +166,7 @@ class DrumDeviator(DrumMachine):
         grid = self.temp_page.note_grid
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos][:8]]
-        notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
+        notes_on = [i for i, x in enumerate(beat_notes) if x == c.NOTE_ON]  # get list of cells that are on
         return notes_on
 
     def save(self):
