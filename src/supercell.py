@@ -49,7 +49,7 @@ class Supercell(object):
         self.process_cmds(m)
 
     def process_cmds(self, m):
-        if m['cmd'] == None:
+        if m['cmd'] is None:
             return None
         if m['cmd'] == 'quit':
             if self.save_on_exit:
@@ -57,38 +57,14 @@ class Supercell(object):
             exit()
         elif m['cmd'] == 'toggle_save':
             self.save_on_exit = not self.save_on_exit
-        elif m['cmd'] == 'save':
-            self.conductor.save()
         elif m['cmd'] == 'CONFIG_A':
             self.conductor.gbl_cfg_state()
         elif m['cmd'] == 'CONFIG_B':
             self.conductor.ins_cfg_state()
         elif m['cmd'] == 'step_beat':
             self.conductor.step_beat()
-        elif m['cmd'] == 'clear_page':
-            self.conductor.clear_page()
-        elif m['cmd'] == 'change_octave':
-            self.conductor.change_octave(m['dir'])
         elif m['cmd'] == 'note':
             self.conductor.touch_note(m['x'], m['y'])
-        elif m['cmd'] == 'ins':
-            self.conductor.set_curr_instrument(m['ins'])
-        elif m['cmd'] == 'inc_rep':
-            self.conductor.inc_rep(m['page'])
-        elif m['cmd'] == 'dec_rep':
-            self.conductor.dec_rep(m['page'])
-        elif m['cmd'] == 'add_page':
-            self.conductor.add_page()
-        elif m['cmd'] == 'change_division':
-            self.conductor.change_division(m['div'])
-        elif m['cmd'] == 'random_rpt':
-            self.conductor.get_curr_instrument().random_pages = False if self.conductor.get_curr_instrument().random_pages else True
-        elif m['cmd'] == 'sustain':
-            self.conductor.get_curr_instrument().sustain = False if self.conductor.get_curr_instrument().sustain else True
-        elif m['cmd'] == 'z_mode':
-            self.conductor.toggle_z_mode()
-        elif m['cmd'] == 'add_instrument':
-            self.conductor.add_instrument(m['type'])
         return
 
     def process_midi_tick(self):

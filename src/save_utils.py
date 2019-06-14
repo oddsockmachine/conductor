@@ -54,6 +54,8 @@ def load_filenum(filenum):
 def save_filenum(data, filenum=None):
     if not filenum:
         filename = get_next_filename()
+    elif filenum == 0:
+        return  # Don't overwrite the default
     else:
         filename = save_location + filenum + save_extension
     with open(filename, 'w') as savefile:

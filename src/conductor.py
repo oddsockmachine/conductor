@@ -239,7 +239,7 @@ class Conductor(object):
     def cb_instrument_type(self, x, y):
         if self.get_total_instrument_num() >= 16:
             return
-        ins = instrument_lookup(y+1)
+        ins = instrument_lookup(y+1)  # +1 because base class isn't playable
         self.instruments.append(ins(ins_num=self.get_total_instrument_num(), **self.instrument_ctx()))
         lcd.flash("Added {}".format(self.instruments[~0].type))
 
