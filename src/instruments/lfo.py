@@ -69,20 +69,8 @@ class LFO(Instrument):
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
         local = self.calc_local_beat(global_beat)
-        if not self.has_beat_changed(local):
-            # Intermediate beat for this instrument, do nothing
-            return
-        self.local_beat_position = local
-        # if self.is_page_end():
-        #     self.advance_page()
+        local
         new_notes = []
-        for i in range(self.width):
-            if self.droplet_positions[i] == 0:
-                continue  # Ignore any that we leave at 0, they're resting
-            self.droplet_positions[i] -= self.droplet_velocities[i]
-            if self.droplet_positions[i] <= 0:
-                new_notes.append(i)
-                self.droplet_positions[i] = self.droplet_starts[i]
         # new_notes = self.get_curr_notes()
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat

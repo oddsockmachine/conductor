@@ -37,7 +37,7 @@ class LCD(object):
 
     def flash(self, text):
         # Show text briefly, then return to previous
-        self.flash_line = text[:50]
+        self.flash_line = text[:20].ljust(20)
         return
 
 
