@@ -10,10 +10,14 @@ i2c_bus = busio.I2C(SCL, SDA)
 
 # create the trellis
 trelli = [
-     [NeoTrellis(i2c_bus, False, addr=0x2e), NeoTrellis(i2c_bus, False, addr=0x2f), NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
-     [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
-     [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
-     [NeoTrellis(i2c_bus, False, addr=0x3a), NeoTrellis(i2c_bus, False, addr=0x3b), NeoTrellis(i2c_bus, False, addr=0x3c), NeoTrellis(i2c_bus, False, addr=0x3d)],
+     [NeoTrellis(i2c_bus, False, addr=0x2e), NeoTrellis(i2c_bus, False, addr=0x2f),
+      NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
+     [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33),
+      NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
+     [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37),
+      NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
+     [NeoTrellis(i2c_bus, False, addr=0x3a), NeoTrellis(i2c_bus, False, addr=0x3b),
+      NeoTrellis(i2c_bus, False, addr=0x3c), NeoTrellis(i2c_bus, False, addr=0x3d)],
     ]
 
 
@@ -32,13 +36,14 @@ for ts in trelli:
 print('ready')
 wait = 0.05
 OFF = (0, 0, 0)
-LOW = (5,5,5)
+LOW = (5, 5, 5)
 RED = (255, 0, 0)
 YELLOW = (255, 150, 0)
 GREEN = (0, 255, 0)
 CYAN = (0, 255, 255)
 BLUE = (0, 0, 255)
 PURPLE = (180, 0, 255)
+
 
 def set_all(wait=0.1, col=YELLOW):
     for x in range(sizeX):
@@ -58,7 +63,7 @@ def set_all(wait=0.1, col=YELLOW):
         print("fail 2")
     return
 
-# set_all(wait, OFF)
+
 print("low")
 set_all(wait, LOW)
 print("done")
@@ -85,7 +90,7 @@ while True:
     except Exception as e:
         print(e)
         print("fail show")
-    if random.randint(0,1) > 0:
+    if random.randint(0, 1) > 0:
         x = random.randint(0, sizeX-1)
         y = random.randint(0, sizeY-1)
         try:

@@ -8,7 +8,8 @@ def get_next_filename():
     files = glob(save_location+'*'+save_extension)
     # print(files)
     files = [f for f in files if fullmatch(save_location+'\d+\.json', f)]
-    files = [f.replace(save_location, '').replace(save_extension, '') for f in files if fullmatch(save_location+'\d+'+save_extension, f)]
+    files = [f.replace(save_location, '').replace(save_extension, '') for f in files if fullmatch(
+        save_location+'\d+'+save_extension, f)]
     files = sorted([int(f) for f in files])
     # print(files)
     next_num = 0
@@ -25,7 +26,8 @@ def get_all_set_file_numbers():
     files = glob(save_location+'*'+save_extension)
     # print(files)
     files = [f for f in files if fullmatch(save_location+'\d+\.json', f)]
-    files = [f.replace(save_location, '').replace(save_extension, '') for f in files if fullmatch(save_location+'\d+'+save_extension, f)]
+    files = [f.replace(save_location, '').replace(save_extension, '') for f in files if fullmatch(
+        save_location+'\d+'+save_extension, f)]
     files = sorted([int(f) for f in files])
     return files
 

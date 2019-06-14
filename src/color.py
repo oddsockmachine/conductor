@@ -10,7 +10,7 @@ CYAN = (0, 255, 255)
 BLUE = (0, 0, 255)
 INDIGO = (180, 0, 255)
 PURPLE = (255, 0, 255)
-colors  = [RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, INDIGO, PURPLE]
+# colors  = [RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, INDIGO, PURPLE]
 PALLETE = {0: (1, 1, 1), 1: (3, 2, 0), 2: (18, 7, 0), 3: (18, 7, 1)}
 
 
@@ -43,7 +43,7 @@ class Colors(object):
                   "PURPLE": PURPLE}
 
         self.scheme = []
-        self.lookup = []
+        self.lookup = [colors]
 
     def get(self):
         return
