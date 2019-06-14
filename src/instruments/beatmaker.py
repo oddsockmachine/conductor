@@ -49,6 +49,7 @@ class BeatMaker(Instrument):
             self.pages.insert(self.curr_page_num+1, Note_Grid(self.bars, self.height))
         else:
             self.pages.append(Note_Grid(self.bars, self.height))
+        lcd.flash("Added page")
         return True
 
     def cell_to_midi(self, cell):

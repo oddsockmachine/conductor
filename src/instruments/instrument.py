@@ -5,6 +5,7 @@ from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KE
 import mido
 from random import choice, random, randint
 from copy import deepcopy
+from interfaces.lcd import lcd
 
 class Instrument(object):
     """docstring for Instrument."""
@@ -31,19 +32,21 @@ class Instrument(object):
         return midi_note_num
 
     def set_key(self, key):
-        self.key = key # Converter is a cached lookup, we need to regenerate it
+        self.key = key  # Converter is a cached lookup, we need to regenerate it
         self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        lcd.flash("Key {}".format(key))
         return True
 
     def set_scale(self, scale):
-        self.scale = scale # Converter is a cached lookup, we need to regenerate it
+        self.scale = scale  # Converter is a cached lookup, we need to regenerate it
         self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        lcd.flash("Scale {}".format(scale))
         return True
 
     def change_octave(self, up_down):
-        self.octave = up_down  #TODO handle up and down as well as octave number
+        self.octave = up_down  # TODO handle up and down as well as octave number
         self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
@@ -51,11 +54,13 @@ class Instrument(object):
     def add_page(self, pos=True):
         '''Add or insert a new blank page into the list of pages'''
         if len(self.pages) == 16:
+            lcd.flash("Max pages reached")
             return False
         if pos:
             self.pages.insert(self.curr_page_num+1, Note_Grid(self.bars, self.height))
         else:
             self.pages.append(Note_Grid(self.bars, self.height))
+        lcd.flash("Added page")
         return True
 
     def get_curr_page(self):
@@ -98,7 +103,7 @@ class Instrument(object):
     def get_next_page_num(self):
         '''Return the number of the next page that has a positive number of repeats
         or return a random page if wanted'''
-        if self.selected_next_page_num != None:
+        if self.selected_next_page_num is not None:
             p = self.selected_next_page_num
             return p
         if self.random_pages:
@@ -132,7 +137,7 @@ class Instrument(object):
             return
         self.curr_rept_num += 1  # inc repeat number
         if self.curr_rept_num >= self.get_curr_page().repeats:
-        # If we're overfowing repeats, time to go to next available page
+            # If we're overfowing repeats, time to go to next available page
             self.curr_rept_num = 0  # Reset, for this page or next page
             self.curr_page_num = self.get_next_page_num()
             self.selected_next_page_num = None
@@ -221,24 +226,31 @@ class Instrument(object):
 
     def cb_sustain(self, x, y):
         self.sustain = not self.sustain
+        lcd.flash("Sustain {}".format(self.sustain))
+
         return
     def cb_random_pages(self, x, y):
         self.random_pages = not self.random_pages
+        lcd.flash("Random {}".format(self.random_pages))
         return
     def cb_speed(self, x, y):
         self.speed = x
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        lcd.flash("Speed {}".format(self.speed))
         return
     def cb_octave(self, x, y):
         self.octave = x
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        lcd.flash("Octave {}".format(self.octave))
         return
     def cb_clip(self, x, y):
         page_num = (4*y) + x
         self.selected_next_page_num = page_num
+        lcd.flash("Next page {}".format(page_num))
         return
     def cb_fill(self, x, y):
         self.fill = False if self.fill else True
+        lcd.flash("Fill {}".format(self.fill))
         return
     def cb_copy_page(self, x, y):
         page = y
@@ -253,6 +265,7 @@ class Instrument(object):
 
         page_num = (4*y) + x
         self.selected_next_page_num = page_num
+        lcd.flash("Copied page {}".format(page))
         return
 
 
@@ -260,13 +273,17 @@ class Instrument(object):
         page = y
         if y >= len(self.pages):
             self.add_page(pos=False)
+            lcd.flash("Added page")
             return
         if x == 0:
             if self.pages[y].repeats == 1:
                 self.pages[y].repeats = 0
+                lcd.flash("Page {} rpt 0".format(page))
             else:
                 self.pages[y].repeats = 1
+                lcd.flash("Page {} rpt 1".format(page))
             return
         else:
             self.pages[y].repeats = x + 1
+            lcd.flash("Page {} rpt {}".format(page, self.pages[y].repeats))
         return

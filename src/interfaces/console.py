@@ -4,9 +4,12 @@ import curses
 from curses.textpad import rectangle
 import locale
 locale.setlocale(locale.LC_ALL, '')
+from interfaces.lcd import lcd
+
 
 class Display(object):
     """docstring for Display."""
+
     def __init__(self, stdscr, w=W, h=H):
         super(Display, self).__init__()
         self.stdscr = stdscr
@@ -63,10 +66,11 @@ class Display(object):
         return {'cmd': None}
 
     def draw_gui(self, status):
-        self.stdscr.addstr(1, self.grid_x+2, "S U P E R C E L L")#, curses.color_pair(4))
+        self.stdscr.addstr(1, self.grid_x+2, "S U P E R C E L L")  # , curses.color_pair(4))
         lines = ["{}: {}        ".format(k,v) for k, v in status.items()]
         for i, line in enumerate(lines):
-            self.stdscr.addstr(self.grid_y+18+i, self.grid_x+2, line)#, curses.color_pair(4))
+            self.stdscr.addstr(self.grid_y+18+i, self.grid_x+2, line)  # , curses.color_pair(4))
+        self.stdscr.addstr(self.grid_y+18+len(lines)+1, self.grid_x+2, lcd.flash_line)  # , curses.color_pair(4))
         return
 
     def draw_grid(self, led_grid):

@@ -74,6 +74,7 @@ class Sequencer(Instrument):
         if page > len(self.pages)-1:
             return False
         self.pages[page].inc_repeats()
+        lcd.flash("Page {} rpt {}".format(page, self.pages[page].repeats))
         return True
 
     def dec_page_repeats(self, page):
@@ -81,6 +82,7 @@ class Sequencer(Instrument):
         if page > len(self.pages)-1:
             return False
         self.pages[page].dec_repeats()
+        lcd.flash("Page {} rpt {}".format(page, self.pages[page].repeats))
         return True
 
     def step_beat(self, global_beat):

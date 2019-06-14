@@ -5,10 +5,12 @@ from instruments import instrument_lookup
 from note_conversion import SCALE_INTERVALS, KEYS
 from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum, save_filenum
 from screens import generate_screen, gbl_cfg_grid_defn, get_cb_from_touch
+from interfaces.lcd import lcd
+
 
 class Conductor(object):
     """docstring for Conductor."""
-    # def __init__(self, mport, bars=int(W/4)):
+
     def __init__(self, mport, key="e", scale="pentatonic_maj", octave=2, bars=int(W/4), height=H):
         super(Conductor, self).__init__()
         self.mport = mport
@@ -189,6 +191,7 @@ class Conductor(object):
             if i.type == 'Droplets':
                 i.droplet_positions = [d for d in i.droplet_starts]
         self.current_state = 'play'
+        lcd.flash("Reset all")
         return
     def cb_scale_inc(self, x, y):
         self.cycle_scale(1)
@@ -204,20 +207,24 @@ class Conductor(object):
         return
     def cb_load(self, x, y):
         self.current_state = 'load'
+        lcd.flash("Select load")
         return
     def cb_save(self, x, y):
         self.current_state = 'save'
+        lcd.flash("Select save file")
         return
     def cb_instrument_sel(self, x, y):
         if int(y) < self.get_total_instrument_num():
             self.set_curr_instrument(int(y))
             self.current_state = 'play'
+        lcd.flash("Selected {}".format(self.get_curr_instrument().type))
         return
     def cb_instrument_type(self, x, y):
         if self.get_total_instrument_num() >= 16:
             return
         ins = instrument_lookup(y+1)
         self.instruments.append(ins(ins_num=self.get_total_instrument_num(), **self.instrument_ctx()))
+        lcd.flash("Added {}".format(self.instruments[~0].type))
 
 
     ###### GETTERS/SETTERS ######
@@ -242,6 +249,7 @@ class Conductor(object):
         self.key = KEYS[new_key]
         for i in self.instruments:
             i.set_key(self.key)
+        lcd.flash("Key {}".format(self.key))
         return
 
     def cycle_scale(self, up_down):
@@ -251,6 +259,7 @@ class Conductor(object):
         self.scale = list(SCALE_INTERVALS.keys())[new_scale]
         for i in self.instruments:
             i.set_scale(self.scale)
+        lcd.flash("Scale {}".format(self.scale))
         return
 
     ###### CONTROL PASSTHROUGH METHODS ######
