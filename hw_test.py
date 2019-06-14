@@ -10,10 +10,10 @@ i2c_bus = busio.I2C(SCL, SDA)
 
 # create the trellis
 trelli = [
-     [NeoTrellis(i2c_bus, False, addr=0x31)],
-     [NeoTrellis(i2c_bus, False, addr=0x35)],
-     [NeoTrellis(i2c_bus, False, addr=0x36)],
-     [NeoTrellis(i2c_bus, False, addr=0x3a)],
+     [NeoTrellis(i2c_bus, False, addr=0x2e), NeoTrellis(i2c_bus, False, addr=0x2f), NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
+     [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
+     [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
+     [NeoTrellis(i2c_bus, False, addr=0x3a), NeoTrellis(i2c_bus, False, addr=0x3b), NeoTrellis(i2c_bus, False, addr=0x3c), NeoTrellis(i2c_bus, False, addr=0x3d)],
     ]
 
 

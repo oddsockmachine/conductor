@@ -4,8 +4,10 @@
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
 
 ### Add small screen for better feedback
-from screen import sprint
-sprint.line1("Select:")
+- from lcd import lcd
+- lcd.line1("Select:")
+- Each instrument presents 5 lines of status
+- Or 4 lines, plus a line for recent messages/alerts
 
 ### Handle LED colors better
 - different backgrounds for each instrument number and type

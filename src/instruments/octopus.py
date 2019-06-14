@@ -75,6 +75,34 @@ class Octopus(DrumDeviator):
             return led_grid
         return led_grid
 
+    # def advance_page(self):
+    #     '''Go to next repeat or page'''
+    #     if self.random_pages:
+    #         # Create a distribution of the pages and their repeats, pick one at random
+    #         dist = []
+    #         for index, page in enumerate(self.pages):
+    #             for r in range(page.repeats):
+    #                 dist.append(index)
+    #         next_page_num = choice(dist)
+    #         self.curr_page_num = next_page_num
+    #         self.curr_rept_num = 0  # Reset, for this page or next page
+    #         return
+    #     self.curr_rept_num += 1  # inc repeat number
+    #     if self.curr_rept_num >= self.get_curr_page().repeats:
+    #         # If we're overfowing repeats, time to go to next available page
+    #         self.curr_rept_num = 0  # Reset, for this page or next page
+    #         self.curr_page_num = self.get_next_page_num()
+    #         self.selected_next_page_num = None
+    #
+    #     # Take control figures from new page, apply to controls
+    #     # notes = self.get_curr_page().note_grid
+    #     # for y in range(8, 16):
+    #         # for x in range(16):
+    #             # if notes[x][y] == NOTE_ON:
+    #                 # self.apply_control(x, y)
+    #     # self.apply_randomness()
+    #     return
+
     # # def get_led_status(self, cell, beat_pos):
     # #     '''Determine which type of LED should be shown for a given cell'''
     # #     led = LED_BLANK  # Start with blank / no led
