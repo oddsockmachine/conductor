@@ -1,5 +1,4 @@
 import constants as c
-# from time import perf_counter
 from board import SCL, SDA, D13, D6
 import busio
 import digitalio
@@ -18,43 +17,38 @@ class Display(object):
     def __init__(self, w=c.W, h=c.H, command_cb=None):
         super(Display, self).__init__()
         print("Creating i2c bus")
+        lcd.flash("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
         lcd.setup_hw(i2c_bus)
-        print("Done")
+        print("i2c bus created")
+        lcd.flash("i2c bus created")
         print("Creating Trelli")
-        # trelli = []
-        # addrs = [0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D]
-        # for addr in addrs:  # Create trelli sequentially with a slight pause between each
-        #     t = NeoTrellis(i2c_bus, False, addr=addr)
-        #     t.pixels.auto_write = False
-        #     trelli.append(t)
-        #     sleep(0.2)
-        #     # [NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
-        #     # [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
-        #     # [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
-        #     # [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],]
-        # print("Linking Trelli")
-        # self.trellis = MultiTrellis(trelli)
-        trelli = [
-            [NeoTrellis(i2c_bus, False, addr=0x2E), NeoTrellis(i2c_bus, False, addr=0x2F), NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
-            [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
-            [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
-            [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],
-            ]
-        for ts in trelli:
-            for t in ts:
-                print(t)
-                print(type(t))
-                t.pixels.auto_write = AUTO_WRITE
+        lcd.flash("Creating Trelli")
+        trelli = [[], [], [], []]
+        addrs = [[0x2e, 0x2f, 0x30, 0x31],
+                 [0x32, 0x33, 0x34, 0x35],
+                 [0x36, 0x37, 0x38, 0x39],
+                 [0x3a, 0x3b, 0x3c, 0x3d]]
+        # Create trelli sequentially with a slight pause between each
+        for x, slice in enumerate(addrs):
+            for y, addr in enumerate(slice):
+                t = NeoTrellis(i2c_bus, False, addr=addr)
+                t.pixels.auto_write = False
+                trelli[x].append(t)
+                sleep(0.2)
+        print("Linking Trelli")
+        lcd.flash("Linking Trelli")
         self.trellis = MultiTrellis(trelli)
 
-        print("Done")
+        print("Trelli linked")
+        lcd.flash("Trelli linked")
         self.grid_h = h
         self.grid_w = w
         self.led_matrix = [[(0, 0, 0) for x in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0, 0, 0) for x in range(w)] for y in range(h)]
         button_cb = self.make_cb()
         print("Initializing Trelli inputs")
+        lcd.flash("Initializing Trelli inputs")
         for y in range(h):
             for x in range(w):
                 sleep(0.01)
@@ -64,7 +58,8 @@ class Display(object):
                 self.trellis.set_callback(x, y, button_cb)
         self.seq_button = digitalio.DigitalInOut(D13)
         self.ins_button = digitalio.DigitalInOut(D6)
-        print("Done")
+        print("Inputs initialized")
+        lcd.flash("Inputs initialized")
         return
 
     def get_cmds(self):
