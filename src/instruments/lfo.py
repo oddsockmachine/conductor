@@ -1,16 +1,15 @@
-#coding=utf-8
+# coding=utf-8
 from instruments.instrument import Instrument
-from constants import *
-from note_grid import Note_Grid
-from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
+import constants as c
 import mido
-from random import choice, random, randint
+
 
 class LFO(Instrument):
     """LFO
-    - Create LFOs for CCs
-    - Set
-    - Options for slew rate, offset, amplitude etc"""
+    - Sets ControlChange values
+    - Multiple pages of sliders
+    - Options for slew rate, transitions etc"""
+
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(LFO, self).__init__(ins_num, mport, key, scale, octave, speed)
         if not isinstance(ins_num, int):
@@ -19,8 +18,8 @@ class LFO(Instrument):
         self.type = "LFO"
         self.height = 16
         self.width = 16
-        self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
-        self.speed = speed  # Relative speed of this instrument compared to global clock
+        self.local_beat_position = 0
+        self.speed = speed
         self.droplet_velocities = [1 for n in range(self.width)]
         self.droplet_positions = [0 for n in range(self.width)]
         self.droplet_starts = [0 for n in range(self.width)]
@@ -44,55 +43,27 @@ class LFO(Instrument):
         }
         return status
 
-
     def set_key(self, key):
-        self.key = key
-        # Converter is a cached lookup, we need to regenerate it
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
+        return
 
     def set_scale(self, scale):
-        self.scale = scale
-        # Converter is a cached lookup, we need to regenerate it
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
+        return
 
     def change_octave(self, up_down):
-        self.octave = up_down  #TODO handle up and down as well as octave number
-        # self.octave = (self.octave + up_down) % 7
-        # Converter is a cached lookup, we need to regenerate it
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
-
-    def cell_to_midi(self, cell):
-        '''convert a cell height to a midi note based on key, scale, octave'''
-        midi_note_num = self.note_converter[cell]
-        return midi_note_num
+        return
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
-        # if y < 4:
-        #     self.droplet_velocities[x] = y
-        # else:
-        self.droplet_positions[x] = y
-        self.droplet_starts[x] = y
         return True
-    #
-    # def get_notes_from_curr_beat(self):
-    #     # self.get_curr_page().get_notes_from_beat(self.local_beat_position)
-    #     return
-
-    # def get_curr_page_leds(self):
-    #     return
 
     def get_led_grid(self, state):
-        page = [[LED_BLANK for y in range(self.height)] for x in range(self.width)]
+        page = [[c.LED_BLANK for y in range(self.height)] for x in range(self.width)]
         display = {
-            0: DROPLET_STOPPED,
-            1: DROPLET_SPLASH
+            0: c.DROPLET_STOPPED,
+            1: c.DROPLET_SPLASH
         }
         for i in range(self.width):
-            page[i][self.droplet_positions[i]] = display.get(self.droplet_positions[i], DROPLET_MOVING)
+            page[i][self.droplet_positions[i]] = display.get(self.droplet_positions[i], c.DROPLET_MOVING)
         return page
 
     def step_beat(self, global_beat):
@@ -117,49 +88,12 @@ class LFO(Instrument):
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
 
-    def calc_local_beat(self, global_beat):
-        '''Calc local_beat_pos for this instrument'''
-        div = self.get_beat_division()
-        local_beat = int(global_beat / div) % self.width
-        # logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
-        return local_beat
-
-    def has_beat_changed(self, local_beat):
-        if self.prev_loc_beat != local_beat:
-            self.prev_loc_beat = local_beat
-            return True
-        self.prev_loc_beat = local_beat
-        return False
-
-    def get_beat_division(self):
-        return 2**self.speed
-
-    def get_beat_division_str(self):
-        return self.speed
-        # return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
-
-    def change_division(self, div):
-        '''Find current instrument, inc or dec its beat division as appropriate'''
-        if div == "-":
-            if self.speed == 0:
-                return
-            self.speed -= 1
-            return
-        if div == "+":
-            if self.speed == 4:
-                return
-            self.speed += 1
-            return
-        # Direct set
-        self.speed = div
-        return
-
     def output(self, old_notes, new_notes):
         """Return all note-ons from the current beat, and all note-offs from the last"""
         notes_off = [self.cell_to_midi(c) for c in old_notes]
         notes_on = [self.cell_to_midi(c) for c in new_notes]
-        notes_off = [n for n in notes_off if n<128 and n>0]
-        notes_on = [n for n in notes_on if n<128 and n>0]
+        notes_off = [n for n in notes_off if n < 128 and n > 0]
+        notes_on = [n for n in notes_on if n < 128 and n > 0]
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
         msgs = off_msgs + on_msgs
