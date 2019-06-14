@@ -9,7 +9,7 @@ from time import sleep
 from interfaces.lcd import lcd
 print("Imported hardware connections")
 
-AUTO_WRITE = True
+AUTO_WRITE = False
 
 
 class Display(object):
@@ -33,10 +33,6 @@ class Display(object):
         #     # [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33), NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
         #     # [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
         #     # [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],]
-        # # if AUTO_WRITE:
-        # #     for ts in trelli:
-        # #         for t in ts:
-        # #             t.pixels.auto_write = False
         # print("Linking Trelli")
         # self.trellis = MultiTrellis(trelli)
         trelli = [
@@ -49,7 +45,7 @@ class Display(object):
             for t in ts:
                 print(t)
                 print(type(t))
-                t.pixels.auto_write = False
+                t.pixels.auto_write = AUTO_WRITE
         self.trellis = MultiTrellis(trelli)
 
         print("Done")
@@ -112,7 +108,7 @@ class Display(object):
             self.trellis.color(diff[0], diff[1], diff[2])
             sleep(0.001)
         if len(diffs) > 0:
-            if AUTO_WRITE:
+            if not AUTO_WRITE:
                 for ts in self.trellis._trelli:
                     for t in ts:
                         t.pixels.show()
@@ -126,78 +122,6 @@ class Display(object):
                 col = c.PALLETE[led_grid[x][y]]
                 self.led_matrix[x][self.grid_h-1-y] = col
         return
-    #
-    # def draw_seq_menu(self, status):
-    #     # menu for sequencer: instrument num on right column, pages on left, repeats pointing right
-    #     # #O##  #
-    #     # ##    #
-    #     # ###   O
-    #     # ###   #
-    #     self.blank_screen()
-    #     # Draw instrument selector
-    #     for i in range(status['ins_total']):
-    #         self.led_matrix[self.grid_w-1][i] = c.RED
-    #     self.led_matrix[self.grid_w-1][status['ins_num']-1] = c.GREEN
-    #     # Draw page/repeats info
-    #     page_stats = status['page_stats']
-    #     page_num = status['page_num']
-    #     repeat_total = status['repeat_total']
-    #     repeat_num = status['repeat_num']
-    #     if status['random_rpt']:
-    #         self.led_matrix[0][7] = c.RED
-    #     else:
-    #         self.led_matrix[0][7] = c.GREEN
-    #     for i, page_reps in enumerate(page_stats):
-    #         for rep in range(page_reps):
-    #             self.led_matrix[rep][i] = c.RED
-    #     for i in range(repeat_total):
-    #         self.led_matrix[i][page_num-1] = c.YELLOW
-    #     self.led_matrix[repeat_num-1][page_num-1] = c.GREEN
-    #     # self.led_matrix[status['repeat_total']-1][status['page_num']-1] = GREEN
-    #     return
-    #
-    # def draw_ins_menu(self, status):
-    #     # Menu for instrument settings (key, scale, octave, speed) spelled out
-    #             # >>>>
-    #             # ____#___
-    #             #
-    #             # ### #  X
-    #             # #   #  O
-    #             # ### #  X
-    #             # #      X
-    #             # ###    X
-    #     self.blank_screen()
-    #     # Speed:
-    #     speed = status['division']
-    #     for i in range(5):
-    #         self.led_matrix[i][0] = c.RED
-    #     for i in range(speed):
-    #         self.led_matrix[i][0] = c.GREEN
-    #     # Scale:  # TODO may have to wrap around to second line
-    #     scale = status['scale']
-    #     scales = list(c.SCALES.keys())
-    #     scale_i = scales.index(scale)
-    #     for i in range(len(scales)):
-    #         self.led_matrix[i][1] = c.BLUE
-    #     self.led_matrix[scale_i][1] = c.CYAN
-    #     # Key
-    #     key = status['key']
-    #     sharp = "#" in key
-    #     key = key.replace('#', '')
-    #     letter = c.LETTERS[key]
-    #     for r, row in enumerate(letter):
-    #         for i, col in enumerate(row):
-    #             if letter[r][i] == 1:
-    #                 self.led_matrix[c][3+r] = c.INDIGO
-    #     if sharp:
-    #         self.led_matrix[4][3] = c.INDIGO
-    #         self.led_matrix[4][4] = c.INDIGO
-    #     # Octave:
-    #     octave = int(status['octave'])
-    #     for i in range(7):
-    #         self.led_matrix[7][self.grid_w-1-i] = c.ORANGE
-    #     self.led_matrix[7][self.grid_w-1-octave] = c.RED
-    #     return
 
     def make_cb(self):
         def button_cb(xcoord, ycoord, edge):
