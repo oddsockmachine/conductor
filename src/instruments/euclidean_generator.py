@@ -1,18 +1,19 @@
-#coding=utf-8
+# coding=utf-8
 from instruments.drum_deviator import DrumDeviator
-from constants import *
+import constants as c
 from note_grid import Note_Grid
-from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
-import mido
-from random import choice, random, randint
-from screens import empty_grid, euc_cfg_grid_defn, generate_screen, get_cb_from_touch
+from note_conversion import create_cell_to_midi_note_lookup
+from screens import euc_cfg_grid_defn, generate_screen, get_cb_from_touch
+
 
 class Euclidean(DrumDeviator):
     """Euclidean Beat Generator
     - For each drum-note/sample, set a bar length (<16), euclidean density, and offset
-    - Bottom 16x8 shows 8 bar lengths, with hits highlighted. Beatpos moves across, or bar rotates? Clicking on a bar determines its bar length
+    - Bottom 16x8 shows 8 bar lengths, with hits highlighted. Beatpos moves across, or bar rotates?
+    - Clicking on a bar determines its bar length
     - TopLeft 8x8 shows sliders for euclidean density. Clicking on a slider sets density
     - TopRight 8x8 shows sliders for offset. Is this necessary?"""
+
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(Euclidean, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Euclidean"
@@ -26,17 +27,18 @@ class Euclidean(DrumDeviator):
         self.key = key
         for i in range(8):
             self.regen(i)
+
     def regen(self, note):
         '''A parameter for this note has changed, regenerate sequence'''
         pattern = []
         for x in range(self.densities[note]):
-            pattern.append(NOTE_ON)
+            pattern.append(c.NOTE_ON)
             for y in range(int(self.lengths[note]/self.densities[note])):
-                pattern.append(NOTE_OFF)
+                pattern.append(c.NOTE_OFF)
         pattern.extend(pattern)
         pattern = pattern[self.offsets[note]:self.offsets[note]+self.lengths[note]]
         for x in range(16-len(pattern)):
-            pattern.append(NOTE_OFF)
+            pattern.append(c.NOTE_OFF)
 
         page = self.get_curr_page()
         for i, beat in enumerate(page.note_grid):
@@ -86,7 +88,7 @@ class Euclidean(DrumDeviator):
             if n >= limit:
                 n = 0
             self.curr_notes_pos[i] = n
-            if note_grid[n][i] == NOTE_ON:
+            if note_grid[n][i] == c.NOTE_ON:
                 new_notes.append(i)
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
@@ -94,15 +96,15 @@ class Euclidean(DrumDeviator):
 
     def get_led_status(self, cell, y, col_num):
         '''Determine which type of LED should be shown for a given cell'''
-        led = LED_BLANK  # Start with blank / no led
+        led = c.LED_BLANK  # Start with blank / no led
         if y >= 8:
             return led
         if col_num == self.curr_notes_pos[y]:
-            led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
-            if cell == NOTE_ON:
-                led = LED_SELECT  # Unless we want a selected + beat cell to be special
-        elif cell == NOTE_ON:
-            led = LED_ACTIVE  # Otherwise if the cell is active (touched)
+            led = c.LED_BEAT  # If we're on the beat, we'll want to show the beat marker
+            if cell == c.NOTE_ON:
+                led = c.LED_SELECT  # Unless we want a selected + beat cell to be special
+        elif cell == c.NOTE_ON:
+            led = c.LED_ACTIVE  # Otherwise if the cell is active (touched)
         return led
 
     def get_led_grid(self, state):
@@ -115,31 +117,37 @@ class Euclidean(DrumDeviator):
             for y in range(8):
                 # reset slider area (removes beat cursor)
                 for x in range(16):
-                    led_grid[x][y+8] = LED_BLANK
+                    led_grid[x][y+8] = c.LED_BLANK
                 for a in range(self.densities[y]+1):
-                    led_grid[7-a][y+8] = LED_ACTIVE
-                led_grid[7-self.densities[y]][y+8] = LED_SELECT
-                led_grid[7][y+8] = LED_CURSOR
+                    led_grid[7-a][y+8] = c.LED_ACTIVE
+                led_grid[7-self.densities[y]][y+8] = c.LED_SELECT
+                led_grid[7][y+8] = c.LED_CURSOR
                 for a in range(self.offsets[y]):
-                    led_grid[8+a][y+8] = LED_ACTIVE
-                led_grid[8+self.offsets[y]][y+8] = LED_SELECT
-                led_grid[8][y+8] = LED_CURSOR
+                    led_grid[8+a][y+8] = c.LED_ACTIVE
+                led_grid[8+self.offsets[y]][y+8] = c.LED_SELECT
+                led_grid[8][y+8] = c.LED_CURSOR
         elif state == 'ins_cfg':
-            led_grid, cb_grid = generate_screen(euc_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num), 'curr_page': self.curr_page_num, 'next_page': self.get_next_page_num(), 'fill':self.fill})
-
-
+            led_grid, cb_grid = generate_screen(euc_cfg_grid_defn, {
+                'speed': int(self.speed),
+                'octave': int(self.octave),
+                'pages': [x.repeats for x in self.pages],
+                'curr_p_r': (self.curr_page_num, self.curr_rept_num),
+                'curr_page': self.curr_page_num,
+                'next_page': self.get_next_page_num(),
+                'fill': self.fill
+                })
             self.cb_grid = cb_grid
             return led_grid
         return led_grid
 
     def set_key(self, key):
-        self.key = key # Converter is a cached lookup, we need to regenerate it
+        self.key = key
         self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True
 
     def set_scale(self, scale):
-        self.scale = scale # Converter is a cached lookup, we need to regenerate it
+        self.scale = scale
         self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return True

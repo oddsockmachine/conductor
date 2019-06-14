@@ -1,4 +1,4 @@
-from constants import *
+import constants as c
 from note_conversion import SCALE_INTERVALS
 # from time import perf_counter
 print("Importing hardware connections")
@@ -11,9 +11,11 @@ print("Done")
 from time import sleep
 AUTO_WRITE = True
 
+
 class Display(object):
     """docstring for Display."""
-    def __init__(self, w=W, h=H, command_cb=None):
+
+    def __init__(self, w=c.W, h=c.H, command_cb=None):
         super(Display, self).__init__()
         print("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
@@ -42,8 +44,6 @@ class Display(object):
             [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37), NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
             [NeoTrellis(i2c_bus, False, addr=0x3A), NeoTrellis(i2c_bus, False, addr=0x3B), NeoTrellis(i2c_bus, False, addr=0x3C), NeoTrellis(i2c_bus, False, addr=0x3D)],
             ]
-
-
         for ts in trelli:
             for t in ts:
                 print(t)
@@ -54,8 +54,8 @@ class Display(object):
         print("Done")
         self.grid_h = h
         self.grid_w = w
-        self.led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
-        self.old_led_matrix = [[(0,0,0) for x  in range(w)] for y in range(h)]
+        self.led_matrix = [[(0, 0, 0) for x in range(w)] for y in range(h)]
+        self.old_led_matrix = [[(0, 0, 0) for x in range(w)] for y in range(h)]
         button_cb = self.make_cb()
         print("Initializing Trelli inputs")
         for y in range(h):
@@ -73,8 +73,8 @@ class Display(object):
     def get_cmds(self):
         try:
             self.trellis.sync()  # TODO undo? Fails if called too often
-        except:
-            print("HW error")
+        except Exception as e:
+            print("HW error: {}".format(str(e)))
         m = {'cmd': None}
         if self.ins_button.value:
             m['cmd'] = "CONFIG_A"
@@ -95,7 +95,7 @@ class Display(object):
     def blank_screen(self):
         for x in range(len(self.led_matrix)):
             for y in range(len(self.led_matrix[x])):
-                self.led_matrix[x][y] = OFF
+                self.led_matrix[x][y] = c.OFF
 
     def redraw_diff(self):
         diffs = []
@@ -108,9 +108,9 @@ class Display(object):
         # This method might be better once the grid is much bigger
         # t_start = perf_counter()
         for diff in diffs:
-            self.trellis.color(diff[0],diff[1],diff[2])
+            self.trellis.color(diff[0], diff[1], diff[2])
             sleep(0.001)
-        if len(diffs)>0:
+        if len(diffs) > 0:
             if AUTO_WRITE:
                 for ts in self.trellis._trelli:
                     for t in ts:
@@ -122,7 +122,7 @@ class Display(object):
     def draw_note_grid(self, led_grid):
         for x in range(len(led_grid)):
             for y in range(len(led_grid[x])):
-                col = PALLETE[led_grid[x][y]]
+                col = c.PALLETE[led_grid[x][y]]
                 self.led_matrix[x][self.grid_h-1-y] = col
         return
 
@@ -135,23 +135,23 @@ class Display(object):
         self.blank_screen()
         # Draw instrument selector
         for i in range(status['ins_total']):
-            self.led_matrix[self.grid_w-1][i] = RED
-        self.led_matrix[self.grid_w-1][status['ins_num']-1] = GREEN
+            self.led_matrix[self.grid_w-1][i] = c.RED
+        self.led_matrix[self.grid_w-1][status['ins_num']-1] = c.GREEN
         # Draw page/repeats info
         page_stats = status['page_stats']
         page_num = status['page_num']
         repeat_total = status['repeat_total']
         repeat_num = status['repeat_num']
         if status['random_rpt']:
-            self.led_matrix[0][7] = RED
+            self.led_matrix[0][7] = c.RED
         else:
-            self.led_matrix[0][7] = GREEN
+            self.led_matrix[0][7] = c.GREEN
         for i, page_reps in enumerate(page_stats):
             for rep in range(page_reps):
-                self.led_matrix[rep][i] = RED
+                self.led_matrix[rep][i] = c.RED
         for i in range(repeat_total):
-            self.led_matrix[i][page_num-1] = YELLOW
-        self.led_matrix[repeat_num-1][page_num-1] = GREEN
+            self.led_matrix[i][page_num-1] = c.YELLOW
+        self.led_matrix[repeat_num-1][page_num-1] = c.GREEN
         # self.led_matrix[status['repeat_total']-1][status['page_num']-1] = GREEN
         return
 
@@ -169,33 +169,33 @@ class Display(object):
         # Speed:
         speed = status['division']
         for i in range(5):
-            self.led_matrix[i][0] = RED
+            self.led_matrix[i][0] = c.RED
         for i in range(speed):
-            self.led_matrix[i][0] = GREEN
+            self.led_matrix[i][0] = c.GREEN
         # Scale:  # TODO may have to wrap around to second line
         scale = status['scale']
-        scales = list(SCALES.keys())
+        scales = list(c.SCALES.keys())
         scale_i = scales.index(scale)
         for i in range(len(scales)):
-            self.led_matrix[i][1] = BLUE
-        self.led_matrix[scale_i][1] = CYAN
+            self.led_matrix[i][1] = c.BLUE
+        self.led_matrix[scale_i][1] = c.CYAN
         # Key
         key = status['key']
         sharp = "#" in key
-        key = key.replace('#','')
-        letter = LETTERS[key]
+        key = key.replace('#', '')
+        letter = c.LETTERS[key]
         for r, row in enumerate(letter):
-            for c, col in enumerate(row):
-                if letter[r][c] == 1:
-                    self.led_matrix[c][3+r] = INDIGO
+            for i, col in enumerate(row):
+                if letter[r][i] == 1:
+                    self.led_matrix[c][3+r] = c.INDIGO
         if sharp:
-            self.led_matrix[4][3] = INDIGO
-            self.led_matrix[4][4] = INDIGO
+            self.led_matrix[4][3] = c.INDIGO
+            self.led_matrix[4][4] = c.INDIGO
         # Octave:
         octave = int(status['octave'])
         for i in range(7):
-            self.led_matrix[7][self.grid_w-1-i] = ORANGE
-        self.led_matrix[7][self.grid_w-1-octave] = RED
+            self.led_matrix[7][self.grid_w-1-i] = c.ORANGE
+        self.led_matrix[7][self.grid_w-1-octave] = c.RED
         return
 
     def make_cb(self):
@@ -203,22 +203,22 @@ class Display(object):
             if edge == NeoTrellis.EDGE_RISING:
                 if self.ins_button.value:  # Button from instrument menu
                     if xcoord == 7:  # Octave
-                        self.command_cb({'cmd':'change_octave', 'octave': self.grid_w-1-ycoord})
+                        self.command_cb({'cmd': 'change_octave', 'octave': self.grid_w-1-ycoord})
                     if ycoord == 0 and xcoord <= 4:  # Divison/speed
-                        self.command_cb({'cmd':'change_division', 'div': xcoord})
+                        self.command_cb({'cmd': 'change_division', 'div': xcoord})
                     if ycoord == 1 and xcoord <= 1:  # Scale
-                        self.command_cb({'cmd':'cycle_scale', 'dir': {0:-1,1:1}[xcoord]})
+                        self.command_cb({'cmd': 'cycle_scale', 'dir': {0: -1, 1: 1}[xcoord]})
                     if ycoord == 7 and xcoord == 0:  # key
-                        self.command_cb({'cmd':'cycle_key', 'dir': -1})
+                        self.command_cb({'cmd': 'cycle_key', 'dir': -1})
                     if ycoord == 3 and xcoord == 0:  # key
-                        self.command_cb({'cmd':'cycle_key', 'dir': 1})
+                        self.command_cb({'cmd': 'cycle_key', 'dir': 1})
                     if ycoord == 0 and xcoord == 7:  # key
-                        self.command_cb({'cmd':'random_rpt'})
+                        self.command_cb({'cmd': 'random_rpt'})
 
-                elif self.seq_button.value: # Normal mode
+                elif self.seq_button.value:  # Normal mode
                     # Button from sequencer menu
                     self.command_cb({'cmd': None})
-                else: # Menu mode - look up location of press and return cmd
+                else:  # Menu mode - look up location of press and return cmd
                     self.command_cb({'cmd': 'note', 'x': xcoord, 'y': self.grid_h-1-ycoord})
             return
         return button_cb

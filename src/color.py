@@ -10,11 +10,13 @@ CYAN = (0, 255, 255)
 BLUE = (0, 0, 255)
 INDIGO = (180, 0, 255)
 PURPLE = (255, 0, 255)
-colors  =[RED, ORANGE,YELLOW, GREEN,CYAN,BLUE,INDIGO,PURPLE]
-PALLETE = {0:(1,1,1), 1:(3,2,0), 2:(18,7,0), 3:(18,7,1)}
+colors  = [RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, INDIGO, PURPLE]
+PALLETE = {0: (1, 1, 1), 1: (3, 2, 0), 2: (18, 7, 0), 3: (18, 7, 1)}
+
 
 class Colors(object):
     """docstring for Colors."""
+
     def __init__(self, arg):
         super(Colors, self).__init__()
         self.arg = arg
@@ -30,7 +32,8 @@ class Colors(object):
         BLUE = (0, 0, 255)
         INDIGO = (180, 0, 255)
         PURPLE = (255, 0, 255)
-        colors = {"RED": RED,
+        colors = {"OFF": OFF,
+                  "RED": RED,
                   "ORANGE": ORANGE,
                   "YELLOW": YELLOW,
                   "GREEN": GREEN,

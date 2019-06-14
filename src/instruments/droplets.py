@@ -1,10 +1,9 @@
-#coding=utf-8
+# coding=utf-8
 from instruments.instrument import Instrument
-from constants import *
-from note_grid import Note_Grid
-from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
+import constants as c
+from note_conversion import create_cell_to_midi_note_lookup, constrain_midi_notes
 import mido
-from random import choice, random, randint
+
 
 class Droplets(Instrument):
     """Droplets
@@ -17,6 +16,7 @@ class Droplets(Instrument):
     - Touch above note to drag/extend it
     - Touch below note to catch/remove it
     - Add multiple drops per line?"""
+
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(Droplets, self).__init__(ins_num, mport, key, scale, octave, speed)
         if not isinstance(ins_num, int):
@@ -25,7 +25,7 @@ class Droplets(Instrument):
         self.type = "Droplets"
         self.height = 16
         self.width = 16
-        self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
+        self.local_beat_position = 0
         self.speed = speed  # Relative speed of this instrument compared to global clock
         self.droplet_velocities = [1 for n in range(self.width)]
         self.droplet_positions = [0 for n in range(self.width)]
@@ -50,7 +50,6 @@ class Droplets(Instrument):
         }
         return status
 
-
     def set_key(self, key):
         self.key = key
         # Converter is a cached lookup, we need to regenerate it
@@ -64,7 +63,7 @@ class Droplets(Instrument):
         return True
 
     def change_octave(self, up_down):
-        self.octave = up_down  #TODO handle up and down as well as octave number
+        self.octave = up_down  # TODO handle up and down as well as octave number
         # self.octave = (self.octave + up_down) % 7
         # Converter is a cached lookup, we need to regenerate it
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
@@ -92,13 +91,13 @@ class Droplets(Instrument):
     #     return
 
     def get_led_grid(self, state):
-        page = [[LED_BLANK for y in range(self.height)] for x in range(self.width)]
+        page = [[c.LED_BLANK for y in range(self.height)] for x in range(self.width)]
         display = {
-            0: DROPLET_STOPPED,
-            1: DROPLET_SPLASH
+            0: c.DROPLET_STOPPED,
+            1: c.DROPLET_SPLASH
         }
         for i in range(self.width):
-            page[i][self.droplet_positions[i]] = display.get(self.droplet_positions[i], DROPLET_MOVING)
+            page[i][self.droplet_positions[i]] = display.get(self.droplet_positions[i], c.DROPLET_MOVING)
         return page
 
     def step_beat(self, global_beat):
@@ -164,8 +163,8 @@ class Droplets(Instrument):
         """Return all note-ons from the current beat, and all note-offs from the last"""
         notes_off = [self.cell_to_midi(c) for c in old_notes]
         notes_on = [self.cell_to_midi(c) for c in new_notes]
-        notes_off = [n for n in notes_off if n<128 and n>0]
-        notes_on = [n for n in notes_on if n<128 and n>0]
+        notes_off = constrain_midi_notes(notes_off)
+        notes_on = constrain_midi_notes(notes_on)
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
         msgs = off_msgs + on_msgs

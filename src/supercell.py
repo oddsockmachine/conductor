@@ -1,13 +1,10 @@
 from conductor import Conductor
-from save_utils import get_next_filename
-from constants import *
 from time import sleep, time
-from datetime import datetime
-from json import dump, load
 
 
 class Supercell(object):
     """docstring for Supercell."""
+
     def __init__(self, display, mport, mportin, saved_set=None):
         super(Supercell, self).__init__()
         self.mport = mport
@@ -35,7 +32,7 @@ class Supercell(object):
         def _process_incoming_midi(message, timestamp=0):
             '''Check for incoming midi messages and categorize so we can do something with them'''
             tick = False
-            notes = []
+            # notes = []
             if message.type == "clock":
                 tick = self.process_midi_tick()
                 if tick:

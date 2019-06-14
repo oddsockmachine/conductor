@@ -13,7 +13,7 @@ print(args)
 
 def console_main(stdscr):
     from interfaces.console import Display
-    m = curses.mousemask(1)
+    curses.mousemask(1)
     curses.mouseinterval(10)
     stdscr.nodelay(1)
     display = Display(stdscr)

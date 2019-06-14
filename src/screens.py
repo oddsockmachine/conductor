@@ -1,52 +1,55 @@
-from constants import *
+import constants as c
 # from instruments import instrument_lookup
 total_num_instruments = 10
+
 
 def get_char(**kwargs):
     '''Return a char bitmap as array, looked up from inputs'''
     # logging.info(str(kwargs))
     if 'char' in kwargs.keys():
-        array = LETTERS.get(kwargs['char'])
+        array = c.LETTERS.get(kwargs['char'])
     elif 'row' in kwargs.keys():
-        array = [ROW[0][:kwargs['row']]]
+        array = [c.ROW[0][:kwargs['row']]]
         if 'selector' in kwargs.keys():
-            array[0][kwargs['selector']] = LED_SELECT
+            array[0][kwargs['selector']] = c.LED_SELECT
     elif 'column' in kwargs.keys():
-        array = COLUMN[:kwargs['column']]
+        array = c.COLUMN[:kwargs['column']]
         if 'selector' in kwargs.keys():
-            array[kwargs['selector']] = [LED_SELECT]
+            array[kwargs['selector']] = [c.LED_SELECT]
     elif 'instrument' in kwargs.keys():
-        array = COLUMN[:kwargs['instrument']]
+        array = c.COLUMN[:kwargs['instrument']]
         if 'selector' in kwargs.keys():
-            array[kwargs['selector']] = [LED_SELECT]
+            array[kwargs['selector']] = [c.LED_SELECT]
     elif 'clips' in kwargs.keys():
         array = [[0 for x in range(4)] for y in range(4)]
         pages = kwargs['clips']
         for p in range(pages):
             y, x = (p % 4, int(p / 4))
-            array[x][y] = LED_CURSOR
+            array[x][y] = c.LED_CURSOR
         if 'curr_page' in kwargs.keys():
             y, x = (kwargs['curr_page'] % 4, int(kwargs['curr_page'] / 4))
-            array[x][y] = LED_SELECT
+            array[x][y] = c.LED_SELECT
         if 'next_page' in kwargs.keys():
             y, x = (kwargs['next_page'] % 4, int(kwargs['next_page'] / 4))
-            array[x][y] = LED_ACTIVE
+            array[x][y] = c.LED_ACTIVE
     elif 'pages' in kwargs.keys():
         max_rpts = 8
         max_pages = 16
         array = [[0 for x in range(max_rpts)] for y in range(max_pages)]
         for i, rpts in enumerate(kwargs['pages']):
             for r in range(rpts):
-                array[i][r] = LED_ACTIVE
+                array[i][r] = c.LED_ACTIVE
         c_r, c_p = kwargs['active']
-        array[c_r][c_p] = LED_SELECT
+        array[c_r][c_p] = c.LED_SELECT
     return array
+
 
 def empty_grid():
     grid = []
     for x in range(16):
-        grid.append([LED_BLANK for y in range(16)])
+        grid.append([c.LED_BLANK for y in range(16)])
     return grid
+
 
 def seq_cfg_grid_defn(args):
     seqcfg = [
@@ -60,6 +63,7 @@ def seq_cfg_grid_defn(args):
     ]
     return seqcfg
 
+
 def dev_cfg_grid_defn(args):
     devcfg = [
         ('random_pages', get_char(char='r'), 0, 13),
@@ -70,6 +74,7 @@ def dev_cfg_grid_defn(args):
     ]
     return devcfg
 
+
 def euc_cfg_grid_defn(args):
     euccfg = [
         ('speed', get_char(row=5, selector=args['speed']), 15, 11),
@@ -77,6 +82,7 @@ def euc_cfg_grid_defn(args):
         ('fill', get_char(char='f'), 0, 0)
     ]
     return euccfg
+
 
 def oct_cfg_grid_defn(args):
     octcfg = [
@@ -89,6 +95,7 @@ def oct_cfg_grid_defn(args):
     ]
     return octcfg
 
+
 def drum_cfg_grid_defn(args):
     drumcfg = [
         ('random_pages', get_char(char='r'), 0, 13),
@@ -98,6 +105,7 @@ def drum_cfg_grid_defn(args):
         ('clip', get_char(clips=len(args['pages']), curr_page=args['curr_page'], next_page=args['next_page']), 9, 9),
     ]
     return drumcfg
+
 
 def gbl_cfg_grid_defn(args):
     gbl_cfg = [
@@ -109,9 +117,11 @@ def gbl_cfg_grid_defn(args):
         ('save', get_char(char='s'), 11, 4),
         ('reset', get_char(char='x'), 11, 8),
         ('instrument_sel', get_char(instrument=args['num_ins'], selector=args['curr_ins']), 0, 15),
-        ('instrument_type', get_char(instrument=total_num_instruments), 0, 14),  # TODO extend instrument adder, use diff colors for each
+        # TODO extend instrument adder, use diff colors for each
+        ('instrument_type', get_char(instrument=total_num_instruments), 0, 14),
     ]
     return gbl_cfg
+
 
 def generate_screen(defn, args):
     defn = defn(args)
@@ -121,6 +131,7 @@ def generate_screen(defn, args):
         led_grid = add_char_to_grid(led_grid, char, x, y)
         callback_grid = add_callback_to_grid(callback_grid, char, cb, x, y)
     return rotate_grid(led_grid), rotate_grid(callback_grid)
+
 
 def add_char_to_grid(grid, char, x, y, color=None):
     '''Overlay a char bitmap to an existing grid, starting at top left x,y'''
@@ -133,11 +144,13 @@ def add_char_to_grid(grid, char, x, y, color=None):
                 pass  # TODO  overwrite with color
     return grid
 
+
 def add_callback_to_grid(grid, char, cb, x, y):
     for m, i in enumerate(char):
         for n, j in enumerate(i):
-            grid[x+m][y+n] = '_'.join([cb,str(m),str(n)])
+            grid[x+m][y+n] = '_'.join([cb, str(m), str(n)])
     return grid
+
 
 def rotate_grid(grid):
     '''Screen uses different coordinate system, rotate 90deg'''
@@ -145,12 +158,14 @@ def rotate_grid(grid):
     new_grid = list(zip(*new_grid))
     return new_grid
 
+
 def get_cb_from_touch(cb_grid, x, y):
     cb = cb_grid[x][y]
     if cb == 0:
         return (None, None, None)
     cb_parts = cb.split('_')
-    return '_'.join(cb_parts[:~1]), int(cb_parts[~0]), int(cb_parts[~1])   # (callback, x, y)  (x and y are swapped, as coordinates are rotated)
+    # (callback, x, y)  (x and y are swapped, as coordinates are rotated)
+    return '_'.join(cb_parts[:~1]), int(cb_parts[~0]), int(cb_parts[~1])
 
 # led, cb = generate_screen(gbl_cfg_grid_defn, {'scale_chars': 'ab', 'key':'c#'})
 # from pprint import pprint
@@ -160,16 +175,16 @@ def get_cb_from_touch(cb_grid, x, y):
 # led, cb = generate_screen(gbl_cfg_grid_defn, {'scale_chars': 'ab', 'key':'c#'})
 # print(get_cb_from_touch(cb, 0,15))
 
-import unittest
-class TestChars(unittest.TestCase):
-    def test_get_char(self):
-        # seq = Conductor(None)
-        self.assertEqual(get_char(char='s'), S)
-        self.assertEqual(get_char(char='+'), PLUS)
-        self.assertEqual(get_char(row=6), [1,1,1,1,1,1])
-        self.assertEqual(get_char(column=5), [[1],[1],[1],[1],[1]])
-        self.assertEqual(get_char(row=6, selector=2), [1,1,5,1,1,1])
-        self.assertEqual(get_char(column=5, selector=2), [[1],[1],[5],[1],[1]])
-
-if __name__ == '__main__':
-    unittest.main()
+# import unittest
+# class TestChars(unittest.TestCase):
+#     def test_get_char(self):
+#         # seq = Conductor(None)
+#         self.assertEqual(get_char(char='s'), S)
+#         self.assertEqual(get_char(char='+'), PLUS)
+#         self.assertEqual(get_char(row=6), [1,1,1,1,1,1])
+#         self.assertEqual(get_char(column=5), [[1],[1],[1],[1],[1]])
+#         self.assertEqual(get_char(row=6, selector=2), [1,1,5,1,1,1])
+#         self.assertEqual(get_char(column=5, selector=2), [[1],[1],[5],[1],[1]])
+#
+# if __name__ == '__main__':
+#     unittest.main()

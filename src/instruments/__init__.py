@@ -10,6 +10,8 @@ from instruments.euclidean_generator import Euclidean
 from instruments.octopus import Octopus
 from instruments.sequencer import Sequencer
 from instruments.transformer import Transformer
+from instruments.cc import CC
+from instruments.lfo import LFO
 
 
 def instrument_lookup(num):
@@ -26,6 +28,8 @@ def instrument_lookup(num):
         9: Octopus,
         10: Sequencer,
         11: Transformer,
+        12: CC,
+        13: LFO,
         'Instrument': Instrument,  # Generic, fallback, no functionality
         'BeatMaker': BeatMaker,
         'Binary Sequencer': BinarySequencer,
@@ -38,4 +42,6 @@ def instrument_lookup(num):
         'Octopus': Octopus,
         'Sequencer': Sequencer,
         'Transformer': Transformer,
+        'CC': CC,
+        'LFO': LFO,
     }[num]
