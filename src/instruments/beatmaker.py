@@ -1,10 +1,13 @@
-#coding=utf-8
+# coding=utf-8
 from instruments.instrument import Instrument
-from constants import *
+import constants as c
 from note_grid import Note_Grid
-from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
+from note_conversion import create_cell_to_midi_note_lookup
 import mido
-from random import choice, random, randint
+from random import choice
+from interfaces.lcd import lcd
+from screens import get_cb_from_touch, generate_screen, drum_cfg_grid_defn
+
 
 class BeatMaker(Instrument):
     """BeatMaker
@@ -13,27 +16,29 @@ class BeatMaker(Instrument):
     - Select a set of patterns for each instrument, change on the fly
     - Show hits and highlight beatpos as normal
     - 4x4 grid for saved pattern combos. Touch current to reset, touch other to load next page and save previous"""
+
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(BeatMaker, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Beat Randomizer"
-        self.bars = 4 #min(bars, W/4)  # Option to reduce number of bars < 4
+        self.bars = 4  # min(bars, W/4)  # Option to reduce number of bars < 4
         self.curr_page_num = 0
         self.curr_rept_num = 0
         self.prev_loc_beat = 0
-        self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
-        self.random_pages = False  #  Pick page at random
+        self.local_beat_position = 0
+        self.random_pages = False  # Pick page at random
         self.sustain = False  # Don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
         self.key = 'c'  # TODO find which starting note corresponds to pad 0
         self.scale = 'chromatic'
         self.octave = 0  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
-        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)  # Function is cached for convenience
+        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)
 
     def set_scale(self, scale):
-        return # Not used
+        return  # Not used
+
     def set_key(self, key):
-        return # Not used
+        return  # Not used
 
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
@@ -73,7 +78,6 @@ class BeatMaker(Instrument):
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
             return True
 
-
     def get_notes_from_curr_beat(self):
         self.get_curr_page().get_notes_from_beat(self.local_beat_position)
         return
@@ -82,25 +86,28 @@ class BeatMaker(Instrument):
         if state == 'play':
             led_grid = []
             grid = self.get_curr_page().note_grid
-            for c, column in enumerate(grid):  # columnn counter
-                led_grid.append([self.get_led_status(x, c) for x in column])
+            for i, column in enumerate(grid):  # columnn counter
+                led_grid.append([self.get_led_status(x, i) for x in column])
         elif state == 'ins_cfg':
-            led_grid, cb_grid = generate_screen(drum_cfg_grid_defn, {'speed':int(self.speed), 'octave':int(self.octave), 'pages':[x.repeats for x in self.pages], 'curr_p_r': (self.curr_page_num, self.curr_rept_num)})
+            led_grid, cb_grid = generate_screen(drum_cfg_grid_defn, {
+                'speed': int(self.speed),
+                'octave': int(self.octave),
+                'pages': [x.repeats for x in self.pages],
+                'curr_p_r': (self.curr_page_num, self.curr_rept_num)})
             self.cb_grid = cb_grid
             return led_grid
         return led_grid
 
     def get_led_status(self, cell, beat_pos):
         '''Determine which type of LED should be shown for a given cell'''
-        led = LED_BLANK  # Start with blank / no led
+        led = c.LED_BLANK  # Start with blank / no led
         if beat_pos == self.local_beat_position:
-            led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
-            if cell == NOTE_ON:
-                led = LED_SELECT  # Unless we want a selected + beat cell to be special
-        elif cell == NOTE_ON:
-            led = LED_ACTIVE  # Otherwise if the cell is active (touched)
+            led = c.LED_BEAT  # If we're on the beat, we'll want to show the beat marker
+            if cell == c.NOTE_ON:
+                led = c.LED_SELECT  # Unless we want a selected + beat cell to be special
+        elif cell == c.NOTE_ON:
+            led = c.LED_ACTIVE  # Otherwise if the cell is active (touched)
         return led
-
 
     def inc_page_repeats(self, page):
         '''Increase how many times the current page will loop'''
@@ -182,7 +189,7 @@ class BeatMaker(Instrument):
             return
         self.curr_rept_num += 1  # inc repeat number
         if self.curr_rept_num >= self.get_curr_page().repeats:
-        # If we're overfowing repeats, time to go to next available page
+            # If we're overfowing repeats, time to go to next available page
             self.curr_rept_num = 0  # Reset, for this page or next page
             self.curr_page_num = self.get_next_page_num()
         return
@@ -215,7 +222,7 @@ class BeatMaker(Instrument):
         grid = self.get_led_grid('play')
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
-        notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
+        notes_on = [i for i, x in enumerate(beat_notes) if x == c.NOTE_ON]  # get list of cells that are on
         return notes_on
 
     def output(self, old_notes, new_notes):
@@ -227,8 +234,8 @@ class BeatMaker(Instrument):
             _notes_on = [n for n in notes_on if n not in notes_off]
             notes_off = _notes_off
             notes_on = _notes_on
-        notes_off = [n for n in notes_off if n<128 and n>0]
-        notes_on = [n for n in notes_on if n<128 and n>0]
+        notes_off = [n for n in notes_off if n < 128 and n > 0]
+        notes_on = [n for n in notes_on if n < 128 and n > 0]
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
         msgs = off_msgs + on_msgs

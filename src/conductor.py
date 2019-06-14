@@ -1,6 +1,5 @@
-#coding=utf-8
-from time import sleep
-from constants import *
+# coding=utf-8
+import constants as c
 from instruments import instrument_lookup
 from note_conversion import SCALE_INTERVALS, KEYS
 from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum, save_filenum
@@ -11,13 +10,13 @@ from interfaces.lcd import lcd
 class Conductor(object):
     """docstring for Conductor."""
 
-    def __init__(self, mport, key="e", scale="pentatonic_maj", octave=2, bars=int(W/4), height=H):
+    def __init__(self, mport, key="e", scale="pentatonic_maj", octave=2, bars=int(c.W/4), height=c.H):
         super(Conductor, self).__init__()
         self.mport = mport
         self.key = key
         self.states = 'play save load ins_cfg gbl_cfg display'.split()  # Valid states for the display(s)
         self.beat_position = 0
-        self.height = H
+        self.height = c.H
         self.width = bars*4
         self.bars = bars
         self.max_beat_division = 8
@@ -25,15 +24,16 @@ class Conductor(object):
         self.octave = octave  # Starting octave
         self.instruments = [instrument_lookup(10)(ins_num=x, **self.instrument_ctx()) for x in range(3)]
         for x in range(4):
-            self.instruments.append(instrument_lookup(4)(ins_num=x+3, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
-        self.instruments.append(instrument_lookup(9)(ins_num=8, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
-        self.instruments.append(instrument_lookup(8)(ins_num=9, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
-        self.instruments.append(instrument_lookup('Octopus')(ins_num=10, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
+            self.instruments.append(instrument_lookup(4)(ins_num=x+3, **self.instrument_ctx()))
+        self.instruments.append(instrument_lookup(9)(ins_num=8, **self.instrument_ctx()))
+        self.instruments.append(instrument_lookup(8)(ins_num=9, **self.instrument_ctx()))
+        self.instruments.append(instrument_lookup('Octopus')(ins_num=10, **self.instrument_ctx()))
 
-        # self.instruments.append(instrument_lookup(7)(ins_num=14, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
-        # self.instruments.append(instrument_lookup(5)(ins_num=15, mport=self.mport, key=key, scale=scale, octave=octave, speed=1))
+        # self.instruments.append(instrument_lookup(7)(ins_num=14, **self.instrument_ctx()))
+        # self.instruments.append(instrument_lookup(5)(ins_num=15, **self.instrument_ctx()))
         self.current_visible_instrument_num = 0
         self.current_state = 'load'  # Current state to be shown on display(s)
+        lcd.flash("Conductor started")
         return
 
     def instrument_ctx(self):
@@ -85,7 +85,11 @@ class Conductor(object):
         return led_grid
 
     def gbl_cfg_screen(self):
-        led_grid, cb_grid = generate_screen(gbl_cfg_grid_defn, {'scale_chars': SCALE_CHARS[self.scale], 'key':self.key+' ', 'num_ins': self.get_total_instrument_num(), 'curr_ins': self.get_curr_instrument_num()-1})
+        led_grid, cb_grid = generate_screen(gbl_cfg_grid_defn, {
+            'scale_chars': c.SCALE_CHARS[self.scale],
+            'key': self.key+' ',
+            'num_ins': self.get_total_instrument_num(),
+            'curr_ins': self.get_curr_instrument_num()-1})
         self.gbl_cfg_cb_grid = cb_grid
         return led_grid
         # return create_gbl_cfg_grid(range(len(self.instruments)), self.key, self.scale)
@@ -97,15 +101,15 @@ class Conductor(object):
     def load_screen(self):
         led_grid = []
         for x in range(16):
-            led_grid.append([LED_BLANK for y in range(16)])
+            led_grid.append([c.LED_BLANK for y in range(16)])
         files = get_all_set_file_numbers()
         for f in files:
             if f > 254:  # TODO add a slot for empty/new
                 continue
             x = int(f / 16)
             y = int(f % 16)
-            led_grid[y][15-x] = LED_ACTIVE
-        led_grid[0][15] = LED_CURSOR
+            led_grid[y][15-x] = c.LED_ACTIVE
+        led_grid[0][15] = c.LED_CURSOR
         return led_grid
 
     def save_screen(self):
@@ -177,7 +181,7 @@ class Conductor(object):
             # cb = get_cb_from_touch(get_ins_cfg_cb_grid(self.get_curr_instrument_num()), x, y)
         return
 
-    ###### CALLBACK METHODS ######
+    # ##### CALLBACK METHODS ######
 
     def cb_reset(self, x, y):
         # TODO reset all beatpos to 0
@@ -186,39 +190,48 @@ class Conductor(object):
             try:
                 i.curr_page_num = 0
                 i.curr_rept_num = 0
-            except:
+            except Exception as e:
+                str(e)
                 pass
             if i.type == 'Droplets':
                 i.droplet_positions = [d for d in i.droplet_starts]
         self.current_state = 'play'
         lcd.flash("Reset all")
         return
+
     def cb_scale_inc(self, x, y):
         self.cycle_scale(1)
         return
+
     def cb_scale_dec(self, x, y):
         self.cycle_scale(-1)
         return
+
     def cb_key_inc(self, x, y):
         self.cycle_key(1)
         return
+
     def cb_key_dec(self, x, y):
         self.cycle_key(-1)
         return
+
     def cb_load(self, x, y):
         self.current_state = 'load'
         lcd.flash("Select load")
         return
+
     def cb_save(self, x, y):
         self.current_state = 'save'
         lcd.flash("Select save file")
         return
+
     def cb_instrument_sel(self, x, y):
         if int(y) < self.get_total_instrument_num():
             self.set_curr_instrument(int(y))
             self.current_state = 'play'
         lcd.flash("Selected {}".format(self.get_curr_instrument().type))
         return
+
     def cb_instrument_type(self, x, y):
         if self.get_total_instrument_num() >= 16:
             return
@@ -226,8 +239,7 @@ class Conductor(object):
         self.instruments.append(ins(ins_num=self.get_total_instrument_num(), **self.instrument_ctx()))
         lcd.flash("Added {}".format(self.instruments[~0].type))
 
-
-    ###### GETTERS/SETTERS ######
+    # ###### GETTERS/SETTERS ######
 
     def get_curr_instrument(self):
         return self.instruments[self.current_visible_instrument_num]
@@ -262,7 +274,7 @@ class Conductor(object):
         lcd.flash("Scale {}".format(self.scale))
         return
 
-    ###### CONTROL PASSTHROUGH METHODS ######
+    # ##### CONTROL PASSTHROUGH METHODS ######
 
     def change_division(self, up_down):
         self.get_curr_instrument().change_division(up_down)
@@ -273,88 +285,17 @@ class Conductor(object):
         return
 
     def inc_rep(self, page):
-        ins = self.get_curr_instrument().inc_page_repeats(page)
+        self.get_curr_instrument().inc_page_repeats(page)
         return
 
     def dec_rep(self, page):
-        ins = self.get_curr_instrument().dec_page_repeats(page)
+        self.get_curr_instrument().dec_page_repeats(page)
         return
 
     def add_page(self):
-        ins = self.get_curr_instrument().add_page()
+        self.get_curr_instrument().add_page()
         return
 
     def clear_page(self):
         self.get_curr_instrument().clear_page()
         return
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import unittest
-class TestInstrument(unittest.TestCase):
-    def test_instrument_nums(self):
-        seq = Conductor(None)
-        self.assertEqual(seq.get_curr_instrument_num(), 1)
-        self.assertEqual(seq.get_total_instrument_num(), 1)
-        seq.next_instrument()
-        self.assertEqual(seq.get_curr_instrument_num(), 1)
-        seq.prev_instrument()
-        self.assertEqual(seq.get_curr_instrument_num(), 1)
-        seq.prev_instrument()
-        self.assertEqual(seq.get_curr_instrument_num(), 1)
-        seq.add_instrument("e", "major")
-        self.assertEqual(seq.get_curr_instrument_num(), 1)
-        self.assertEqual(seq.get_total_instrument_num(), 2)
-        seq.next_instrument()
-        self.assertEqual(seq.get_curr_instrument_num(), 2)
-        seq.prev_instrument()
-        self.assertEqual(seq.get_curr_instrument_num(), 1)
-
-    def test_multi_instrument_notes(self):
-        seq = Conductor(None)
-        seq.add_instrument("e", "major")
-        seq.touch_note(0,3)
-        seq.touch_note(1,4)
-        self.assertEqual(seq.get_curr_instrument_num(), 1)
-        self.assertEqual(seq.get_curr_instrument().get_curr_notes(), [3])
-        seq.next_instrument()
-        seq.touch_note(0,5)
-        seq.touch_note(1,6)
-        self.assertEqual(seq.get_curr_instrument_num(), 2)
-        self.assertEqual(seq.get_curr_instrument().get_curr_notes(), [5])
-        seq.step_beat()
-        self.assertEqual(seq.get_curr_instrument().get_curr_notes(), [6])
-        seq.prev_instrument()
-        self.assertEqual(seq.get_curr_instrument().get_curr_notes(), [4])
-
-    def test_led_grid(self):
-        seq = Conductor(None)
-        seq.touch_note(2,3)
-        seq.touch_note(2,4)
-        seq.touch_note(2,5)
-        seq.touch_note(3,3)
-        seq.touch_note(4,3)
-        seq.step_beat()
-        seq.step_beat()
-        seq.step_beat()  # step to 4th beat, #3
-        grid = seq.get_led_grid()
-        print(grid)
-        self.assertEqual(grid[0], [0,0,0,0,0,0,0,0,             0,0,0,0,0,0,0,0])
-        self.assertEqual(grid[1], [0,0,0,0,0,0,0,0,             0,0,0,0,0,0,0,0])
-        self.assertEqual(grid[2], [0,0,0,LED_ACTIVE,LED_ACTIVE,LED_ACTIVE,0,0, 0,0,0,0,0,0,0,0])
-        self.assertEqual(grid[3], [LED_BEAT,LED_BEAT,LED_BEAT,LED_ACTIVE,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT, LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT,LED_BEAT])
-        self.assertEqual(grid[4], [0,0,0,LED_ACTIVE,0,0,0,0,     0,0,0,0,0,0,0,0])
-
-if __name__ == '__main__':
-    unittest.main()

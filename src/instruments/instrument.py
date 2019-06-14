@@ -1,14 +1,16 @@
-#coding=utf-8
-from constants import *
+# coding=utf-8
+import constants as c
 from note_grid import Note_Grid
-from note_conversion import create_cell_to_midi_note_lookup, SCALE_INTERVALS, KEYS
+from note_conversion import create_cell_to_midi_note_lookup
 import mido
 from random import choice, random, randint
 from copy import deepcopy
 from interfaces.lcd import lcd
 
+
 class Instrument(object):
     """docstring for Instrument."""
+
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(Instrument, self).__init__()
         self.type = "Generic Instrument"
@@ -17,13 +19,13 @@ class Instrument(object):
         self.height = 16
         self.width = 16
         self.prev_loc_beat = 0
-        self.local_beat_position = 0  # Beat position due to instrument speed, which may be different to other instruments
+        self.local_beat_position = 0
         self.speed = speed  # Relative speed of this instrument compared to global clock
         self.key = key
         self.scale = scale
         self.octave = octave  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
-        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)  # Function is cached for convenience
+        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)
         self.selected_next_page_num = None
 
     def cell_to_midi(self, cell):
@@ -148,12 +150,12 @@ class Instrument(object):
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
         if self.chaos > 0:  # If using chaos, switch up some notes
-            if beat_notes.count(NOTE_ON) > 0:  # Only if there are any notes in use
+            if beat_notes.count(c.NOTE_ON) > 0:  # Only if there are any notes in use
                 if random() < self.chaos:
                     rand_note = randint(0, self.height-1)
-                    beat_notes[rand_note] = NOTE_ON if beat_notes[rand_note] != NOTE_ON else NOTE_OFF
-                    # beat_notes = [n if random() < self.chaos else (NOTE_ON if n==NOTE_OFF else NOTE_OFF) for n in beat_notes]
-        notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
+                    beat_notes[rand_note] = c.NOTE_ON if beat_notes[rand_note] != c.NOTE_ON else c.NOTE_OFF
+        # beat_notes = [n if random() < self.chaos else (NOTE_ON if n==NOTE_OFF else NOTE_OFF) for n in beat_notes]
+        notes_on = [i for i, x in enumerate(beat_notes) if x == c.NOTE_ON]  # get list of cells that are on
         return notes_on
 
     def get_beat_division(self):
@@ -191,8 +193,8 @@ class Instrument(object):
             _notes_on = [n for n in notes_on if n not in notes_off]
             notes_off = _notes_off
             notes_on = _notes_on
-        notes_off = [n for n in notes_off if n<128 and n>0]
-        notes_on = [n for n in notes_on if n<128 and n>0]
+        notes_off = [n for n in notes_off if n < 128 and n > 0]
+        notes_on = [n for n in notes_on if n < 128 and n > 0]
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
         msgs = off_msgs + on_msgs
@@ -227,47 +229,51 @@ class Instrument(object):
     def cb_sustain(self, x, y):
         self.sustain = not self.sustain
         lcd.flash("Sustain {}".format(self.sustain))
-
         return
+
     def cb_random_pages(self, x, y):
         self.random_pages = not self.random_pages
         lcd.flash("Random {}".format(self.random_pages))
         return
+
     def cb_speed(self, x, y):
         self.speed = x
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         lcd.flash("Speed {}".format(self.speed))
         return
+
     def cb_octave(self, x, y):
         self.octave = x
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         lcd.flash("Octave {}".format(self.octave))
         return
+
     def cb_clip(self, x, y):
         page_num = (4*y) + x
         self.selected_next_page_num = page_num
         lcd.flash("Next page {}".format(page_num))
         return
+
     def cb_fill(self, x, y):
         self.fill = False if self.fill else True
         lcd.flash("Fill {}".format(self.fill))
         return
+
     def cb_copy_page(self, x, y):
         page = y
         if y >= len(self.pages):
-            logging.info(self.curr_page_num)
-            logging.info(str(len(self.pages)))
+            c.logging.info(self.curr_page_num)
+            c.logging.info(str(len(self.pages)))
             self.add_page(pos=False)
             self.pages[self.curr_page_num+1].note_grid = deepcopy(self.pages[self.curr_page_num].note_grid)
-            logging.info(self.curr_page_num)
-            logging.info(str(len(self.pages)))
+            c.logging.info(self.curr_page_num)
+            c.logging.info(str(len(self.pages)))
             return
 
         page_num = (4*y) + x
         self.selected_next_page_num = page_num
         lcd.flash("Copied page {}".format(page))
         return
-
 
     def cb_page(self, x, y):
         page = y
@@ -278,12 +284,12 @@ class Instrument(object):
         if x == 0:
             if self.pages[y].repeats == 1:
                 self.pages[y].repeats = 0
-                lcd.flash("Page {} rpt 0".format(page))
+                lcd.flash("Page {} rpt 0".format(page+1))
             else:
                 self.pages[y].repeats = 1
-                lcd.flash("Page {} rpt 1".format(page))
+                lcd.flash("Page {} rpt 1".format(page+1))
             return
         else:
             self.pages[y].repeats = x + 1
-            lcd.flash("Page {} rpt {}".format(page, self.pages[y].repeats))
+            lcd.flash("Page {} rpt {}".format(page+1, self.pages[y].repeats))
         return

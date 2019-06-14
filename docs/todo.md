@@ -2,6 +2,8 @@
 - multi-instrument support: program new ones, and add cfg pages
 - multi-color support
 - call sequencer.restart() when controller receives "songpos" msg - all instruments reset to page 0, beatpos 0
+- redo euclidean.regen algorithm
+- fix lint issues around constants import
 
 ### Add small screen for better feedback
 - from lcd import lcd

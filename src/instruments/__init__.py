@@ -12,8 +12,6 @@ from instruments.sequencer import Sequencer
 from instruments.transformer import Transformer
 
 
-
-
 def instrument_lookup(num):
     return {
         0: Instrument,  # Generic, fallback, no functionality

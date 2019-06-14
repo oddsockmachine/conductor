@@ -45,8 +45,8 @@ class Euclidean(DrumDeviator):
 
     def apply_control(self, x, y):
         if y >= 8:  # Control touch, but save it in the page, it's easier that way
-            y-=8
-            if x < 8: # densities
+            y -= 8
+            if x < 8:  # densities
                 self.densities[y] = 7 - x
             else:  # offsets
                 self.offsets[y] = x - 8
@@ -54,8 +54,6 @@ class Euclidean(DrumDeviator):
             self.lengths[y] = x+1
         self.regen(y)
         return
-
-
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page - either a control, or a note'''
