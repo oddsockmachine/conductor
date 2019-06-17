@@ -9,16 +9,18 @@ import random
 i2c_bus = busio.I2C(SCL, SDA)
 
 # create the trellis
-trelli = [
-     [NeoTrellis(i2c_bus, False, addr=0x2e), NeoTrellis(i2c_bus, False, addr=0x2f),
-      NeoTrellis(i2c_bus, False, addr=0x30), NeoTrellis(i2c_bus, False, addr=0x31)],
-     [NeoTrellis(i2c_bus, False, addr=0x32), NeoTrellis(i2c_bus, False, addr=0x33),
-      NeoTrellis(i2c_bus, False, addr=0x34), NeoTrellis(i2c_bus, False, addr=0x35)],
-     [NeoTrellis(i2c_bus, False, addr=0x36), NeoTrellis(i2c_bus, False, addr=0x37),
-      NeoTrellis(i2c_bus, False, addr=0x38), NeoTrellis(i2c_bus, False, addr=0x39)],
-     [NeoTrellis(i2c_bus, False, addr=0x3a), NeoTrellis(i2c_bus, False, addr=0x3b),
-      NeoTrellis(i2c_bus, False, addr=0x3c), NeoTrellis(i2c_bus, False, addr=0x3d)],
-    ]
+trelli = [[], [], [], []]
+addrs = [[0x30, 0x31],
+         [0x34, 0x35],
+         [0x36, 0x37],
+         [0x3a, 0x3c]]
+# Create trelli sequentially with a slight pause between each
+for x, slice in enumerate(addrs):
+    for y, addr in enumerate(slice):
+        t = NeoTrellis(i2c_bus, False, addr=addr)
+        t.pixels.auto_write = False
+        trelli[x].append(t)
+        sleep(0.2)
 
 
 sizeY = len(trelli) * 4

@@ -88,6 +88,10 @@ Volume Faders for each instrument?
 - Set up LFOs or timed transitions
 
 ### Marbles?
+- Like mutable instruments, shift register style pattern randomness
+
+### Keyboard
+- Just for playing instruments directly
 
 ### Z-Mode
 - Use for display only

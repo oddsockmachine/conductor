@@ -8,7 +8,8 @@ class CC(Instrument):
     """CC
     - Sets ControlChange values
     - Multiple pages of sliders
-    - Options for slew rate, transitions etc"""
+    - Options for slew rate, transitions etc
+    - Choose pages of 16 big sliders, 32 small sliders, etc"""
 
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(CC, self).__init__(ins_num, mport, key, scale, octave, speed)
