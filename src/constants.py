@@ -1,3 +1,5 @@
+# coding=utf-8
+
 # Log to a file, good for debugging
 import logging
 logging.basicConfig(filename='sequencer.log', level=logging.DEBUG)
