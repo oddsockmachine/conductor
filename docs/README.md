@@ -1,14 +1,14 @@
 # ISNTRUMENT
 
-## A Grid instrument, sequencer and performance workstation for live music creation
+## _A Grid instrument, sequencer and performance workstation for live music creation_
 
-### Introduction
+## Introduction
 
 The _Isntrument_ was designed to be the center of any electronic music setup. Whether you want to control modular synths, live loop, create giant improvised sets, control Ableton, or generate music algorithmically, the Isntrument can do it all.
 
 Think of it like the conductor in an orchestra; it's not making any noise, but it's flailing its arms wildly, keeping every instrument around it under control, in time, and in tune... and looking cool doing while it.
 
-### Examples
+## Examples
 
 - https://soundcloud.com/oddsockmachine/droplets
 
@@ -16,7 +16,7 @@ Think of it like the conductor in an orchestra; it's not making any noise, but i
 
 - https://www.youtube.com/watch?v=pdu7UI-fMRo
 
-### Installation
+## Installation
 
 `python3 -m venv ./venv && source venv/bin/activate`
 
@@ -24,7 +24,7 @@ Think of it like the conductor in an orchestra; it's not making any noise, but i
 
 `python controller.py [--hw 1]`
 
-### Usage
+## Usage
 
 The Isntrument  has four modes:
 
@@ -54,7 +54,7 @@ The Isntrument  has four modes:
   - Shows the performance screen of the currently selected instrument
   - Details about how each instrument works are available in the `Instruments` section of this document.
 
-### Instruments
+## Instruments
 
 Each "instrument" is a different method of making music, controlling things, or generating inspiration.
 
@@ -64,63 +64,63 @@ Others take inspiration from the worlds of modular synth, ambient and generative
 
 Instruments are listed alphabetically, the same order they are available in when adding them to a set.
 
-##### Beat Maker
+#### Beat Maker
 
 TODO
 
-##### Binary Sequencer
+#### Binary Sequencer
 
 TODO
 
-##### CC
+#### CC
 
 TODO
 
-##### Chord Sequencer
+#### Chord Sequencer
 
 TODO
 
-##### Droplets
+#### Droplets
 
 TODO
 
-##### Drum Deviator
+#### Drum Deviator
 
 TODO
 
-##### Drum Machine
+#### Drum Machine
 
 TODO
 
-##### Elaborator
+#### Elaborator
 
 TODO
 
-##### Euclidean Generator
+#### Euclidean Generator
 
 TODO
 
-##### Keyboard
+#### Keyboard
 
 TODO
 
-##### LFO
+#### LFO
 
 TODO
 
-##### Marbles
+#### Marbles
 
 TODO
 
-##### Octopus
+#### Octopus
 
 TODO
 
-##### Sequencer
+#### Sequencer
 
 TODO
 
-##### Transformer
+#### Transformer
 
 TODO
 
