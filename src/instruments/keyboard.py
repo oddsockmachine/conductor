@@ -4,18 +4,19 @@ import constants as c
 import mido
 
 
-class Elaborator(Instrument):
-    """Elaborator
-    - Draw a beat/pattern on a page
-    - Select which of the page repeats will be elaborated (eg every 4th)
-    - Add randomness to that repeat, but only use notes that are already on the page"""
+class Keyboard(Instrument):
+    """Keyboard
+    - Sets ControlChange values
+    - Multiple pages of sliders
+    - Options for slew rate, transitions etc
+    - Choose pages of 16 big sliders, 32 small sliders, etc"""
 
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
-        super(Elaborator, self).__init__(ins_num, mport, key, scale, octave, speed)
+        super(Keyboard, self).__init__(ins_num, mport, key, scale, octave, speed)
         if not isinstance(ins_num, int):
             print("Instrument num {} must be an int".format(ins_num))
             exit()
-        self.type = "Elaborator"
+        self.type = "Keyboard"
         self.height = 16
         self.width = 16
         self.local_beat_position = 0
