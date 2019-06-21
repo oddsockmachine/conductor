@@ -27,8 +27,8 @@ class Display(object):
         trelli = [[], [], [], []]
         addrs = [[0x2e, 0x2f, 0x30, 0x31],
                  [0x32, 0x33, 0x34, 0x35],
-                 [0x36, 0x37, 0x38, 0x39],
-                 [0x3a, 0x3b, 0x3c, 0x3d]]
+                 [0x39, 0x38, 0x37, 0x36],
+                 [0x3d, 0x3b, 0x3c, 0x3a]]
         # Create trelli sequentially with a slight pause between each
         for x, slice in enumerate(addrs):
             for y, addr in enumerate(slice):
