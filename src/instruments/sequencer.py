@@ -99,7 +99,6 @@ class Sequencer(Instrument):
         if self.is_page_end():
             self.advance_page()
         new_notes = self.get_curr_notes()
-        c.logging.info(new_notes)
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
@@ -122,11 +121,9 @@ class Sequencer(Instrument):
         return notes_on
 
     def output(self, old_notes, new_notes):
-        c.logging.info("output")
         """Return all note-ons from the current beat, and all note-offs from the last"""
         notes_off = [self.cell_to_midi(c) for c in old_notes]
         notes_on = [self.cell_to_midi(c) for c in new_notes]
-        c.logging.info(notes_on)
         if self.sustain:
             _notes_off = [n for n in notes_off if n not in notes_on]
             _notes_on = [n for n in notes_on if n not in notes_off]
@@ -134,14 +131,11 @@ class Sequencer(Instrument):
             notes_on = _notes_on
         notes_off = [n for n in notes_off if n < 128 and n > 0]
         notes_on = [n for n in notes_on if n < 128 and n > 0]
-        c.logging.info(notes_on)
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
         msgs = off_msgs + on_msgs
-        c.logging.info(msgs)
         if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
             for msg in msgs:
-                c.logging.info(msg)
                 self.mport.send(msg)
 
     def save(self):

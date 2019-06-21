@@ -5,18 +5,18 @@
 #
 # scale = list of intervals from root note, of any size
 SCALE_INTERVALS = {
-    "chromatic":  list(map(int, '111111111111'.split())),
-    "major":      list(map(int, '2212221'.split())),
-    "minor":      list(map(int, '2122122'.split())),
-    "pentatonic_min": list(map(int, '32322'.split())),
-    "pentatonic_maj": list(map(int, '22323'.split())),
-    'ionian':     list(map(int, '2212221'.split())),
-    'dorian':     list(map(int, '2122212'.split())),
-    'phrygian':   list(map(int, '1222122'.split())),
-    'lydian':     list(map(int, '2221221'.split())),
-    'mixolydian': list(map(int, '2212212'.split())),
-    'aeolian':    list(map(int, '2122122'.split())),
-    'locrian':    list(map(int, '1221222'.split())),
+    "chromatic":  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    "major":      [2, 2, 1, 2, 2, 2, 1],
+    "minor":      [2, 1, 2, 2, 1, 2, 2],
+    "pentatonic_min": [3, 2, 3, 2, 2],
+    "pentatonic_maj": [2, 2, 3, 2, 3],
+    'ionian':     [2, 2, 1, 2, 2, 2, 1],
+    'dorian':     [2, 1, 2, 2, 2, 1, 2],
+    'phrygian':   [1, 2, 2, 2, 1, 2, 2],
+    'lydian':     [2, 2, 2, 1, 2, 2, 1],
+    'mixolydian': [2, 2, 1, 2, 2, 1, 2],
+    'aeolian':    [2, 1, 2, 2, 1, 2, 2],
+    'locrian':    [1, 2, 2, 1, 2, 2, 2],
 }
 
 KEYS = 'a a# b c c# d d# e f f# g g#'.split()

@@ -37,8 +37,6 @@ class Instrument(object):
     def cell_to_midi(self, cell):
         '''convert a cell height to a midi note based on key, scale, octave'''
         midi_note_num = self.note_converter[cell]
-        c.logging.info(cell)
-        c.logging.info(midi_note_num)
         return midi_note_num
 
     def set_key(self, key):
