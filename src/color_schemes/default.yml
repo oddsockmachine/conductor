@@ -1,0 +1,19 @@
+name: default
+gradient:
+  from: (0,0,0)
+  to: (0,0,0)
+pallette:
+  BLANK: (0, 0, 0),
+  CURSOR: (1, 1, 1),
+  ACTIVE: (2, 2, 2),
+  SELECT: (3, 3, 3),
+  BEAT: (4, 4, 4),
+  SCALE_PRIMARY: (0, 0, 0),
+  SCALE_SECONDARY: (0, 0, 0),
+  DROPLET_MOVING: (0, 0, 0),
+  DROPLET_SPLASH: (0, 0, 0),
+  DROPLET_STOPPED: (0, 0, 0),
+  DRUM_OFF: (0, 0, 0),
+  DRUM_SELECT: (0, 0, 0),
+  DRUM_ACTIVE: (0, 0, 0),
+  DRUM_CHANGED: (0, 0, 0),
