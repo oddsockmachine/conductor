@@ -99,6 +99,7 @@ class Sequencer(Instrument):
         if self.is_page_end():
             self.advance_page()
         new_notes = self.get_curr_notes()
+        c.logging.info(new_notes)
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
@@ -121,6 +122,7 @@ class Sequencer(Instrument):
         return notes_on
 
     def output(self, old_notes, new_notes):
+        c.logging.info("output")
         """Return all note-ons from the current beat, and all note-offs from the last"""
         notes_off = [self.cell_to_midi(c) for c in old_notes]
         notes_on = [self.cell_to_midi(c) for c in new_notes]
