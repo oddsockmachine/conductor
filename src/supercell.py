@@ -2,7 +2,6 @@ from conductor import Conductor
 from time import sleep, time
 
 
-
 class Supercell(object):
     """docstring for Supercell."""
 
@@ -18,15 +17,11 @@ class Supercell(object):
         self.display = display
         self.display.command_cb = self.command_cb
         self.save_on_exit = False
-        self.CLOCK = 0
 
     def run(self):
         print("Running...")
         self.draw()
         while True:
-            self.CLOCK += 1
-            if (self.CLOCK % 10) == 0:
-                self.conductor.step_beat()
             self.get_cmds()
             sleep(0.1)  # TODO REMOVE TODO
             # self.conductor.step_beat()  # TODO REMOVE TODO
