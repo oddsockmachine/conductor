@@ -121,25 +121,25 @@ class Display(object):
     def make_cb(self):
         def button_cb(xcoord, ycoord, edge):
             if edge == NeoTrellis.EDGE_RISING:
-                if self.ins_button.value:  # Button from instrument menu
-                    if xcoord == 7:  # Octave
-                        self.command_cb({'cmd': 'change_octave', 'octave': self.grid_w-1-ycoord})
-                    if ycoord == 0 and xcoord <= 4:  # Divison/speed
-                        self.command_cb({'cmd': 'change_division', 'div': xcoord})
-                    if ycoord == 1 and xcoord <= 1:  # Scale
-                        self.command_cb({'cmd': 'cycle_scale', 'dir': {0: -1, 1: 1}[xcoord]})
-                    if ycoord == 7 and xcoord == 0:  # key
-                        self.command_cb({'cmd': 'cycle_key', 'dir': -1})
-                    if ycoord == 3 and xcoord == 0:  # key
-                        self.command_cb({'cmd': 'cycle_key', 'dir': 1})
-                    if ycoord == 0 and xcoord == 7:  # key
-                        self.command_cb({'cmd': 'random_rpt'})
-
-                elif self.seq_button.value:  # Normal mode
-                    # Button from sequencer menu
-                    self.command_cb({'cmd': None})
-                else:  # Menu mode - look up location of press and return cmd
-                    self.command_cb({'cmd': 'note', 'x': xcoord, 'y': self.grid_h-1-ycoord})
+                # if self.ins_button.value:  # Button from instrument menu
+                #     if xcoord == 7:  # Octave
+                #         self.command_cb({'cmd': 'change_octave', 'octave': self.grid_w-1-ycoord})
+                #     if ycoord == 0 and xcoord <= 4:  # Divison/speed
+                #         self.command_cb({'cmd': 'change_division', 'div': xcoord})
+                #     if ycoord == 1 and xcoord <= 1:  # Scale
+                #         self.command_cb({'cmd': 'cycle_scale', 'dir': {0: -1, 1: 1}[xcoord]})
+                #     if ycoord == 7 and xcoord == 0:  # key
+                #         self.command_cb({'cmd': 'cycle_key', 'dir': -1})
+                #     if ycoord == 3 and xcoord == 0:  # key
+                #         self.command_cb({'cmd': 'cycle_key', 'dir': 1})
+                #     if ycoord == 0 and xcoord == 7:  # key
+                #         self.command_cb({'cmd': 'random_rpt'})
+                #
+                # elif self.seq_button.value:  # Normal mode
+                #     # Button from sequencer menu
+                #     self.command_cb({'cmd': None})
+                # else:  # Menu mode - look up location of press and return cmd
+                self.command_cb({'cmd': 'note', 'x': xcoord, 'y': self.grid_h-1-ycoord})
             return
         return button_cb
 
