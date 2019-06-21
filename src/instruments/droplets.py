@@ -31,6 +31,11 @@ class Droplets(Instrument):
         self.droplet_positions = [0 for n in range(self.width)]
         self.droplet_starts = [0 for n in range(self.width)]
 
+    def restart(self):
+        """Set all aspects of instrument back to starting state"""
+        self.droplet_positions = [0 for n in range(self.width)]
+        return
+
     def get_status(self):
         status = {
             'ins_num': self.ins_num+1,

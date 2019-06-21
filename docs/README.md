@@ -1,10 +1,10 @@
-# ISNTRUMENT
+# Conductor
 
 ## _A Grid instrument, sequencer and performance workstation for live music creation_
 
 ## Introduction
 
-The _Isntrument_ was designed to be the center of any electronic music setup. Whether you want to control modular synths, live loop, create giant improvised sets, control Ableton, or generate music algorithmically, the Isntrument can do it all.
+The _Conductor_ was designed to be the center of any electronic music setup. Whether you want to control modular synths, live loop, create giant improvised sets, control Ableton, or generate music algorithmically, the Conductor can do it all.
 
 Think of it like the conductor in an orchestra; it's not making any noise, but it's flailing its arms wildly, keeping every instrument around it under control, in time, and in tune... and looking cool doing while it.
 
@@ -26,7 +26,7 @@ Think of it like the conductor in an orchestra; it's not making any noise, but i
 
 ## Usage
 
-The Isntrument  has four modes:
+The Conductor  has four modes:
 
 - Load/Save set
   - Displays all saved sets as highlighted items on the grid.

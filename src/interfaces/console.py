@@ -11,6 +11,9 @@ class Display(object):
 
     def __init__(self, stdscr, w=c.W, h=c.H):
         super(Display, self).__init__()
+        curses.use_default_colors()
+        for i in range(0, curses.COLORS):
+            curses.init_pair(i + 1, i, -1)
         self.stdscr = stdscr
         self.grid_h = h
         self.grid_w = w*2
@@ -82,7 +85,7 @@ class Display(object):
                 x = (i * 2) + 1
                 y = (c.H - r - 1) + 1
                 glyph = c.DISPLAY[cell]
-                win.addstr(y, x, glyph)  # , curses.color_pair(4))
+                win.addstr(y, x, glyph, curses.color_pair(40))
         win.refresh()
         return
 

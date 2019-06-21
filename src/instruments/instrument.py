@@ -28,6 +28,12 @@ class Instrument(object):
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)
         self.selected_next_page_num = None
 
+    def restart(self):
+        """Set all aspects of instrument back to starting state"""
+        self.local_beat_position = 0
+        self.selected_next_page_num = 0
+        return
+
     def cell_to_midi(self, cell):
         '''convert a cell height to a midi note based on key, scale, octave'''
         midi_note_num = self.note_converter[cell]

@@ -136,6 +136,13 @@ class Conductor(object):
             ins.step_beat(self.beat_position)
         pass
 
+    def restart(self):
+        """Set all instruments back to starting state, beat 0, page 0"""
+        # TODO
+        for ins in self.instruments:
+            ins.restart()
+        return
+
     def save(self, filenum=None):
         data = {
             "height": 16,
@@ -167,13 +174,13 @@ class Conductor(object):
             if filenum == 1:
                 return
             self.load(load_filenum(filenum))
-            self.current_state == 'play'  # TODO return to play, or stay in load?
+            self.current_state == 'play'
         elif self.current_state == 'save':
             filenum = filenum_from_touch(x, y)
             if validate_filenum(filenum):
                 return  # don't overwrite existing files
             self.save(filenum)
-            self.current_state == 'play'  # TODO return to play, or stay in save?
+            self.current_state == 'play'
         elif self.current_state == 'gbl_cfg':
             cb_text, _x, _y = get_cb_from_touch(self.gbl_cfg_cb_grid, x, y)  # Find which area was touched
             if not cb_text:

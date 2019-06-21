@@ -28,6 +28,11 @@ class Euclidean(DrumDeviator):
         for i in range(8):
             self.regen(i)
 
+    def restart(self):
+        """Set all aspects of instrument back to starting state"""
+        self.curr_notes_pos = [0 for x in range(8)]
+        return
+
     def regen(self, note):
         '''A parameter for this note has changed, regenerate sequence'''
         pattern = []
