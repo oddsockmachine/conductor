@@ -43,7 +43,7 @@ def filenum_from_touch(x, y):
 
 
 def validate_filenum(num):
-    return int(num) in ALL_FILE_NAMES
+    return int(num) in get_all_set_file_numbers()
 
 
 def load_filenum(filenum):

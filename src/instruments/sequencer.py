@@ -136,6 +136,7 @@ class Sequencer(Instrument):
         msgs = off_msgs + on_msgs
         if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
             for msg in msgs:
+                c.logging.info(msg)
                 self.mport.send(msg)
 
     def save(self):

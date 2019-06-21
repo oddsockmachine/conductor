@@ -168,18 +168,24 @@ class Conductor(object):
         if self.current_state == 'play':
             self.get_curr_instrument().touch_note(self.current_state, x, y)
         elif self.current_state == 'load':
+            c.logging.info("loading")
             filenum = filenum_from_touch(x, y)
             if not validate_filenum(filenum):
                 return
             if filenum == 1:
                 return
             self.load(load_filenum(filenum))
+            c.logging.info("loaded {}".format(filenum))
             self.current_state == 'play'
         elif self.current_state == 'save':
+            c.logging.info("Saving {} {}".format(x, y))
             filenum = filenum_from_touch(x, y)
             if validate_filenum(filenum):
+                c.logging.info("already exists, ignoring")
+                self.current_state == 'play'
                 return  # don't overwrite existing files
             self.save(filenum)
+            c.logging.info("saved")
             self.current_state == 'play'
         elif self.current_state == 'gbl_cfg':
             cb_text, _x, _y = get_cb_from_touch(self.gbl_cfg_cb_grid, x, y)  # Find which area was touched
