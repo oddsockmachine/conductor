@@ -58,8 +58,8 @@ CYAN = (0, 255, 255)
 BLUE = (0, 0, 255)
 PURPLE = (180, 0, 255)
 
-red = Color("black")
-blue = Color("black")
+red = Color("green")
+blue = Color("orange")
 gradient = gradient_1d(red, blue, sizeX*2)
 print(gradient)
 

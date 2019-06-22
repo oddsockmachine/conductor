@@ -1,20 +1,20 @@
 name: default
 gradient:
-  from: "Blue"
-  to: "Green"
+  from: "#011501"
+  to: "#010115"
 brightness: 1
 pallette:
-  BLANK: (0, 0, 0),
-  CURSOR: (1, 1, 1),
-  ACTIVE: (2, 2, 2),
-  SELECT: (3, 3, 3),
-  BEAT: (4, 4, 4),
-  SCALE_PRIMARY: (0, 0, 0),
-  SCALE_SECONDARY: (0, 0, 0),
-  DROPLET_MOVING: (0, 0, 0),
-  DROPLET_SPLASH: (0, 0, 0),
-  DROPLET_STOPPED: (0, 0, 0),
-  DRUM_OFF: (0, 0, 0),
-  DRUM_SELECT: (0, 0, 0),
-  DRUM_ACTIVE: (0, 0, 0),
-  DRUM_CHANGED: (0, 0, 0),
+  BLANK: [1, 1, 1]
+  CURSOR: [15, 2, 2]
+  ACTIVE: [30, 4, 4]
+  SELECT: [10, 30, 30]
+  BEAT: [30, 30, 10]
+  SCALE_PRIMARY: [0, 0, 0]
+  SCALE_SECONDARY: [0, 0, 0]
+  DROPLET_MOVING: [0, 0, 0]
+  DROPLET_SPLASH: [0, 0, 0]
+  DROPLET_STOPPED: [0, 0, 0]
+  DRUM_OFF: [0, 0, 0]
+  DRUM_SELECT: [0, 0, 0]
+  DRUM_ACTIVE: [0, 0, 0]
+  DRUM_CHANGED: [0, 0, 0]

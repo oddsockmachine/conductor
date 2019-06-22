@@ -11,7 +11,6 @@ print("Imported hardware connections")
 
 AUTO_WRITE = False
 
-
 class Display(object):
     """docstring for Display."""
 
@@ -62,6 +61,7 @@ class Display(object):
         self.ins_button = digitalio.DigitalInOut(D6)
         print("Inputs initialized")
         lcd.flash("Inputs initialized")
+        self.col_scheme = SCHEMES['default']
         return
 
     def get_cmds(self):
@@ -108,7 +108,8 @@ class Display(object):
     def draw_note_grid(self, led_grid):
         for x in range(len(led_grid)):
             for y in range(len(led_grid[x])):
-                col = c.PALLETE[led_grid[x][y]]
+                col = self.col_scheme.get_color(led_grid[x][y], x, y)
+                # col = c.PALLETE[led_grid[x][y]]
                 self.led_matrix[x][self.grid_h-1-y] = col
         return
 

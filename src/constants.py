@@ -9,22 +9,22 @@ save_extension = '.json'
 
 THEME = "A"
 # The ints used to represent the state of leds on an led_grid
-LED_BLANK = {"A": 0, "B": 0, }[THEME]
-LED_CURSOR = {"A": 1, "B": 2, }[THEME]
-LED_ACTIVE = {"A": 2, "B": 3, }[THEME]
-LED_SELECT = {"A": 3, "B": 3, }[THEME]
-LED_BEAT = {"A": 1, "B": 1, }[THEME]
-LED_SCALE_PRIMARY = {"A": 9, "B": 9, }[THEME]
-LED_SCALE_SECONDARY = {"A": 9, "B": 9, }[THEME]
+LED_BLANK = 0
+LED_CURSOR = 1
+LED_ACTIVE = 2
+LED_SELECT = 3
+LED_BEAT = 4
+LED_SCALE_PRIMARY = 5
+LED_SCALE_SECONDARY = 6
 
-DROPLET_MOVING = 2
-DROPLET_SPLASH = 3
-DROPLET_STOPPED = 1
+DROPLET_MOVING = 7
+DROPLET_SPLASH = 8
+DROPLET_STOPPED = 9
 
-DRUM_OFF = 0
-DRUM_SELECT = 3
-DRUM_ACTIVE = 2
-DRUM_CHANGED = 1
+DRUM_OFF = 10
+DRUM_SELECT = 11
+DRUM_ACTIVE = 12
+DRUM_CHANGED = 13
 
 # TODO calculate and return color tuples based on brightness setting
 OFF = (0, 0, 0)
