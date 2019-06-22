@@ -4,7 +4,18 @@
 #     sprite: which pixel to render, eg background, root note, falling droplet, beatline, active, cursor
 # Load available schemes in from json/yaml data
 
-from dataclasses import dataclass
+# hardware.display.draw_all>draw_note_grid takes a grid of sprites
+# These are dereferenced from constants.pallette to give a grid of (r,g,b)
+# At the call to `col = c.PALLETE[led_grid[x][y]]`, we could instead call
+# col = color.get_color(sprite, x, y)
+# Where sprite is the type of pixel (background, active, etc), and x/y may be
+# used for gradient effects
+
+from glob import glob
+from yaml import load
+from colour import Color
+# https://pypi.org/project/colour/0.1.1/
+
 
 # Some constants, used like atoms/enums
 BLANK = 'BLANK'
@@ -23,20 +34,15 @@ DRUM_ACTIVE = 'DRUM_ACTIVE'
 DRUM_CHANGED = 'DRUM_CHANGED'
 
 
-@dataclass
-class Color:
-    r: int
-    g: int
-    b: int
-
-
 class ColorScheme(object):
     """docstring for ColorScheme."""
 
-    def __init__(self):
+    def __init__(self, yaml_data):
         super(ColorScheme, self).__init__()
         self.brightness = 0.1
-        self.gradient = ((0, 0, 0), (0, 0, 0))
+        self.gradient_from = (0, 0, 0)
+        self.gradient_to = (0, 0, 0)
+        self.gradient = []
         self.pallette = {
             'BLANK': (0, 0, 0),
             'CURSOR': (0, 0, 0),
@@ -53,14 +59,35 @@ class ColorScheme(object):
             'DRUM_ACTIVE': (0, 0, 0),
             'DRUM_CHANGED': (0, 0, 0),
         }
+        self.import_yaml(yaml_data)
+        self.gradient = self.gradient_1d(self.gradient_from, self.gradient_to, 32)
 
-    def get_sprite_color(self, sprite):
-        # Lookup sprite RGB
+    def import_yaml(self, yaml):
+        self.brightness = yaml['brightness']
+        self.gradient_from = Color(yaml['gradient']['from'])
+        self.gradient_to = Color(yaml['gradient']['to'])
+        print(yaml['pallette'])
+        for p in self.pallette.keys():
+            print(p)
+            self.pallette[p] = yaml['pallette'][p]
+        self
         return
 
-    def get_background_color(self, x, y):
-        # Calculate background pixel form gradient
-        return
+    def get_color(self, sprite, x=None, y=None):
+        # Lookup sprite RGB, calculate based on x/y if necessary
+        if sprite == BLANK:
+            col = self.gradient[x+y]
+        else:
+            col = self.pallette[sprite]
+        return col
+
+    def col_to_rgb(self, col):
+        rgb = col.get_rgb()
+        return (int(255*rgb[0]), int(255*rgb[1]), int(255*rgb[2]))
+
+    def gradient_1d(self, start, stop, steps):
+        gradient = list(map(self.col_to_rgb, start.range_to(stop, steps)))
+        return gradient
 
 
 SCHEMES = {}
@@ -68,7 +95,20 @@ SCHEMES = {}
 
 def load_schemes():
     """Load in all named schemes from saved data"""
+    files = glob('./src/color_schemes/*.yml')
+    for y_path in files:
+        with open(y_path, 'r') as y_file:
+            y_scheme = load(y_file)
+        new_scheme = ColorScheme(y_scheme)
+        SCHEMES[y_scheme['name']] = new_scheme
     return
+
+
+load_schemes()
+
+from pprint import pprint
+pprint(SCHEMES)
+pprint(SCHEMES['default'].gradient)
 
 
 # TODO calculate and return color tuples based on brightness setting

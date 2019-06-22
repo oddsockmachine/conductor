@@ -1,7 +1,8 @@
 name: default
 gradient:
-  from: (0,0,0)
-  to: (0,0,0)
+  from: "Blue"
+  to: "Green"
+brightness: 1
 pallette:
   BLANK: (0, 0, 0),
   CURSOR: (1, 1, 1),

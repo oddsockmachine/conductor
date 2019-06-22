@@ -6,6 +6,7 @@ from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 from time import sleep
 from interfaces.lcd import lcd
+from color_scheme import SCHEMES
 print("Imported hardware connections")
 
 AUTO_WRITE = False
@@ -44,6 +45,7 @@ class Display(object):
         lcd.flash("Trelli linked")
         self.grid_h = h
         self.grid_w = w
+        self.state = 'play'
         self.led_matrix = [[(0, 0, 0) for x in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0, 0, 0) for x in range(w)] for y in range(h)]
         button_cb = self.make_cb()
@@ -68,18 +70,15 @@ class Display(object):
         except Exception as e:
             print("HW error: {}".format(str(e)))
         m = {'cmd': None}
-        if self.ins_button.value:
+        if self.ins_button.value and self.state != 'gbl_cfg':
             m['cmd'] = "CONFIG_A"
-        elif self.seq_button.value:
+            self.state = 'gbl_cfg'
+        elif self.seq_button.value and self.state != 'ins_cfg':
             m['cmd'] = "CONFIG_B"
+            self.state = 'ins_cfg'
         return m
 
     def draw_all(self, status, led_grid):
-        # if self.ins_button.value:
-        #     self.draw_ins_menu(status)
-        # elif self.seq_button.value:
-        #     self.draw_seq_menu(status)
-        # else:
         self.draw_note_grid(led_grid)
         self.redraw_diff()
         return
@@ -95,10 +94,7 @@ class Display(object):
             for y in range(len(self.led_matrix[x])):
                 if self.led_matrix[x][y] != self.old_led_matrix[x][y]:
                     diffs.append((x, y, self.led_matrix[x][y]))
-                    # self.trellis.color(x, y, self.led_matrix[x][y])
                 self.old_led_matrix[x][y] = self.led_matrix[x][y]
-        # This method might be better once the grid is much bigger
-        # t_start = perf_counter()
         for diff in diffs:
             self.trellis.color(diff[0], diff[1], diff[2])
             sleep(0.001)
@@ -107,8 +103,6 @@ class Display(object):
                 for ts in self.trellis._trelli:
                     for t in ts:
                         t.pixels.show()
-        # t_stop = perf_counter()
-        # logger.info(str(t1_stop-t1_start))
         return
 
     def draw_note_grid(self, led_grid):
@@ -121,24 +115,6 @@ class Display(object):
     def make_cb(self):
         def button_cb(xcoord, ycoord, edge):
             if edge == NeoTrellis.EDGE_RISING:
-                # if self.ins_button.value:  # Button from instrument menu
-                #     if xcoord == 7:  # Octave
-                #         self.command_cb({'cmd': 'change_octave', 'octave': self.grid_w-1-ycoord})
-                #     if ycoord == 0 and xcoord <= 4:  # Divison/speed
-                #         self.command_cb({'cmd': 'change_division', 'div': xcoord})
-                #     if ycoord == 1 and xcoord <= 1:  # Scale
-                #         self.command_cb({'cmd': 'cycle_scale', 'dir': {0: -1, 1: 1}[xcoord]})
-                #     if ycoord == 7 and xcoord == 0:  # key
-                #         self.command_cb({'cmd': 'cycle_key', 'dir': -1})
-                #     if ycoord == 3 and xcoord == 0:  # key
-                #         self.command_cb({'cmd': 'cycle_key', 'dir': 1})
-                #     if ycoord == 0 and xcoord == 7:  # key
-                #         self.command_cb({'cmd': 'random_rpt'})
-                #
-                # elif self.seq_button.value:  # Normal mode
-                #     # Button from sequencer menu
-                #     self.command_cb({'cmd': None})
-                # else:  # Menu mode - look up location of press and return cmd
                 self.command_cb({'cmd': 'note', 'x': xcoord, 'y': self.grid_h-1-ycoord})
             return
         return button_cb

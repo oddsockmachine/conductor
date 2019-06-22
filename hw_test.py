@@ -4,16 +4,28 @@ import busio
 from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 import random
+from colour import Color
+
+
+def col_to_rgb(col):
+    rgb = col.get_rgb()
+    return (int(255*rgb[0]), int(255*rgb[1]), int(255*rgb[2]))
+
+
+def gradient_1d(start, stop, steps):
+    gradient = list(map(col_to_rgb, start.range_to(stop, steps)))
+    return gradient
+
 
 # create the i2c object for the trellis
 i2c_bus = busio.I2C(SCL, SDA)
 
 # create the trellis
 trelli = [[], [], [], []]
-addrs = [[0x2e, 0x2f, 0x30, 0x31],
-         [0x32, 0x33, 0x34, 0x35],
-         [0x39, 0x38, 0x37, 0x36],
-         [0x3d, 0x3b, 0x3c, 0x3a]]
+addrs = [[0x31, 0x30, 0x2f, 0x2e],
+         [0x35, 0x34, 0x33, 0x32],
+         [0x36, 0x37, 0x38, 0x39],
+         [0x3a, 0x3c, 0x3b, 0x3d]]
 # Create trelli sequentially with a slight pause between each
 for x, slice in enumerate(addrs):
     for y, addr in enumerate(slice):
@@ -46,12 +58,16 @@ CYAN = (0, 255, 255)
 BLUE = (0, 0, 255)
 PURPLE = (180, 0, 255)
 
+red = Color("black")
+blue = Color("black")
+gradient = gradient_1d(red, blue, sizeX*2)
+print(gradient)
 
 def set_all(wait=0.1, col=YELLOW):
     for x in range(sizeX):
         for y in range(sizeY):
             try:
-                trellis.color(x, y, col)
+                trellis.color(x, y, gradient[y+x])
             except Exception as e:
                 print(e)
                 print("fail 1")
@@ -69,10 +85,12 @@ def set_all(wait=0.1, col=YELLOW):
 print("low")
 set_all(wait, LOW)
 print("done")
+exit(0)
 sleep(2)
 print("off")
 set_all(wait, OFF)
 print("done")
+
 
 while True:
     color = (random.randint(0, 50), random.randint(0, 50), random.randint(0, 50))
