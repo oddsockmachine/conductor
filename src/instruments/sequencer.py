@@ -66,6 +66,7 @@ class Sequencer(Instrument):
 
     def get_led_status(self, cell, beat_pos):
         '''Determine which type of LED should be shown for a given cell'''
+        # TODO check for root notes, bar breaks etc here
         led = c.LED_BLANK  # Start with blank / no led
         if beat_pos == self.local_beat_position:
             led = c.LED_BEAT  # If we're on the beat, we'll want to show the beat marker

@@ -20,11 +20,12 @@ LED_SCALE_SECONDARY = 6
 DROPLET_MOVING = 7
 DROPLET_SPLASH = 8
 DROPLET_STOPPED = 9
+DROPLET_HEIGHT = 10
 
-DRUM_OFF = 10
-DRUM_SELECT = 11
-DRUM_ACTIVE = 12
-DRUM_CHANGED = 13
+DRUM_OFF = 11
+DRUM_SELECT = 12
+DRUM_ACTIVE = 13
+DRUM_CHANGED = 14
 
 # TODO calculate and return color tuples based on brightness setting
 OFF = (0, 0, 0)
@@ -46,7 +47,7 @@ NOTE_ON = 3
 
 # The glyphs used to display cell information/states in the CLI
 # DISPLAY = {0: '. ', 1:'  ', 2:'OO', 3:'XX'}
-DISPLAY = {0: '. ', 1: '░░', 2: '▒▒', 3: '▓▓'}
+DISPLAY = {0: '. ', 1: '░░', 2: '▒▒', 3: '▓▓', 7: '░░', 8: '▒▒', 9: '▓▓'}
 PALLETE = {0: (1, 1, 1), 1: (3, 2, 0), 2: (18, 7, 0), 3: (18, 7, 1)}
 
 W = 16  # Width of the display grid

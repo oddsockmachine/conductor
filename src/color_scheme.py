@@ -61,7 +61,7 @@ class ColorScheme(object):
     def get_color(self, sprite, x=None, y=None):
         # Lookup sprite RGB, calculate based on x/y if necessary
         if sprite == c.LED_BLANK:
-            col = self.gradient[x+y]
+            col = self.gradient[int(x+y/2)]
         else:
             col = self.pallette[sprite]
         return col

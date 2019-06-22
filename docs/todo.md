@@ -3,7 +3,6 @@
 - multi-instrument support: program new ones, and add cfg pages
   - cc, keyboard, lfo, marbles
   - beatmaker, binarysequencer, chordsequencer, elaborator, transformer
-- multi-color support
 - redo euclidean.regen algorithm
 - save/load colorscheme in set
 - droplets: touch column while falling to set speed

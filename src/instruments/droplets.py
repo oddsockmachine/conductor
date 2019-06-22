@@ -27,7 +27,7 @@ class Droplets(Instrument):
         self.width = 16
         self.local_beat_position = 0
         self.speed = speed  # Relative speed of this instrument compared to global clock
-        self.droplet_velocities = [1 for n in range(self.width)]
+        self.droplet_velocities = [0 for n in range(self.width)]
         self.droplet_positions = [0 for n in range(self.width)]
         self.droplet_starts = [0 for n in range(self.width)]
 
@@ -84,8 +84,17 @@ class Droplets(Instrument):
         # if y < 4:
         #     self.droplet_velocities[x] = y
         # else:
-        self.droplet_positions[x] = y
-        self.droplet_starts[x] = y
+        if y == 0:  # make droplet rest at 0
+            self.droplet_positions[x] = 0
+            self.droplet_starts[x] = 0
+            self.droplet_velocities[x] = 0
+        else:
+            if self.droplet_velocities[x] == 0:  # droplet is resting, put it in play
+                self.droplet_positions[x] = y
+                self.droplet_starts[x] = y
+                self.droplet_velocities[x] = 1
+            else:  # droplet is falling, change its velocity
+                self.droplet_velocities[x] = (y+1)/16
         return True
     #
     # def get_notes_from_curr_beat(self):
@@ -102,11 +111,13 @@ class Droplets(Instrument):
             1: c.DROPLET_SPLASH
         }
         for i in range(self.width):
-            page[i][self.droplet_positions[i]] = display.get(self.droplet_positions[i], c.DROPLET_MOVING)
+            page[i][int(self.droplet_positions[i])] = display.get(int(self.droplet_positions[i]), c.DROPLET_MOVING)
         return page
 
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
+        # c.logging.info(self.droplet_positions)
+        # c.logging.info(self.droplet_velocities)
         local = self.calc_local_beat(global_beat)
         if not self.has_beat_changed(local):
             # Intermediate beat for this instrument, do nothing
