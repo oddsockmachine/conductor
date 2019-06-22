@@ -6,7 +6,7 @@ from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 from time import sleep
 from interfaces.lcd import lcd
-from color_scheme import SCHEMES
+from color_scheme import load_schemes
 print("Imported hardware connections")
 
 AUTO_WRITE = False
@@ -61,7 +61,7 @@ class Display(object):
         self.ins_button = digitalio.DigitalInOut(D6)
         print("Inputs initialized")
         lcd.flash("Inputs initialized")
-        self.col_scheme = SCHEMES['default']
+        self.col_scheme = load_schemes()['default']
         return
 
     def get_cmds(self):

@@ -23,7 +23,7 @@ class ColorScheme(object):
 
     def __init__(self, yaml_data):
         super(ColorScheme, self).__init__()
-        self.brightness = 0.1
+        self.brightness = 0.1  # TODO user control of brightness
         self.gradient_from = (0, 0, 0)
         self.gradient_to = (0, 0, 0)
         self.gradient = []
@@ -75,19 +75,13 @@ class ColorScheme(object):
         return gradient
 
 
-SCHEMES = {}
-
-
 def load_schemes():
     """Load in all named schemes from saved data"""
+    SCHEMES = {}
     files = glob('./src/color_schemes/*.yml')
     for y_path in files:
         with open(y_path, 'r') as y_file:
             y_scheme = load(y_file)
         new_scheme = ColorScheme(y_scheme)
         SCHEMES[y_scheme['name']] = new_scheme
-    return
-
-
-load_schemes()
-PALLETE = {0: (1, 1, 1), 1: (3, 2, 0), 2: (18, 7, 0), 3: (18, 7, 1)}
+    return SCHEMES
