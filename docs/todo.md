@@ -5,7 +5,7 @@
   - beatmaker, binarysequencer, chordsequencer, elaborator, transformer
 - redo euclidean.regen algorithm
 - save/load colorscheme in set
-- droplets: touch column while falling to set speed
+- method for removing instruments
 
 ### Add small screen for better feedback
 - from lcd import lcd

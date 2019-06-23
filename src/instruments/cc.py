@@ -2,6 +2,45 @@
 from instruments.instrument import Instrument
 import constants as c
 import mido
+from screens import generate_screen, cc_cfg_grid_defn, get_cb_from_touch
+
+
+class SliderPage(object):
+    """docstring for SliderPage."""
+
+    def __init__(self, type, offset):
+        super(SliderPage, self).__init__()
+        self.sliders = [Slider(c.H, offset+x) for x in range(c.W)]
+
+    def touch(self, x, y):
+        self.sliders[x].touch(y)
+
+    def get_led_grid(self):
+        leds = [[c.LED_BLANK for y in range(c.H)] for x in range(c.W)]
+        for i, s in enumerate(self.sliders):  # sliders along x axis
+            leds[i][s.value] = c.SLIDER_TOP
+            for j in range(s.value):
+                leds[i][j] = c.SLIDER_BODY
+        return leds
+
+
+class Slider(object):
+    """docstring for Slider."""
+
+    def __init__(self, height, id):
+        super(Slider, self).__init__()
+        self.height = height
+        self.value = 0
+        self.options = {}
+        self.cc_num = id
+
+    def get_cc(self):
+        return self.value * (128/self.height)
+
+    def set(self, value):
+        if value > self.height:
+            return  # Not possible
+        self.value = value
 
 
 class CC(Instrument):
@@ -19,11 +58,17 @@ class CC(Instrument):
         self.type = "CC"
         self.height = 16
         self.width = 16
-        self.local_beat_position = 0
-        self.speed = speed
-        self.droplet_velocities = [1 for n in range(self.width)]
-        self.droplet_positions = [0 for n in range(self.width)]
-        self.droplet_starts = [0 for n in range(self.width)]
+        self.curr_page_num = 0
+        self.pages = []
+        self.pages.append(SliderPage('A', 0))
+        self.pages.append(SliderPage('A', 16))
+        self.pages.append(SliderPage('B', 32))
+        self.pages.append(SliderPage('A', 64))
+        self.pages.append(SliderPage('A', 80))
+        self.pages.append(SliderPage('B', 96))
+
+    def add_page(self, type):
+        self.pages.append(SliderPage(type))
 
     def get_status(self):
         status = {
@@ -45,36 +90,50 @@ class CC(Instrument):
         return status
 
     def set_key(self, key):
+        # Not implemented
         return
 
     def set_scale(self, scale):
+        # Not implemented
         return
 
     def change_octave(self, up_down):
+        # Not implemented
         return
+
+    def get_curr_page(self):
+        return self.pages[self.curr_page_num]
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
+        if state == 'play':
+            self.get_curr_page().touch(x, y)
+        elif state == 'ins_cfg':
+            cb_text, _x, _y = get_cb_from_touch(self.cb_grid, x, y)
+            c.logging.info(cb_text)
+            if not cb_text:
+                return
+            cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
+            cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
+            return True
+
         return True
 
     def get_led_grid(self, state):
-        page = [[c.LED_BLANK for y in range(self.height)] for x in range(self.width)]
-        display = {
-            0: c.DROPLET_STOPPED,
-            1: c.DROPLET_SPLASH
-        }
-        for i in range(self.width):
-            page[i][self.droplet_positions[i]] = display.get(self.droplet_positions[i], c.DROPLET_MOVING)
-        return page
+        if state == 'play':
+            return self.get_curr_page().get_led_grid()
+        elif state == 'ins_cfg':
+            led_grid, cb_grid = generate_screen(cc_cfg_grid_defn, {
+                'pages': [1 for x in self.pages],
+                'curr_p_r':  (self.curr_page_num, 0)
+                })
+            self.cb_grid = cb_grid
+            return led_grid
+        return led_grid
+
 
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
-        local = self.calc_local_beat(global_beat)
-        local
-        new_notes = []
-        # new_notes = self.get_curr_notes()
-        self.output(self.old_notes, new_notes)
-        self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
 
     def output(self, old_notes, new_notes):

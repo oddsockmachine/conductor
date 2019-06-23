@@ -27,6 +27,9 @@ DRUM_SELECT = 12
 DRUM_ACTIVE = 13
 DRUM_CHANGED = 14
 
+SLIDER_TOP = 20
+SLIDER_BODY = 21
+
 # TODO calculate and return color tuples based on brightness setting
 OFF = (0, 0, 0)
 RED = (255, 0, 0)
@@ -47,8 +50,16 @@ NOTE_ON = 3
 
 # The glyphs used to display cell information/states in the CLI
 # DISPLAY = {0: '. ', 1:'  ', 2:'OO', 3:'XX'}
-DISPLAY = {0: '. ', 1: '░░', 2: '▒▒', 3: '▓▓', 7: '░░', 8: '▒▒', 9: '▓▓'}
-PALLETE = {0: (1, 1, 1), 1: (3, 2, 0), 2: (18, 7, 0), 3: (18, 7, 1)}
+DISPLAY = {0: '. ',
+           1: '░░',
+           2: '▒▒',
+           3: '▓▓',
+           4: '▒▒',
+           7: '░░',
+           8: '▒▒',
+           9: '▓▓',
+           21: '▒▒',
+           20: '▓▓'}
 
 W = 16  # Width of the display grid
 H = 16  # Width of the display grid

@@ -107,11 +107,15 @@ class Droplets(Instrument):
     def get_led_grid(self, state):
         page = [[c.LED_BLANK for y in range(self.height)] for x in range(self.width)]
         display = {
-            0: c.DROPLET_STOPPED,
             1: c.DROPLET_SPLASH
         }
         for i in range(self.width):
-            page[i][int(self.droplet_positions[i])] = display.get(int(self.droplet_positions[i]), c.DROPLET_MOVING)
+            if self.droplet_velocities[i] == 0:
+                page[i][int(self.droplet_positions[i])] = c.DROPLET_STOPPED
+            elif self.droplet_positions[i] == 0:
+                page[i][int(self.droplet_positions[i])] = c.DROPLET_SPLASH
+            else:
+                page[i][int(self.droplet_positions[i])] = c.DROPLET_MOVING
         return page
 
     def step_beat(self, global_beat):
@@ -127,12 +131,13 @@ class Droplets(Instrument):
         #     self.advance_page()
         new_notes = []
         for i in range(self.width):
-            if self.droplet_positions[i] == 0:
+            if self.droplet_velocities[i] == 0:
                 continue  # Ignore any that we leave at 0, they're resting
+            if self.droplet_positions[i] <= 0:
+                self.droplet_positions[i] = self.droplet_starts[i]
             self.droplet_positions[i] -= self.droplet_velocities[i]
             if self.droplet_positions[i] <= 0:
                 new_notes.append(i)
-                self.droplet_positions[i] = self.droplet_starts[i]
         # new_notes = self.get_curr_notes()
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat

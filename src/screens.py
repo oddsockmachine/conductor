@@ -63,6 +63,12 @@ def seq_cfg_grid_defn(args):
     ]
     return seqcfg
 
+def cc_cfg_grid_defn(args):
+    cccfg = [  # TODO make cc specific page control
+        ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
+    ]
+    return cccfg
+
 
 def dev_cfg_grid_defn(args):
     devcfg = [
