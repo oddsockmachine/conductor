@@ -17,10 +17,6 @@
 - different backgrounds for each instrument number and type
 - create color engine, for different themes, brightnesses, background gradient, etc https://www.sweetwater.com/store/detail/Fire--akai-professional-fire-grid-controller-for-fl-studio
 - Show gridlines, root notes, pentatonic notes, etc in different colors/shades
-- call background(x, y) to get a color code for general background pixel, as chosen by some other setting/algo
-- Show root notes, pentatonic notes, etc in different colors/shades
-- Should be handled by instrument.get_led_status/get_led_grid, has access to scale and cell info
-- semi-transparent config screens? See underlying instrument underneath
 
 ### Inspirations for new instruments
 - Arc https://www.youtube.com/watch?v=HM0EBvJe1s0
@@ -94,10 +90,6 @@ Volume Faders for each instrument?
 
 ### Keyboard
 - Just for playing instruments directly
-
-### Z-Mode
-- Use for display only
-- Maybe a screensaver?
 
 
 ### synchronize with Ableton
