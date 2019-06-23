@@ -27,9 +27,9 @@ class DrumMachine(Instrument):
         self.pages = [Note_Grid(self.bars, self.height)]
         self.key = 'c'  # TODO find which starting note corresponds to pad 0
         self.scale = 'chromatic'
-        self.octave = 0  # Starting octave
+        self.octave = 1  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
-        self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
 
     def set_scale(self, scale):
         return  # Not used
