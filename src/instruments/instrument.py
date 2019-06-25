@@ -267,7 +267,7 @@ class Instrument(object):
         return
 
     def cb_edit_page(self, x, y):
-        if self.edit_page != None:
+        if self.edit_page is not None:
             self.edit_page = None
             lcd.flash("Edit mode disabled")
         else:

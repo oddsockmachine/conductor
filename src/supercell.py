@@ -1,6 +1,6 @@
 from conductor import Conductor
 from time import sleep
-
+import constants as c
 
 class Supercell(object):
     """docstring for Supercell."""
@@ -28,9 +28,10 @@ class Supercell(object):
         pass
 
     def process_incoming_midi(self):
-        def _process_incoming_midi(message, timestamp=0):
+        def _process_incoming_midi(message):
             '''Check for incoming midi messages and categorize so we can do something with them'''
             tick = False
+            # c.logging.warning(message)
             # notes = []
             if message.type == "clock":
                 tick = self.process_midi_tick()

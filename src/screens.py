@@ -26,7 +26,7 @@ def get_char(**kwargs):
         for p in range(pages):
             y, x = (p % 4, int(p / 4))
             array[x][y] = c.LED_CURSOR
-        if kwargs.get('edit_page'):
+        if kwargs.get('edit_page') is not None:
             c.logging.info(f"edit page {kwargs.get('edit_page')}")
             y, x = (kwargs['edit_page'] % 4, int(kwargs['edit_page'] / 4))
             array[x][y] = c.LED_EDIT
@@ -61,8 +61,8 @@ def seq_cfg_grid_defn(args):
         ('random_pages', get_char(char='r'), 0, 13),
         # ('copy_page', get_char(char='c'), 6, 13),
         ('edit_page', get_char(char='e'), 6, 13),
-        ('speed', get_char(row=5, selector=args['speed']), 15, 11),
-        ('octave', get_char(row=5, selector=args['octave']), 14, 11),
+        ('speed', get_char(row=6, selector=args['speed']), 15, 10),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 10),
         ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
         ('clip', get_char(clips=len(args['pages']), curr_page=args['curr_page'], edit_page=args['edit_page'], next_page=args['next_page']), 9, 9),
     ]
@@ -78,8 +78,8 @@ def cc_cfg_grid_defn(args):
 def dev_cfg_grid_defn(args):
     devcfg = [
         ('random_pages', get_char(char='r'), 0, 13),
-        ('speed', get_char(row=5, selector=args['speed']), 15, 11),
-        ('octave', get_char(row=5, selector=args['octave']), 14, 11),
+        ('speed', get_char(row=6, selector=args['speed']), 15, 10),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 10),
         ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
         ('clip', get_char(clips=len(args['pages']), curr_page=args['curr_page'], next_page=args['next_page']), 9, 9),
     ]
@@ -88,8 +88,8 @@ def dev_cfg_grid_defn(args):
 
 def euc_cfg_grid_defn(args):
     euccfg = [
-        ('speed', get_char(row=5, selector=args['speed']), 15, 11),
-        ('octave', get_char(row=5, selector=args['octave']), 14, 11),
+        ('speed', get_char(row=6, selector=args['speed']), 15, 10),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 10),
         ('fill', get_char(char='f'), 0, 0)
     ]
     return euccfg
@@ -99,8 +99,8 @@ def oct_cfg_grid_defn(args):
     octcfg = [
         ('random_pages', get_char(char='r'), 0, 13),
         ('copy_page', get_char(char='c'), 0, 9),
-        ('speed', get_char(row=5, selector=args['speed']), 15, 11),
-        ('octave', get_char(row=5, selector=args['octave']), 14, 11),
+        ('speed', get_char(row=6, selector=args['speed']), 15, 10),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 10),
         ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
         ('clip', get_char(clips=len(args['pages']), curr_page=args['curr_page'], next_page=args['next_page']), 9, 9),
     ]
@@ -110,8 +110,8 @@ def oct_cfg_grid_defn(args):
 def drum_cfg_grid_defn(args):
     drumcfg = [
         ('random_pages', get_char(char='r'), 0, 13),
-        ('speed', get_char(row=5, selector=args['speed']), 15, 11),
-        ('octave', get_char(row=5, selector=args['octave']), 14, 11),
+        ('speed', get_char(row=6, selector=args['speed']), 15, 10),
+        ('octave', get_char(row=5, selector=args['octave']), 14, 10),
         ('page', get_char(active=args['curr_p_r'], pages=args['pages']), 0, 0),
         ('clip', get_char(clips=len(args['pages']), curr_page=args['curr_page'], next_page=args['next_page']), 9, 9),
     ]

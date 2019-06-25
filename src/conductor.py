@@ -19,16 +19,16 @@ class Conductor(object):
         self.height = c.H
         self.width = bars*4
         self.bars = bars
-        self.max_beat_division = 8
+        self.max_beat_division = 32
         self.scale = scale
         self.octave = octave  # Starting octave
-        self.instruments = [instrument_lookup(10)(ins_num=x, **self.instrument_ctx()) for x in range(3)]
-        for x in range(4):
-            self.instruments.append(instrument_lookup(4)(ins_num=x+3, **self.instrument_ctx()))
-        self.instruments.append(instrument_lookup(9)(ins_num=8, **self.instrument_ctx()))
-        self.instruments.append(instrument_lookup(8)(ins_num=9, **self.instrument_ctx()))
-        self.instruments.append(instrument_lookup('Octopus')(ins_num=10, **self.instrument_ctx()))
-
+        self.instruments = [instrument_lookup(10)(ins_num=0, **self.instrument_ctx())]
+        # for x in range(4):
+        #     self.instruments.append(instrument_lookup(4)(ins_num=x+3, **self.instrument_ctx()))
+        # self.instruments.append(instrument_lookup(9)(ins_num=8, **self.instrument_ctx()))
+        # self.instruments.append(instrument_lookup(8)(ins_num=9, **self.instrument_ctx()))
+        # self.instruments.append(instrument_lookup('Octopus')(ins_num=10, **self.instrument_ctx()))
+        #
         # self.instruments.append(instrument_lookup(7)(ins_num=14, **self.instrument_ctx()))
         # self.instruments.append(instrument_lookup(5)(ins_num=15, **self.instrument_ctx()))
         self.current_visible_instrument_num = 0

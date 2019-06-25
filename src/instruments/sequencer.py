@@ -29,7 +29,10 @@ class Sequencer(Instrument):
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
         if state == 'play':
-            page = self.get_curr_page()
+            if self.edit_page is not None:
+                page = self.pages[self.edit_page]
+            else:
+                page = self.get_curr_page()
             if not page.validate_touch(x, y):
                 return False
             page.touch_note(x, y)
@@ -49,7 +52,10 @@ class Sequencer(Instrument):
     def get_led_grid(self, state):
         if state == 'play':
             led_grid = []
-            grid = self.get_curr_page().note_grid
+            if self.edit_page is not None:
+                grid = self.pages[self.edit_page].note_grid
+            else:
+                grid = self.get_curr_page().note_grid
             for i, column in enumerate(grid):  # columnn counter
                 led_grid.append([self.get_led_status(x, i) for x in column])
         elif state == 'ins_cfg':
@@ -69,7 +75,7 @@ class Sequencer(Instrument):
         '''Determine which type of LED should be shown for a given cell'''
         # TODO check for root notes, bar breaks etc here
         led = c.LED_BLANK  # Start with blank / no led
-        if beat_pos == self.local_beat_position:
+        if beat_pos == self.local_beat_position and self.edit_page is None:
             led = c.LED_BEAT  # If we're on the beat, we'll want to show the beat marker
             if cell == c.NOTE_ON:
                 led = c.LED_SELECT  # Unless we want a selected + beat cell to be special

@@ -5,7 +5,6 @@ import argparse
 # Get command line arguments, set up midi connections, start up Supercell in correct mode
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--set", help="Filename of previous set to load", type=str)
 parser.add_argument("--hw",  help="Use real hardware", type=bool)
 args = parser.parse_args()
 print(args)
@@ -19,7 +18,7 @@ def console_main(stdscr):
     display = Display(stdscr)
     with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
-            supercell = Supercell(display, mport, mportin, args.set)
+            supercell = Supercell(display, mport, mportin)
             supercell.run()
 
 
@@ -34,7 +33,7 @@ def hardware_main():
             print("Done")
             print(mportin)
             print(mport)
-            supercell = Supercell(display, mport, mportin, args.set)
+            supercell = Supercell(display, mport, mportin)
             supercell.run()
 
 
