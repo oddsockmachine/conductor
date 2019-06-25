@@ -27,7 +27,6 @@ def get_char(**kwargs):
             y, x = (p % 4, int(p / 4))
             array[x][y] = c.LED_CURSOR
         if kwargs.get('edit_page') is not None:
-            c.logging.info(f"edit page {kwargs.get('edit_page')}")
             y, x = (kwargs['edit_page'] % 4, int(kwargs['edit_page'] / 4))
             array[x][y] = c.LED_EDIT
         if 'curr_page' in kwargs.keys():
@@ -121,12 +120,13 @@ def drum_cfg_grid_defn(args):
 def gbl_cfg_grid_defn(args):
     gbl_cfg = [
         ('scale_dec', get_char(char=args['scale_chars'][0]), 0, 0),
-        ('scale_inc', get_char(char=args['scale_chars'][1]), 0, 4),
+        ('scale_inc', get_char(char=args['scale_chars'][1]), 0, 3),
         ('key_dec', get_char(char=args['key'][0]), 5, 0),
-        ('key_inc', get_char(char=args['key'][1]), 5, 4),
+        ('key_inc', get_char(char=args['key'][1]), 5, 3),
         ('load', get_char(char='l'), 11, 0),
-        ('save', get_char(char='s'), 11, 4),
-        ('reset', get_char(char='x'), 11, 8),
+        ('save', get_char(char='s'), 11, 3),
+        ('reset', get_char(char='r'), 11, 6),
+        ('instrument_del', get_char(char='d'), 11, 9),
         ('instrument_sel', get_char(instrument=args['num_ins'], selector=args['curr_ins']), 0, 15),
         # TODO extend instrument adder, use diff colors for each
         ('instrument_type', get_char(instrument=total_num_instruments), 0, 14),

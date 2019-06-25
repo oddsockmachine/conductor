@@ -41,6 +41,8 @@ The Conductor  has four modes:
   - Musical key/root note is represented below this, and works in the same way..
   - The `L` button will trigger the load set screen.
   - The `S` button will trigger the save set screen.
+  - The `R` button will reset the set to its initial conditions.
+  - The `D` button will delete the current instrument.
   - The rightmost column of pixels represents all instruments that have been added to the set. Pressing one will take you to that instrument's play screen.
   - The second rightmost column of pixels represents each of the different types of instruments that can be used. Pressing one will add the corresponding instrument to the set.
 

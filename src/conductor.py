@@ -242,6 +242,17 @@ class Conductor(object):
         lcd.flash("Select save file")
         return
 
+    def cb_instrument_del(self, x, y):
+        ins_num = self.get_curr_instrument_num()
+        c.logging.info(f"deleting instrument num {ins_num}")
+        lcd.flash(f"deleting instrument num {ins_num}")
+        c.logging.info(f"total instruments before {len(self.instruments)}")
+        self.instruments.pop(ins_num)
+        c.logging.info(f"total instruments after {len(self.instruments)}")
+        for i, ins in enumerate(self.instruments):
+            ins.ins_num = i
+        return
+
     def cb_instrument_sel(self, x, y):
         if int(y) < self.get_total_instrument_num():
             self.set_curr_instrument(int(y))
