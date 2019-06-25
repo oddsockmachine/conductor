@@ -243,7 +243,9 @@ class Conductor(object):
         return
 
     def cb_instrument_del(self, x, y):
-        ins_num = self.get_curr_instrument_num()
+        if len(self.instruments) == 1:
+            return
+        ins_num = self.get_curr_instrument_num() - 1
         c.logging.info(f"deleting instrument num {ins_num}")
         lcd.flash(f"deleting instrument num {ins_num}")
         c.logging.info(f"total instruments before {len(self.instruments)}")

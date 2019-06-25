@@ -33,18 +33,31 @@ class Euclidean(DrumDeviator):
         self.curr_notes_pos = [0 for x in range(8)]
         return
 
+    def euclidean_algo(self, pulses, rotate, steps):
+        pattern = []
+        bucket = 0
+        for i in range(steps):
+            bucket += pulses
+            if bucket >= steps:
+                bucket -= steps
+                pattern.append(c.NOTE_ON)
+            else:
+                pattern.append(c.NOTE_OFF)
+        rotate %= len(pattern)
+        rotate = 0 - rotate
+        pattern = pattern[rotate:] + pattern[:rotate]
+        # c.logging.info(len(pattern))
+        # c.logging.info(c.W - len(pattern))
+        pattern = pattern[::-1]
+        for x in range(c.W - len(pattern)):
+            pattern.append(c.NOTE_OFF)
+        # c.logging.info(len(pattern))
+        return pattern
+
     def regen(self, note):
         '''A parameter for this note has changed, regenerate sequence'''
-        pattern = []
-        for x in range(self.densities[note]):
-            pattern.append(c.NOTE_ON)
-            for y in range(int(self.lengths[note]/self.densities[note])):
-                pattern.append(c.NOTE_OFF)
-        pattern.extend(pattern)
-        pattern = pattern[self.offsets[note]:self.offsets[note]+self.lengths[note]]
-        for x in range(16-len(pattern)):
-            pattern.append(c.NOTE_OFF)
-
+        pulses, rotate, steps = self.densities[note], self.offsets[note], self.lengths[note]
+        pattern = self.euclidean_algo(pulses, rotate, steps)
         page = self.get_curr_page()
         for i, beat in enumerate(page.note_grid):
             beat[note] = pattern[i]
