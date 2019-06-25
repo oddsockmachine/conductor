@@ -131,7 +131,6 @@ class CC(Instrument):
             return led_grid
         return led_grid
 
-
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
         return

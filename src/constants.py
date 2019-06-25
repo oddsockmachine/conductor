@@ -7,16 +7,15 @@ logging.basicConfig(filename='sequencer.log', level=logging.DEBUG)
 save_location = './saved/'
 save_extension = '.json'
 
-THEME = "A"
 # The ints used to represent the state of leds on an led_grid
-LED_BLANK = 0
+LED_BLANK = 0  # TODO rename to seq_
 LED_CURSOR = 1
 LED_ACTIVE = 2
 LED_SELECT = 3
 LED_BEAT = 4
 LED_SCALE_PRIMARY = 5
 LED_SCALE_SECONDARY = 6
-
+LED_EDIT = 4
 DROPLET_MOVING = 7
 DROPLET_SPLASH = 8
 DROPLET_STOPPED = 9
@@ -42,8 +41,8 @@ DISPLAY = {0: '. ',
            3: '▓▓',
            4: '▒▒',
            7: '░░',
-           8: '▒▒',
-           9: '▓▓',
+           9: '▒▒',
+           8: '▓▓',
            21: '▒▒',
            20: '▓▓'}
 

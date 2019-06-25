@@ -85,3 +85,23 @@ def load_schemes():
         new_scheme = ColorScheme(y_scheme)
         SCHEMES[y_scheme['name']] = new_scheme
     return SCHEMES
+
+
+SCHEMES = load_schemes()
+CURR_SCHEME_NAME = ""
+
+
+def select_scheme(name):
+    CURR_SCHEME_NAME = name
+    c.logging.info("selected scheme: {}".format(CURR_SCHEME_NAME))
+    return SCHEMES[name]
+
+
+def next_scheme():
+    names = SCHEMES.keys()
+    i = names.index(CURR_SCHEME_NAME)
+    new_i = (i+1) % len(SCHEMES.keys())
+    new_name = SCHEMES.keys()[new_i]
+    CURR_SCHEME_NAME = new_name
+    new_scheme = SCHEMES[CURR_SCHEME_NAME]
+    return new_scheme

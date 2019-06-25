@@ -6,6 +6,8 @@
 - redo euclidean.regen algorithm
 - save/load colorscheme in set
 - method for removing instruments
+- stay on page for editing, play continues in background
+- async?
 
 ### Add small screen for better feedback
 - from lcd import lcd

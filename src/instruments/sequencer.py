@@ -59,6 +59,7 @@ class Sequencer(Instrument):
                 'pages': [x.repeats for x in self.pages],
                 'curr_p_r':  (self.curr_page_num, self.curr_rept_num),
                 'curr_page':  self.curr_page_num,
+                'edit_page':  self.edit_page,
                 'next_page':  self.get_next_page_num()})
             self.cb_grid = cb_grid
             return led_grid

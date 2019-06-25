@@ -1,11 +1,11 @@
 from conductor import Conductor
-from time import sleep, time
+from time import sleep
 
 
 class Supercell(object):
     """docstring for Supercell."""
 
-    def __init__(self, display, mport, mportin, saved_set=None):
+    def __init__(self, display, mport, mportin):
         super(Supercell, self).__init__()
         self.mport = mport
         self.mportin = mportin
@@ -13,7 +13,6 @@ class Supercell(object):
         self.midi_clock_divider = 7
         self.mportin.callback = self.process_incoming_midi()
         self.conductor = Conductor(mport)
-        self.last = time()
         self.display = display
         self.display.command_cb = self.command_cb
         self.save_on_exit = False
@@ -23,9 +22,9 @@ class Supercell(object):
         self.draw()
         while True:
             self.get_cmds()
-            sleep(0.1)  # TODO REMOVE TODO
-            # self.conductor.step_beat()  # TODO REMOVE TODO
-            self.draw()  # TODO REMOVE TODO
+            sleep(0.01)
+            # self.conductor.step_beat()
+            self.draw()
         pass
 
     def process_incoming_midi(self):

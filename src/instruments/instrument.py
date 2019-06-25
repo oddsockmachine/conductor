@@ -27,6 +27,7 @@ class Instrument(object):
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)
         self.selected_next_page_num = None
+        self.edit_page = None  # Track which page we want to show and edit while playback continues
 
     def restart(self):
         """Set all aspects of instrument back to starting state"""
@@ -263,6 +264,15 @@ class Instrument(object):
     def cb_fill(self, x, y):
         self.fill = False if self.fill else True
         lcd.flash("Fill {}".format(self.fill))
+        return
+
+    def cb_edit_page(self, x, y):
+        if self.edit_page != None:
+            self.edit_page = None
+            lcd.flash("Edit mode disabled")
+        else:
+            self.edit_page = self.curr_page_num
+            lcd.flash(f"Editing page {self.edit_page}")
         return
 
     def cb_copy_page(self, x, y):
