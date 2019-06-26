@@ -2,18 +2,17 @@
 from instruments.instrument import Instrument
 import constants as c
 import mido
-from screens import generate_screen, cc_cfg_grid_defn, get_cb_from_touch
 
 
-class SliderPage(object):
-    """docstring for SliderPage."""
+class SliderBank(object):
+    """docstring for SliderBank."""
 
-    def __init__(self, type, offset):
-        super(SliderPage, self).__init__()
-        self.sliders = [Slider(c.H, offset+x) for x in range(c.W)]
+    def __init__(self, offset):
+        super(SliderBank, self).__init__()
+        self.sliders = [Slider(offset+x) for x in range(c.W-1)]
 
     def touch(self, x, y):
-        self.sliders[x].touch(y)
+        return self.sliders[x].set(y)
 
     def get_led_grid(self):
         leds = [[c.LED_BLANK for y in range(c.H)] for x in range(c.W)]
@@ -27,20 +26,24 @@ class SliderPage(object):
 class Slider(object):
     """docstring for Slider."""
 
-    def __init__(self, height, id):
+    def __init__(self, id):
         super(Slider, self).__init__()
-        self.height = height
+        self.height = c.H
         self.value = 0
         self.options = {}
         self.cc_num = id
 
     def get_cc(self):
-        return self.value * (128/self.height)
+        return int(self.value * (128/(self.height-1)))
 
     def set(self, value):
         if value > self.height:
             return  # Not possible
         self.value = value
+        cc = self.get_cc()
+        c.logging.info("CC{} = {}, {}".format(self.cc_num, self.value, cc))
+        msg = mido.Message('control_change', value=cc, control=self.cc_num, channel=0)
+        return msg
 
 
 class CC(Instrument):
@@ -59,16 +62,17 @@ class CC(Instrument):
         self.height = 16
         self.width = 16
         self.curr_page_num = 0
+        self.max_pages = 4
         self.pages = []
-        self.pages.append(SliderPage('A', 0))
-        self.pages.append(SliderPage('A', 16))
-        self.pages.append(SliderPage('B', 32))
-        self.pages.append(SliderPage('A', 64))
-        self.pages.append(SliderPage('A', 80))
-        self.pages.append(SliderPage('B', 96))
+        for i in range(self.max_pages):
+            self.pages.append(SliderBank(len(self.pages*15)))
+        #     self.pages.append(SliderBank(0))
+        # self.pages.append(SliderBank(15))
+        # self.pages.append(SliderBank(30))
+        # self.pages.append(SliderBank(45))
 
     def add_page(self, type):
-        self.pages.append(SliderPage(type))
+        self.pages.append(SliderBank(len(self.pages*15)))
 
     def get_status(self):
         status = {
@@ -106,62 +110,47 @@ class CC(Instrument):
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
-        if state == 'play':
-            self.get_curr_page().touch(x, y)
-        elif state == 'ins_cfg':
-            cb_text, _x, _y = get_cb_from_touch(self.cb_grid, x, y)
-            c.logging.info(cb_text)
-            if not cb_text:
+        if x == 15:
+            if y < c.H - self.max_pages:
                 return
-            cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
-            cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
-            return True
-
+            self.curr_page_num = c.H-y-1
+            return
+        msg = self.get_curr_page().touch(x, y)
+        msg.channel = self.ins_num
+        self.mport.send(msg)
         return True
 
     def get_led_grid(self, state):
-        if state == 'play':
-            return self.get_curr_page().get_led_grid()
-        elif state == 'ins_cfg':
-            led_grid, cb_grid = generate_screen(cc_cfg_grid_defn, {
-                'pages': [1 for x in self.pages],
-                'curr_p_r':  (self.curr_page_num, 0)
-                })
-            self.cb_grid = cb_grid
-            return led_grid
-        return led_grid
+        grid = self.get_curr_page().get_led_grid()
+        grid[15][15] = c.SLIDER_BODY
+        grid[15][14] = c.SLIDER_BODY
+        grid[15][13] = c.SLIDER_BODY
+        grid[15][12] = c.SLIDER_BODY
+        grid[15][c.H-self.curr_page_num-1] = c.SLIDER_TOP
+        return grid
 
     def step_beat(self, global_beat):
-        '''Increment the beat counter, and do the math on pages and repeats'''
         return
 
     def output(self, old_notes, new_notes):
-        """Return all note-ons from the current beat, and all note-offs from the last"""
-        notes_off = [self.cell_to_midi(c) for c in old_notes]
-        notes_on = [self.cell_to_midi(c) for c in new_notes]
-        notes_off = [n for n in notes_off if n < 128 and n > 0]
-        notes_on = [n for n in notes_on if n < 128 and n > 0]
-        off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
-        on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
-        msgs = off_msgs + on_msgs
-        if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
-            for msg in msgs:
-                self.mport.send(msg)
+        return
 
     def save(self):
         saved = {
-          "droplet_velocities": self.droplet_velocities,
-          "droplet_positions": self.droplet_positions,
-          "droplet_starts": self.droplet_starts,
+          "values": [[v.value for v in p.sliders] for p in self.pages]
         }
         saved.update(self.default_save_info())
         return saved
 
     def load(self, saved):
         self.load_default_info(saved)
-        self.droplet_velocities = saved["droplet_velocities"]
-        self.droplet_positions = saved["droplet_positions"]
-        self.droplet_starts = saved["droplet_starts"]
+        values = saved["values"]
+        self.pages = []
+        for p in values:
+            sb = SliderBank(len(self.pages*15))
+            for i, v in enumerate(p):
+                sb.sliders[i].value = v
+            self.pages.append(sb)
         return
 
     def clear_page(self):
