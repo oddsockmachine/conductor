@@ -6,7 +6,7 @@ from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_neotrellis.multitrellis import MultiTrellis
 from time import sleep
 from interfaces.lcd import lcd
-from color_scheme import select_scheme, next_scheme
+from color_scheme import select_scheme, next_scheme  # TODO add gbl button to cycle scheme
 print("Imported hardware connections")
 
 AUTO_WRITE = False

@@ -28,22 +28,6 @@ class ColorScheme(object):
         self.gradient_to = (0, 0, 0)
         self.gradient = []
         self.pallette = {}
-        self.pallette_lookup = {
-            c.LED_BLANK: 'BLANK',
-            c.LED_CURSOR: 'CURSOR',
-            c.LED_ACTIVE: 'ACTIVE',
-            c.LED_SELECT: 'SELECT',
-            c.LED_BEAT: 'BEAT',
-            c.LED_SCALE_PRIMARY: 'SCALE_PRIMARY',
-            c.LED_SCALE_SECONDARY: 'SCALE_SECONDARY',
-            c.DROPLET_MOVING: 'DROPLET_MOVING',
-            c.DROPLET_SPLASH: 'DROPLET_SPLASH',
-            c.DROPLET_STOPPED: 'DROPLET_STOPPED',
-            c.DRUM_OFF: 'DRUM_OFF',
-            c.DRUM_SELECT: 'DRUM_SELECT',
-            c.DRUM_ACTIVE: 'DRUM_ACTIVE',
-            c.DRUM_CHANGED: 'DRUM_CHANGED',
-        }
         self.import_yaml(yaml_data)
         self.gradient = self.gradient_1d(self.gradient_from, self.gradient_to, 32)
 
@@ -52,9 +36,9 @@ class ColorScheme(object):
         self.gradient_from = Color(yaml['gradient']['from'])
         self.gradient_to = Color(yaml['gradient']['to'])
         print(yaml['pallette'])
-        for p in self.pallette_lookup.keys():
+        for p in c.pallette_lookup.keys():
             print(p)
-            self.pallette[p] = yaml['pallette'][self.pallette_lookup[p]]
+            self.pallette[p] = yaml['pallette'][c.pallette_lookup[p]]
         self
         return
 

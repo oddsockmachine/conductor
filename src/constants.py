@@ -29,9 +29,38 @@ DRUM_CHANGED = 14
 SLIDER_TOP = 20
 SLIDER_BODY = 21
 
+INSTRUMENT_A = 90
+INSTRUMENT_B = 91
+INSTRUMENT_C = 92
+INSTRUMENT_D = 93
+
+
 # The ints used to represent the state of notes on a note_grid
 NOTE_OFF = 0
 NOTE_ON = 3
+
+pallette_lookup = {
+    LED_BLANK: 'BLANK',
+    LED_CURSOR: 'CURSOR',
+    LED_ACTIVE: 'ACTIVE',
+    LED_SELECT: 'SELECT',
+    LED_BEAT: 'BEAT',
+    LED_SCALE_PRIMARY: 'SCALE_PRIMARY',
+    LED_SCALE_SECONDARY: 'SCALE_SECONDARY',
+    DROPLET_MOVING: 'DROPLET_MOVING',
+    DROPLET_SPLASH: 'DROPLET_SPLASH',
+    DROPLET_STOPPED: 'DROPLET_STOPPED',
+    DRUM_OFF: 'DRUM_OFF',
+    DRUM_SELECT: 'DRUM_SELECT',
+    DRUM_ACTIVE: 'DRUM_ACTIVE',
+    DRUM_CHANGED: 'DRUM_CHANGED',
+    SLIDER_TOP: 'SLIDER_TOP',
+    SLIDER_BODY: 'SLIDER_BODY',
+    INSTRUMENT_A: 'INSTRUMENT_A',
+    INSTRUMENT_B: 'INSTRUMENT_B',
+    INSTRUMENT_C: 'INSTRUMENT_C',
+    INSTRUMENT_D: 'INSTRUMENT_D',
+}
 
 # The glyphs used to display cell information/states in the CLI
 # DISPLAY = {0: '. ', 1:'  ', 2:'OO', 3:'XX'}
@@ -44,7 +73,12 @@ DISPLAY = {0: '. ',
            9: '▒▒',
            8: '▓▓',
            21: '▒▒',
-           20: '▓▓'}
+           20: '▓▓',
+           90: 'xx',
+           91: 'XX',
+           92: '//',
+           93: r'\\',
+           }
 
 W = 16  # Width of the display grid
 H = 16  # Width of the display grid
@@ -203,8 +237,8 @@ SPACE = [
 ]
 
 ROW = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ]]
-COLUMN = [[1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], ]
-INSTRUMENTS = [[1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], [1], ]
+COLUMN = [[INSTRUMENT_A], [INSTRUMENT_B], [INSTRUMENT_C], [INSTRUMENT_D], [INSTRUMENT_A], [INSTRUMENT_B], [INSTRUMENT_C], [INSTRUMENT_D], [INSTRUMENT_A], [INSTRUMENT_B], [INSTRUMENT_C], [INSTRUMENT_D], [INSTRUMENT_A], [INSTRUMENT_B], [INSTRUMENT_C], [INSTRUMENT_D], ]
+INSTRUMENTS = [[INSTRUMENT_A], [INSTRUMENT_B], [INSTRUMENT_C], [INSTRUMENT_D], [INSTRUMENT_A], [INSTRUMENT_B], [INSTRUMENT_C], [INSTRUMENT_D], [INSTRUMENT_A], [INSTRUMENT_B], [INSTRUMENT_C], [INSTRUMENT_D], [INSTRUMENT_A], [INSTRUMENT_B], [INSTRUMENT_C], [INSTRUMENT_D], ]
 NUM_INSTRUMENTS = {
     0: INSTRUMENTS[:0],
     1: INSTRUMENTS[:1],
