@@ -89,7 +89,8 @@ def euc_cfg_grid_defn(args):
     euccfg = [
         ('speed', get_char(row=6, selector=args['speed']), 15, 10),
         ('octave', get_char(row=5, selector=args['octave']), 14, 10),
-        ('fill', get_char(char='f'), 0, 0)
+        ('fill', get_char(char='f'), 0, 0),
+        ('drum', get_char(char='d'), 0, 4)
     ]
     return euccfg
 

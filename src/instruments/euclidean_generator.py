@@ -1,12 +1,12 @@
 # coding=utf-8
-from instruments.drum_deviator import DrumDeviator
+from instruments.sequencer import Sequencer
 import constants as c
 from note_grid import Note_Grid
 from note_conversion import create_cell_to_midi_note_lookup
 from screens import euc_cfg_grid_defn, generate_screen, get_cb_from_touch
 
 
-class Euclidean(DrumDeviator):
+class Euclidean(Sequencer):
     """Euclidean Beat Generator
     - For each drum-note/sample, set a bar length (<16), euclidean density, and offset
     - Bottom 16x8 shows 8 bar lengths, with hits highlighted. Beatpos moves across, or bar rotates?
@@ -22,11 +22,13 @@ class Euclidean(DrumDeviator):
         self.lengths = [16 for x in range(8)]
         self.curr_notes_pos = [0 for x in range(8)]
         self.fill = True
-        self.scale = scale
-        self.octave = octave
-        self.key = key
+        self.scale = 'chromatic'
+        self.octave = 1
+        self.key = 'c'
+        self.is_drum = (True, scale, key, octave)
         for i in range(8):
             self.regen(i)
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
 
     def restart(self):
         """Set all aspects of instrument back to starting state"""
@@ -44,14 +46,11 @@ class Euclidean(DrumDeviator):
             else:
                 pattern.append(c.NOTE_OFF)
         rotate %= len(pattern)
-        rotate = 0 - rotate
+        # rotate = 0 - rotate
         pattern = pattern[rotate:] + pattern[:rotate]
-        # c.logging.info(len(pattern))
-        # c.logging.info(c.W - len(pattern))
         pattern = pattern[::-1]
         for x in range(c.W - len(pattern)):
             pattern.append(c.NOTE_OFF)
-        # c.logging.info(len(pattern))
         return pattern
 
     def regen(self, note):
@@ -157,18 +156,6 @@ class Euclidean(DrumDeviator):
             self.cb_grid = cb_grid
             return led_grid
         return led_grid
-
-    def set_key(self, key):
-        self.key = key
-        self.output(self.old_notes, [])
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
-
-    def set_scale(self, scale):
-        self.scale = scale
-        self.output(self.old_notes, [])
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        return True
 
     def save(self):
         saved = {

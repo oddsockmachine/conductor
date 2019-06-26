@@ -291,6 +291,8 @@ class Conductor(object):
         self.key = KEYS[new_key]
         for i in self.instruments:
             i.set_key(self.key)
+            c.logging.info(i.type)
+        c.logging.info(f"Scale {self.key}")
         lcd.flash("Key {}".format(self.key))
         return
 
@@ -301,6 +303,8 @@ class Conductor(object):
         self.scale = list(SCALE_INTERVALS.keys())[new_scale]
         for i in self.instruments:
             i.set_scale(self.scale)
+            c.logging.info(i.type)
+        c.logging.info(f"Scale {self.scale}")
         lcd.flash("Scale {}".format(self.scale))
         return
 

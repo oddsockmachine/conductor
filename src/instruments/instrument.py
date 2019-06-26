@@ -24,6 +24,7 @@ class Instrument(object):
         self.key = key
         self.scale = scale
         self.octave = octave  # Starting octave
+        self.is_drum = False
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)
         self.selected_next_page_num = None
@@ -41,6 +42,12 @@ class Instrument(object):
         return midi_note_num
 
     def set_key(self, key):
+        c.logging.info(f"set key {key}")
+        if self.is_drum:
+            c.logging.info(self.is_drum)
+            self.is_drum = (True, self.scale, key, self.octave)
+            c.logging.info(self.is_drum)
+            return
         self.key = key  # Converter is a cached lookup, we need to regenerate it
         self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
@@ -48,6 +55,12 @@ class Instrument(object):
         return True
 
     def set_scale(self, scale):
+        c.logging.info(f"set scale {scale}")
+        if self.is_drum:
+            c.logging.info(self.is_drum)
+            self.is_drum = (True, scale, self.key, self.octave)
+            c.logging.info(self.is_drum)
+            return
         self.scale = scale  # Converter is a cached lookup, we need to regenerate it
         self.output(self.old_notes, [])
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
@@ -264,6 +277,26 @@ class Instrument(object):
     def cb_fill(self, x, y):
         self.fill = False if self.fill else True
         lcd.flash("Fill {}".format(self.fill))
+        return
+
+    def cb_drum(self, x, y):
+        if self.is_drum:
+            c.logging.info(self.is_drum)
+            self.scale = self.is_drum[1]
+            self.key = self.is_drum[2]
+            self.octave = self.is_drum[3]
+            self.is_drum = False
+            c.logging.info(f"Reverting to {self.scale}, {self.key}, {self.octave}")
+            lcd.flash(f"Reverting to {self.scale}")
+        else:
+            self.is_drum = (True, self.scale, self.key, self.octave)
+            c.logging.info("Drum mode")
+            c.logging.info(self.is_drum)
+            self.scale = 'chromatic'
+            self.key = 'c'
+            self.octave = 1
+            lcd.flash("Drum mode")
+        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
         return
 
     def cb_edit_page(self, x, y):
