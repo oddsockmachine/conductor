@@ -57,12 +57,18 @@ class Display(object):
                 sleep(0.01)
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_FALLING)
                 self.trellis.set_callback(x, y, button_cb)
-        self.seq_button = digitalio.DigitalInOut(D13)
-        self.ins_button = digitalio.DigitalInOut(D6)
+        self.ins_button = digitalio.DigitalInOut(D13)
+        self.gbl_button = digitalio.DigitalInOut(D6)
         print("Inputs initialized")
         lcd.flash("Inputs initialized")
         self.col_scheme = select_scheme('default')
         return
+
+    def read_gbl_button(self):
+        return not self.gbl_button.value
+
+    def read_ins_button(self):
+        return not self.ins_button.value
 
     def get_cmds(self):
         try:
@@ -70,12 +76,18 @@ class Display(object):
         except Exception as e:
             print("HW error: {}".format(str(e)))
         m = {'cmd': None}
-        if self.ins_button.value and self.state != 'gbl_cfg':
-            m['cmd'] = "CONFIG_A"
-            self.state = 'gbl_cfg'
-        elif self.seq_button.value and self.state != 'ins_cfg':
-            m['cmd'] = "CONFIG_B"
-            self.state = 'ins_cfg'
+        if self.read_gbl_button():
+            if self.state != 'gbl_cfg':
+                m['cmd'] = "CONFIG_A"
+                self.state = 'gbl_cfg'
+            else:
+                self.state = 'play'
+        elif self.read_ins_button():
+            if self.state != 'ins_cfg':
+                m['cmd'] = "CONFIG_B"
+                self.state = 'ins_cfg'
+            else:
+                self.state = 'play'
         return m
 
     def draw_all(self, status, led_grid):

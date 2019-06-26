@@ -42,7 +42,7 @@ class Instrument(object):
         return midi_note_num
 
     def set_key(self, key):
-        c.logging.info(f"set key {key}")
+        # c.logging.info(f"set key {key}")
         if self.is_drum:
             c.logging.info(self.is_drum)
             self.is_drum = (True, self.scale, key, self.octave)
@@ -55,7 +55,7 @@ class Instrument(object):
         return True
 
     def set_scale(self, scale):
-        c.logging.info(f"set scale {scale}")
+        # c.logging.info(f"set scale {scale}")
         if self.is_drum:
             c.logging.info(self.is_drum)
             self.is_drum = (True, scale, self.key, self.octave)
@@ -286,8 +286,8 @@ class Instrument(object):
             self.key = self.is_drum[2]
             self.octave = self.is_drum[3]
             self.is_drum = False
-            c.logging.info(f"Reverting to {self.scale}, {self.key}, {self.octave}")
-            lcd.flash(f"Reverting to {self.scale}")
+            # c.logging.info(f"Reverting to {self.scale}, {self.key}, {self.octave}")
+            # lcd.flash(f"Reverting to {self.scale}")
         else:
             self.is_drum = (True, self.scale, self.key, self.octave)
             c.logging.info("Drum mode")
@@ -305,7 +305,7 @@ class Instrument(object):
             lcd.flash("Edit mode disabled")
         else:
             self.edit_page = self.curr_page_num
-            lcd.flash(f"Editing page {self.edit_page}")
+            # lcd.flash(f"Editing page {self.edit_page}")
         return
 
     def cb_copy_page(self, x, y):

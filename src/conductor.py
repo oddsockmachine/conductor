@@ -246,11 +246,11 @@ class Conductor(object):
         if len(self.instruments) == 1:
             return
         ins_num = self.get_curr_instrument_num() - 1
-        c.logging.info(f"deleting instrument num {ins_num}")
-        lcd.flash(f"deleting instrument num {ins_num}")
-        c.logging.info(f"total instruments before {len(self.instruments)}")
+        # c.logging.info(f"deleting instrument num {ins_num}")
+        # lcd.flash(f"deleting instrument num {ins_num}")
+        # c.logging.info(f"total instruments before {len(self.instruments)}")
         self.instruments.pop(ins_num)
-        c.logging.info(f"total instruments after {len(self.instruments)}")
+        # c.logging.info(f"total instruments after {len(self.instruments)}")
         for i, ins in enumerate(self.instruments):
             ins.ins_num = i
         return
@@ -292,7 +292,7 @@ class Conductor(object):
         for i in self.instruments:
             i.set_key(self.key)
             c.logging.info(i.type)
-        c.logging.info(f"Scale {self.key}")
+        # c.logging.info(f"Scale {self.key}")
         lcd.flash("Key {}".format(self.key))
         return
 
@@ -304,7 +304,7 @@ class Conductor(object):
         for i in self.instruments:
             i.set_scale(self.scale)
             c.logging.info(i.type)
-        c.logging.info(f"Scale {self.scale}")
+        # c.logging.info(f"Scale {self.scale}")
         lcd.flash("Scale {}".format(self.scale))
         return
 

@@ -1,5 +1,4 @@
 ## Top
-- Hook digital input pins to config pages
 - multi-instrument support: program new ones, and add cfg pages
   - cc, keyboard, lfo, marbles
   - beatmaker, binarysequencer, chordsequencer, elaborator, transformer
