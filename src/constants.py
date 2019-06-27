@@ -34,6 +34,11 @@ INSTRUMENT_B = 91
 INSTRUMENT_C = 92
 INSTRUMENT_D = 93
 
+KEY_BLACK = 80
+KEY_WHITE = 81
+KEY_ROOT = 82
+KEY_SCALE = 83
+
 
 # The ints used to represent the state of notes on a note_grid
 NOTE_OFF = 0
@@ -74,6 +79,10 @@ DISPLAY = {0: '. ',
            8: '▓▓',
            21: '▒▒',
            20: '▓▓',
+           80: '░░',
+           81: '░░',
+           82: '▒▒',
+           83: '▓▓',
            90: 'xx',
            91: 'XX',
            92: '//',

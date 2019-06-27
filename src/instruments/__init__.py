@@ -12,6 +12,7 @@ from instruments.sequencer import Sequencer
 from instruments.transformer import Transformer
 from instruments.cc import CC
 from instruments.lfo import LFO
+from instruments.keyboard import Keyboard
 
 
 def instrument_lookup(num):
@@ -30,6 +31,7 @@ def instrument_lookup(num):
         11: Transformer,
         12: CC,
         13: LFO,
+        14: Keyboard,
         'Instrument': Instrument,  # Generic, fallback, no functionality
         'BeatMaker': BeatMaker,
         'BinarySequencer': BinarySequencer,
@@ -44,4 +46,5 @@ def instrument_lookup(num):
         'Transformer': Transformer,
         'CC': CC,
         'LFO': LFO,
+        'Keyboard': Keyboard,
     }[num]

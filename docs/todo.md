@@ -1,9 +1,11 @@
 ## Top
 - multi-instrument support: program new ones, and add cfg pages
-  - cc, keyboard, lfo, marbles
+  - keyboard, lfo, marbles
   - beatmaker, binarysequencer, chordsequencer, elaborator, transformer
 - save/load colorscheme in set
 - async?
+- overlay colorscheme: add sprites on top of background gradient
+- color_char function: char acts as bitmask over selected color, useful for menus
 
 ### Add small screen for better feedback
 - from lcd import lcd

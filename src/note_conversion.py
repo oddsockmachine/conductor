@@ -47,6 +47,10 @@ def scale_to_offset(scale):
     return offsets
 
 
+def midi_to_letter(num):
+    return KEYS[(num + 3) % 12]
+
+
 def create_cell_to_midi_note_lookup(scale, octave, key, height):
     '''Create a lookup table between cell height and midi note number'''
     starting_note = get_starting_note(octave, key)
