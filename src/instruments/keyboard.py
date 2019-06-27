@@ -28,7 +28,7 @@ class Keyboard(Instrument):
         self.type = "Keyboard"
         self.height = 16
         self.width = 16
-        self.layout = "guitar"
+        self.layout = "piano"
         self.available_layouts = ['piano', 'scalar', 'isomorphic', 'guitar']
         self.cached_keys = (None, [])
         self.set_layout(self.layout)
@@ -84,16 +84,21 @@ class Keyboard(Instrument):
             key = self.cached_keys[1][x][y]
             c.logging.info(key.number)
             # add to new_notes
+        elif y == 15:
+            layout = {6+i: self.available_layouts[i] for i in range(len(self.available_layouts))}.get(x)
+            if layout:
+                self.set_layout(layout)
         return True
 
     def keys_to_led_grid(self, keys):
-        # c.logging.info(len(keys))
-        # c.logging.info(keys[5][5])
         grid = [[None for x in range(c.W)] for y in range(c.H)]
         for y, row in enumerate(keys):
             for x, key in enumerate(row):
                 grid[y][x] = key.sprite
         # TODO add buttons over top
+        for i in range(len(self.available_layouts)):
+            grid[6+i][15] = c.SLIDER_BODY
+        grid[6+(self.available_layouts.index(self.layout))][15] = c.SLIDER_TOP
         return grid
 
     def get_led_grid(self, state):
