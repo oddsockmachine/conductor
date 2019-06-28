@@ -22,16 +22,14 @@ class Keyboard(Instrument):
 
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(Keyboard, self).__init__(ins_num, mport, key, scale, octave, speed)
-        if not isinstance(ins_num, int):
-            print("Instrument num {} must be an int".format(ins_num))
-            exit()
         self.type = "Keyboard"
         self.height = 16
         self.width = 16
         self.layout = "piano"
-        self.available_layouts = ['piano', 'scalar', 'isomorphic', 'guitar']
+        self.available_layouts = ['piano', 'scalar', 'iso', 'guitar']
         self.cached_keys = (None, [])
         self.set_layout(self.layout)
+        self.new_notes = []
 
     def set_key(self, key):
         c.logging.info("new key, regen layout")
@@ -40,7 +38,7 @@ class Keyboard(Instrument):
         return
 
     def set_scale(self, scale):
-        c.logging.info("new key, regen layout")
+        c.logging.info("new scale, regen layout")
         self.scale = scale
         self.set_layout(self.layout)
         return
@@ -49,14 +47,14 @@ class Keyboard(Instrument):
         if layout not in self.available_layouts:
             return
         self.layout = layout
-        # self.cached_keys = (layout, self.keys_to_led_grid(create_piano_grid(self.scale, self.key)))
         if layout == 'piano':
             self.cached_keys = ('piano', rotate_grid(create_piano_grid(self.scale, self.key)))
         if layout == 'guitar':
             self.cached_keys = ('guitar', rotate_grid(create_guitar_grid(self.scale, self.key)))
         if layout == 'scalar':
             self.cached_keys = ('scalar', rotate_grid(create_scalar_grid(self.scale, self.key)))
-
+        if layout == 'iso':
+            self.cached_keys = ('iso', rotate_grid(create_iso_grid(self.scale, self.key)))
         return
 
     def get_status(self):
@@ -83,7 +81,7 @@ class Keyboard(Instrument):
         if y < 14:
             key = self.cached_keys[1][x][y]
             c.logging.info(key.number)
-            # add to new_notes
+            self.new_notes.append(key.number)
         elif y == 15:
             layout = {6+i: self.available_layouts[i] for i in range(len(self.available_layouts))}.get(x)
             if layout:
@@ -95,64 +93,49 @@ class Keyboard(Instrument):
         for y, row in enumerate(keys):
             for x, key in enumerate(row):
                 grid[y][x] = key.sprite
-        # TODO add buttons over top
+        # add buttons over top
         for i in range(len(self.available_layouts)):
             grid[6+i][15] = c.SLIDER_BODY
         grid[6+(self.available_layouts.index(self.layout))][15] = c.SLIDER_TOP
         return grid
 
     def get_led_grid(self, state):
-        # if self.layout == self.cached_keys[0]:
         return self.keys_to_led_grid(self.cached_keys[1])
-        # if self.layout == 'piano':
-        #     self.cached_keys = ('piano', self.keys_to_led_grid(create_piano_grid(self.scale, self.key)))
-        # if self.layout == 'guitar':
-        #     self.cached_keys = ('guitar', self.keys_to_led_grid(create_guitar_grid(self.scale, self.key)))
-        # if self.layout == 'scalar':
-        #     self.cached_keys = ('scalar', self.keys_to_led_grid(create_scalar_grid(self.scale, self.key)))
-        # return self.cached_keys[1]
 
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
         local = self.calc_local_beat(global_beat)
-        local
-        new_notes = []
-        # new_notes = self.get_curr_notes()
-        self.output(self.old_notes, new_notes)
-        self.old_notes = new_notes  # Keep track of which notes need stopping next beat
+        if not self.has_beat_changed(local):
+            return
+        self.local_beat_position = local
+        self.output(self.old_notes, self.new_notes)
+        self.old_notes = self.new_notes
         return
 
-    def output(self, old_notes, new_notes):
+    def output(self, notes_off, notes_on):
         """Return all note-ons from the current beat, and all note-offs from the last"""
-        notes_off = [self.cell_to_midi(c) for c in old_notes]
-        notes_on = [self.cell_to_midi(c) for c in new_notes]
         notes_off = [n for n in notes_off if n < 128 and n > 0]
         notes_on = [n for n in notes_on if n < 128 and n > 0]
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
         msgs = off_msgs + on_msgs
-        if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
+        if self.mport:
             for msg in msgs:
                 self.mport.send(msg)
 
     def save(self):
         saved = {
-          "droplet_velocities": self.droplet_velocities,
-          "droplet_positions": self.droplet_positions,
-          "droplet_starts": self.droplet_starts,
+          "layout": self.layout,
         }
         saved.update(self.default_save_info())
         return saved
 
     def load(self, saved):
         self.load_default_info(saved)
-        self.droplet_velocities = saved["droplet_velocities"]
-        self.droplet_positions = saved["droplet_positions"]
-        self.droplet_starts = saved["droplet_starts"]
+        self.layout = saved["layout"]
         return
 
     def clear_page(self):
-        self.get_curr_page().clear_page()
         return
 
 
@@ -200,47 +183,54 @@ def create_piano_grid(scale, key):
     grid.append([Key(0, c.LED_BLANK) for x in range(c.W)])
     grid.append([Key(0, c.LED_BLANK) for x in range(c.W)])
     offset = 23
-    print(c.H-1/2)
     for h in range(int((c.H-1)/2))[::-1]:
-        print(h)
         w_keys = get_keys_for_scale('major', (h * 12) + offset, 0, c.W, scale, key, 'w')
         b_keys = get_keys_for_scale('pentatonic_maj', (h * 12) + offset, 6, c.W, scale, key, 'b')
-        # grid.append([Key(0, c.LED_BLANK) for x in range(c.W)])
         grid.append(b_keys)
         grid.append(w_keys)
-    print(len(grid))
-    while (len(grid) < c.W):  # TODO put blank lines at top
+    while (len(grid) < c.W):
         grid.extend([[Key(0, c.LED_BLANK) for x in range(c.W)]])
-    print(len(grid))
     return grid
 
 
 
 def create_scalar_grid(scale, key):
     keys = []
+    scale_notes = list(n.create_cell_to_midi_note_lookup(scale, -1, key, 62).values())
+    root_notes = list(scale_notes)[::(5 if 'penta' in scale else 7)]
     for octave, y in enumerate(range(7)):
         keys.append(list(n.create_cell_to_midi_note_lookup(scale, octave, key, c.W).values()))
     grid = []
     for x in range(5):
         grid.append([Key(0, c.LED_BLANK) for i in range(c.W)])
     for row in keys[::-1]:
-        grid.append([Key(k, c.KEY_ROOT if (i % 7) else c.KEY_SCALE) for i, k in enumerate(row)])
-        # grid.append([Key(0, c.LED_BLANK) for i in row])
-        # grid.append([Key(0, c.LED_BLANK) for i in row])
+        grid.append([Key(k, c.KEY_ROOT if (n in root_notes) else c.KEY_SCALE) for i, k in enumerate(row)])
     for x in range(4):
         grid.append([Key(0, c.LED_BLANK) for i in range(c.W)])
     return grid
 
 
+def create_iso_grid(scale, key):
+    keys = []
+    scale_notes = list(n.create_cell_to_midi_note_lookup(scale, -1, key, 62).values())
+    root_notes = list(scale_notes)[::(5 if 'penta' in scale else 7)]
+    for octave, y in enumerate(range(7)):
+        keys.append([Key(n, c.KEY_ROOT if (n in root_notes) else c.KEY_SCALE)
+                     for n in scale_notes[5+(5*octave):5+(5*octave)+c.W]])
+    grid = []
+    for x in range(5):
+        grid.append([Key(0, c.LED_BLANK) for i in range(c.W)])
+    for row in keys[::-1]:
+        grid.append(row)
+    for x in range(4):
+        grid.append([Key(0, c.LED_BLANK) for i in range(c.W)])
+    return grid
+
 
 def create_guitar_grid(scale, key):
     scale_notes = n.create_cell_to_midi_note_lookup(scale, -1, key, 62).values()
     root_notes = list(scale_notes)[::(5 if 'penta' in scale else 7)]
-    print(root_notes)
-    print(scale_notes)
-    print(n.midi_to_letter(list(scale_notes)[0]))
     start = 21 + n.KEYS.index(key)
-    print(start)
     grid = []
     for i, r in enumerate(range(c.H-2)):
         row = []

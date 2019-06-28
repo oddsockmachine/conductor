@@ -1,6 +1,6 @@
 ## Top
 - multi-instrument support: program new ones, and add cfg pages
-  - keyboard, lfo, marbles
+  - lfo, marbles
   - beatmaker, binarysequencer, chordsequencer, elaborator, transformer
 - save/load colorscheme in set
 - async?

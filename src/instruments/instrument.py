@@ -198,6 +198,13 @@ class Instrument(object):
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
 
+    def has_beat_changed(self, local_beat):
+        if self.prev_loc_beat != local_beat:
+            self.prev_loc_beat = local_beat
+            return True
+        self.prev_loc_beat = local_beat
+        return False
+
     def calc_local_beat(self, global_beat):
         '''Calc local_beat_pos for this instrument'''
         div = self.get_beat_division()
