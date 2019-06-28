@@ -2,6 +2,7 @@
 from instruments.instrument import Instrument
 import constants as c
 import mido
+from interfaces.lcd import lcd
 
 
 class SliderBank(object):
@@ -42,6 +43,7 @@ class Slider(object):
         self.value = value
         cc = self.get_cc()
         c.logging.info("CC{} = {}, {}".format(self.cc_num, self.value, cc))
+        lcd.flash("CC{} = {}, {}".format(self.cc_num, self.value, cc))
         msg = mido.Message('control_change', value=cc, control=self.cc_num, channel=0)
         return msg
 

@@ -11,7 +11,6 @@ from instruments.octopus import Octopus
 from instruments.sequencer import Sequencer
 from instruments.transformer import Transformer
 from instruments.cc import CC
-from instruments.lfo import LFO
 from instruments.keyboard import Keyboard
 
 
@@ -30,7 +29,6 @@ def instrument_lookup(num):
         10: Sequencer,
         11: Transformer,
         12: CC,
-        13: LFO,
         14: Keyboard,
         'Instrument': Instrument,  # Generic, fallback, no functionality
         'BeatMaker': BeatMaker,
@@ -45,6 +43,5 @@ def instrument_lookup(num):
         'Sequencer': Sequencer,
         'Transformer': Transformer,
         'CC': CC,
-        'LFO': LFO,
         'Keyboard': Keyboard,
     }[num]
