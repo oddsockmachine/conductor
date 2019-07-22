@@ -277,6 +277,8 @@ class Instrument(object):
 
     def cb_clip(self, x, y):
         page_num = (4*y) + x
+        if page_num+1 > len(self.pages):
+            return
         self.selected_next_page_num = page_num
         lcd.flash("Next page {}".format(page_num))
         return

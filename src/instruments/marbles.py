@@ -6,10 +6,7 @@ import mido
 
 class Marbles(Instrument):
     """Marbles
-    - Sets ControlChange values
-    - Multiple pages of sliders
-    - Options for slew rate, transitions etc
-    - Choose pages of 16 big sliders, 32 small sliders, etc"""
+    """
 
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(Marbles, self).__init__(ins_num, mport, key, scale, octave, speed)
@@ -17,13 +14,6 @@ class Marbles(Instrument):
             print("Instrument num {} must be an int".format(ins_num))
             exit()
         self.type = "Marbles"
-        self.height = 16
-        self.width = 16
-        self.local_beat_position = 0
-        self.speed = speed
-        self.droplet_velocities = [1 for n in range(self.width)]
-        self.droplet_positions = [0 for n in range(self.width)]
-        self.droplet_starts = [0 for n in range(self.width)]
 
     def get_status(self):
         status = {
