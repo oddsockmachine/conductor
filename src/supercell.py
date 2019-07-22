@@ -1,6 +1,7 @@
 from conductor import Conductor
 from time import sleep
-import constants as c
+# import constants as c
+
 
 class Supercell(object):
     """docstring for Supercell."""
