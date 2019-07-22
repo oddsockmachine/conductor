@@ -5,7 +5,6 @@
   - marbles
   - beatmaker, binarysequencer, chordsequencer, drumdeviator, elaborator, transformer
 - save/load colorscheme in set
-- Fix MIDI clock timing
 - async?
 
 ### Add small screen for better feedback

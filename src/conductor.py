@@ -201,7 +201,7 @@ class Conductor(object):
     # ##### CALLBACK METHODS ######
 
     def cb_reset(self, x, y):
-        # TODO reset all beatpos to 0
+        self.beat_position = 0
         for i in self.instruments:
             i.local_beat_position = 0
             try:

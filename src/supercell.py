@@ -10,7 +10,7 @@ class Supercell(object):
         self.mport = mport
         self.mportin = mportin
         self.beat_clock_count = 0
-        self.midi_clock_divider = 7
+        self.midi_clock_divider = 6
         self.mportin.callback = self.process_incoming_midi()
         self.conductor = Conductor(mport)
         self.display = display
