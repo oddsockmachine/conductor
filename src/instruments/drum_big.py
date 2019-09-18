@@ -30,7 +30,7 @@ class DrumBig(Instrument):
         self.octave = 1  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
         self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
-        self.half = True
+        self.half = False  # Bool to track whether we are on the second half of the extended notegrid
 
     def set_scale(self, scale):
         return  # Not used
@@ -61,7 +61,9 @@ class DrumBig(Instrument):
             return True
 
     def get_notes_from_curr_beat(self):
-        self.get_curr_page().get_notes_from_beat(self.local_beat_position)
+        page = self.get_curr_page()
+        # page.get_notes_from_beat(self.local_beat_position)
+        page.note_grid[self.local_beat_position]
         # TODO: cut page in half and append. Get curr long beat, and get note from that
         return
 
@@ -69,7 +71,6 @@ class DrumBig(Instrument):
         if state == 'play':
             led_grid = []
             grid = self.get_curr_page().note_grid
-            # TODO: get curr long beat, show led_status on top or bottom row accordingly
             for i, column in enumerate(grid):  # columnn counter
                 led_grid.append([self.get_led_status(x, i, y) for y, x in enumerate(column)])
         elif state == 'ins_cfg':
@@ -86,13 +87,8 @@ class DrumBig(Instrument):
 
     def get_led_status(self, cell, beat_pos, h):
         '''Determine which type of LED should be shown for a given cell'''
-        # c.logging.info(str(cell), str(beat_pos), str(h))
-
         led = c.LED_BLANK  # Start with blank / no led
         if beat_pos == self.local_beat_position:
-            # c.logging.info(str(cell), str(beat_pos), str(h))
-            # if (h > self.height/2) and self.half:
-            #     led = c.LED_BLANK
             if self.half == (h < (self.height/2)):
                 led = c.LED_BEAT  # If we're on the beat, we'll want to show the beat marker
                 if cell == c.NOTE_ON:
@@ -138,10 +134,6 @@ class DrumBig(Instrument):
         '''Calc local_beat_pos for this instrument'''
         div = self.get_beat_division()
         local_beat = int(global_beat / div) % (self.width * 1)
-        # c.logging.info(local_beat)
-        # logging.info("g{} d{} w{} l{}".format(global_beat, div, self.width, local_beat))
-        # if self.local_beat_position == local_beat and self.is_page_end():
-        #     self.half = not self.half
         return local_beat
 
     def is_page_end(self):
@@ -182,6 +174,12 @@ class DrumBig(Instrument):
         grid = self.get_led_grid('play')
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
+        # c.logging.info(beat_notes)
+        if self.half:
+            beat_notes = [c.LED_BLANK for i in range(int(self.height/2))] + beat_notes
+        # else:
+        #     beat_notes = beat_notes[int(self.height/2):]
+        c.logging.info(beat_notes)
         notes_on = [i for i, x in enumerate(beat_notes) if x == c.NOTE_ON]  # get list of cells that are on
         return notes_on
 
