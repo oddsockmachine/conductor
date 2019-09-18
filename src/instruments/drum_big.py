@@ -29,14 +29,14 @@ class DrumBig(Instrument):
         self.scale = 'chromatic'
         self.octave = 1  # Starting octave
         self.old_notes = []  # Keep track of currently playing notes so we can off them next step
-        self.note_converter = create_cell_to_midi_note_lookup(self.scale, self.octave, self.key, self.height)
+        self.note_converter = create_cell_to_midi_note_lookup('chromatic', self.octave, self.key, self.height)
         self.half = False  # Bool to track whether we are on the second half of the extended notegrid
 
-    def set_scale(self, scale):
-        return  # Not used
-
-    def set_key(self, key):
-        return  # Not used
+    # def set_scale(self, scale):
+    #     return  # Not used
+    #
+    # def set_key(self, key):
+    #     return  # Not used
 
     def get_curr_page(self):
         return self.pages[self.curr_page_num]
