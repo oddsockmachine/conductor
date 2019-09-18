@@ -22,7 +22,7 @@ class Conductor(object):
         self.max_beat_division = 32
         self.scale = scale
         self.octave = octave  # Starting octave
-        self.instruments = [instrument_lookup(10)(ins_num=0, **self.instrument_ctx())]
+        self.instruments = [instrument_lookup(5)(ins_num=0, **self.instrument_ctx())]
         # for x in range(4):
         #     self.instruments.append(instrument_lookup(4)(ins_num=x+3, **self.instrument_ctx()))
         # self.instruments.append(instrument_lookup(9)(ins_num=8, **self.instrument_ctx()))

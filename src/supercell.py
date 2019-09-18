@@ -23,8 +23,8 @@ class Supercell(object):
         self.draw()
         while True:
             self.get_cmds()
-            sleep(0.01)
-            # self.conductor.step_beat()
+            sleep(0.1)
+            self.conductor.step_beat()
             self.draw()
         pass
 

@@ -5,7 +5,8 @@
   - marbles
   - beatmaker, binarysequencer, chordsequencer, drumdeviator, elaborator, transformer
 - save/load colorscheme in set
-- async?
+- Choose to sync to external midi clock, or self-generate
+- double drum machine: 8 channels, 32 steps
 
 ### Add small screen for better feedback
 - from lcd import lcd
