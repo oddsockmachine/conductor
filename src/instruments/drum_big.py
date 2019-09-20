@@ -16,7 +16,7 @@ class DrumBig(Instrument):
 
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(DrumBig, self).__init__(ins_num, mport, key, scale, octave, speed)
-        self.type = "Drum Machine"
+        self.type = "Drum Big"
         self.bars = 4
         self.curr_page_num = 0
         self.curr_rept_num = 0

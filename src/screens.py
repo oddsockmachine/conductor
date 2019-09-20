@@ -1,6 +1,6 @@
 import constants as c
 # from instruments import instrument_lookup
-total_num_instruments = 14
+total_num_instruments = 8
 
 
 def get_char(**kwargs):
