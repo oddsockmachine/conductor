@@ -7,6 +7,7 @@
 - save/load colorscheme in set
 - Choose to sync to external midi clock, or self-generate
 - double drum machine: 8 channels, 32 steps
+- threads/async?
 
 ### Add small screen for better feedback
 - from lcd import lcd
