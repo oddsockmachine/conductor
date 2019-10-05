@@ -2,8 +2,8 @@
 
 # Log to a file, good for debugging
 import logging
-logging.basicConfig(filename='sequencer.log', level=logging.DEBUG)
-
+logging.basicConfig(filename='sequencer.log', level=logging.DEBUG, format='(%(threadName)-10s) %(message)s')
+debug = logging.debug
 save_location = './saved/'
 save_extension = '.json'
 
@@ -43,6 +43,9 @@ KEY_SCALE = 83
 # The ints used to represent the state of notes on a note_grid
 NOTE_OFF = 0
 NOTE_ON = 3
+
+TICK = 1
+BEAT = 2
 
 pallette_lookup = {
     LED_BLANK: 'BLANK',

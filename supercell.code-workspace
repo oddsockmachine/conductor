@@ -5,6 +5,7 @@
 		}
 	],
 	"settings": {
-		"python.pythonPath": "venv/bin/python3"
+		"python.pythonPath": "venv/bin/python3",
+		"workbench.colorTheme": "Atom One Dark"
 	}
 }

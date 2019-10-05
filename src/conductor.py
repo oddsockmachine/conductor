@@ -128,7 +128,7 @@ class Conductor(object):
         status = self.get_curr_instrument().get_status()
         return status
 
-    def step_beat(self):
+    def step_beat(self, tick_type):
         self.beat_position += 1
         self.beat_position %= self.width * self.max_beat_division
         for ins in self.instruments:

@@ -1,7 +1,11 @@
 from supercell import Supercell
 import mido
 import argparse
-
+from buses import midi_in_bus, LEDs_bus, buttons_bus, clock_bus, ticker_bus
+from midi_input import MidiInListener
+from clock import Clock
+from ticker import SelfTicker
+from constants import debug
 # Get command line arguments, set up midi connections, start up Supercell in correct mode
 
 parser = argparse.ArgumentParser()
@@ -18,6 +22,15 @@ def console_main(stdscr):
     display = Display(stdscr)
     with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
+            midi = MidiInListener(mportin, midi_in_bus)
+            ticker = SelfTicker(100, ticker_bus)
+            clock = Clock(midi_in_bus, ticker_bus, clock_bus)
+            midi.start()
+            ticker.start()
+            clock.start()
+            clock.set_input("midi")
+            debug(midi)
+
             supercell = Supercell(display, mport, mportin)
             supercell.run()
 
@@ -30,10 +43,18 @@ def hardware_main():
     print("Creating MIDI ports")
     with mido.open_output('f_midi:f_midi 16:0') as mport:
         with mido.open_input('f_midi:f_midi 16:0') as mportin:
+            midi = MidiInListener(mportin, midi_in_bus)
+            ticker = SelfTicker(100, ticker_bus)
+            clock = Clock(midi_in_bus, ticker_bus, clock_bus)
+            midi.start()
+            ticker.start()
+            clock.start()
+            clock.set_input("midi")
+            debug(midi)
             print("Done")
             print(mportin)
             print(mport)
-            supercell = Supercell(display, mport, mportin)
+            supercell = Supercell(display, mport, midi)
             supercell.run()
 
 

@@ -1,7 +1,7 @@
 from conductor import Conductor
 from time import sleep
-# import constants as c
-
+from constants import debug
+from buses import clock_bus
 
 class Supercell(object):
     """docstring for Supercell."""
@@ -12,34 +12,26 @@ class Supercell(object):
         self.mportin = mportin
         self.beat_clock_count = 0
         self.midi_clock_divider = 6
-        self.mportin.callback = self.process_incoming_midi()
+        # self.mportin.callback = self.process_incoming_midi()
         self.conductor = Conductor(mport)
         self.display = display
         self.display.command_cb = self.command_cb
         self.save_on_exit = False
 
     def run(self):
-        print("Running...")
+        debug("Running...")
         self.draw()
         while True:
             self.get_cmds()
-            sleep(0.1)
-            self.conductor.step_beat()
+            debug("?")
+            sleep(0.01)
+            # self.conductor.step_beat()
+            # debug(clock_bus.get())
+            clock_tick = clock_bus.get()
+            self.conductor.step_beat(clock_tick)
+            debug('---')
             self.draw()
         pass
-
-    def process_incoming_midi(self):
-        def _process_incoming_midi(message):
-            '''Check for incoming midi messages and categorize so we can do something with them'''
-            tick = False
-            # c.logging.warning(message)
-            # notes = []
-            if message.type == "clock":
-                tick = self.process_midi_tick()
-                if tick:
-                    self.conductor.step_beat()
-                    # self.draw()
-        return _process_incoming_midi
 
     def command_cb(self, m):
         self.process_cmds(m)
