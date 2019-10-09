@@ -7,13 +7,18 @@ from random import choice, random, randint
 from copy import deepcopy
 from interfaces.lcd import lcd
 from buses import midi_out_bus
+from threading import Thread
+from queue import Queue
 
-
-class Instrument(object):
+class Instrument(Thread):
     """docstring for Instrument."""
 
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
-        super(Instrument, self).__init__()
+        # super(Instrument, self).__init__()
+        Thread.__init__(self, name=f"Ins: {ins_num}")
+        self.daemon = True
+
+        self.instrument_cmd_bus = Queue()
         self.type = "Generic Instrument"
         self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
         self.mport = mport
@@ -30,6 +35,12 @@ class Instrument(object):
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)
         self.selected_next_page_num = None
         self.edit_page = None  # Track which page we want to show and edit while playback continues
+ 
+    def run(self):
+        c.debug("Instrument starting")
+        while True:
+            cmd = self.instrument_cmd_bus.get()
+        return
 
     def restart(self):
         """Set all aspects of instrument back to starting state"""

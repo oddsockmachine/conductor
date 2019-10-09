@@ -10,9 +10,9 @@ from interfaces.lcd import lcd
 class Conductor(object):
     """docstring for Conductor."""
 
-    def __init__(self, mport, key="e", scale="pentatonic_maj", octave=2, bars=int(c.W/4), height=c.H):
+    def __init__(self, key="e", scale="pentatonic_maj", octave=2, bars=int(c.W/4), height=c.H):
         super(Conductor, self).__init__()
-        self.mport = mport
+        self.mport = None
         self.key = key
         self.states = 'play save load ins_cfg gbl_cfg display'.split()  # Valid states for the display(s)
         self.beat_position = 0
@@ -23,6 +23,7 @@ class Conductor(object):
         self.scale = scale
         self.octave = octave  # Starting octave
         self.instruments = [instrument_lookup(5)(ins_num=0, **self.instrument_ctx())]
+        self.instruments[0].start()
         # for x in range(4):
         #     self.instruments.append(instrument_lookup(4)(ins_num=x+3, **self.instrument_ctx()))
         # self.instruments.append(instrument_lookup(9)(ins_num=8, **self.instrument_ctx()))
@@ -121,7 +122,9 @@ class Conductor(object):
         if len(self.instruments) == 16:
             return
         ins_type = instrument_lookup(type)
-        self.instruments.append(ins_type(ins_num=len(self.instruments), **self.instrument_ctx()))
+        new_ins = ins_type(ins_num=len(self.instruments), **self.instrument_ctx())
+        new_ins.start()
+        self.instruments.append(new_ins)
         return
 
     def get_status(self):
@@ -266,7 +269,9 @@ class Conductor(object):
         if self.get_total_instrument_num() >= 16:
             return
         ins = instrument_lookup(y+1)  # +1 because base class isn't playable
-        self.instruments.append(ins(ins_num=self.get_total_instrument_num(), **self.instrument_ctx()))
+        new_ins = ins(ins_num=self.get_total_instrument_num(), **self.instrument_ctx())
+        new_ins.start()
+        self.instruments.append(new_ins)
         lcd.flash("Added {}".format(self.instruments[~0].type))
 
     # ###### GETTERS/SETTERS ######

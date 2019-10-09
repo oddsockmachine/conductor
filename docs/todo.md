@@ -9,6 +9,10 @@
 - double drum machine: 8 channels, 32 steps
 - threads/async?
 
+### Threads
+- Run each instrument in a thread
+- Handle shutdown of curses and all threads
+
 ### Add small screen for better feedback
 - from lcd import lcd
 - lcd.line1("Select:")

@@ -8,18 +8,19 @@ class SelfTicker(Thread):
         Thread.__init__(self, name='SelfTicker')
         self.daemon = True
         self.bpm = initial_bpm
+        debug(f"ticker's bpm is {initial_bpm}")
         self.ticker_bus = ticker_bus
         self.beat_clock_count = 0
-        self.midi_clock_divider = 12
+        self.midi_clock_divider = 4
 
     def run(self):
         debug("SelfTicker")
         while True:
             sleep(60/self.bpm)
-            self.ticker_bus.put("x")
+            # self.ticker_bus.put("x")
             # debug("tick in")
-        tick = self.process_midi_tick()
-        self.ticker_bus.put(tick)
+            tick = self.process_midi_tick()
+            self.ticker_bus.put(tick)
 
         return
 
@@ -28,6 +29,5 @@ class SelfTicker(Thread):
         self.beat_clock_count += 1
         if self.beat_clock_count >= self.midi_clock_divider:
             self.beat_clock_count %= self.midi_clock_divider
-            print(".")
             return BEAT
         return TICK

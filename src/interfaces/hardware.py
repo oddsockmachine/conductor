@@ -1,4 +1,5 @@
 import constants as c
+from threading import Thread
 from board import SCL, SDA, D13, D6
 import busio
 import digitalio
@@ -11,7 +12,7 @@ print("Imported hardware connections")
 
 AUTO_WRITE = False
 
-class Display(object):
+class Display(Thread):
     """docstring for Display."""
 
     def __init__(self, w=c.W, h=c.H, command_cb=None):
@@ -62,6 +63,9 @@ class Display(object):
         print("Inputs initialized")
         lcd.flash("Inputs initialized")
         self.col_scheme = select_scheme('default')
+        return
+
+    def run(self):
         return
 
     def read_gbl_button(self):

@@ -11,3 +11,13 @@ def clear_queue(q):
     while not q.empty():
         q.get()
     return
+
+def all_buses():
+    return {
+        'midi_in_bus': midi_in_bus,
+        'midi_out_bus': midi_out_bus,
+        'ticker_bus': ticker_bus,
+        'clock_bus': clock_bus,
+        'buttons_bus': buttons_bus,
+        'LEDs_bus': LEDs_bus, 
+    }
