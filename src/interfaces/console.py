@@ -14,8 +14,8 @@ class Display(Thread):
     def __init__(self, stdscr, button_bus, led_bus, w=c.W, h=c.H):
         # super(Display, self).__init__()
         Thread.__init__(self, name='Display')
-        # self.button_bus = button_bus
-        # self.led_bus = led_bus
+        self.button_bus = button_bus
+        self.led_bus = led_bus
 
         curses.use_default_colors()
         for i in range(0, curses.COLORS):
@@ -38,15 +38,14 @@ class Display(Thread):
     def run(self):
         c.debug("Display thread started")
         while True:
-            sleep(1)
-            c.debug("Display thread running")
-
-            # m = self.get_cmds()
-            # if m.get('cmd') != None:
-            #     self.button_bus.put(m)
-            # if not self.led_bus.empty():
-            #     status, led_grid = self.led_bus.get()
-            #     self.draw_all(status, led_grid)
+            sleep(0.01)
+            m = self.get_cmds()
+            if m.get('cmd') != None:
+                c.debug(m)
+                self.button_bus.put(m)
+            if not self.led_bus.empty():
+                status, led_grid = self.led_bus.get()
+                self.draw_all(status, led_grid)
 
     def get_cmds(self):
         m = {'cmd': None}

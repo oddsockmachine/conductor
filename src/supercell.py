@@ -1,7 +1,7 @@
 from conductor import Conductor
 from time import sleep
 from constants import debug
-from buses import clock_bus, buttons_bus
+from buses import clock_bus, buttons_bus, LEDs_bus
 
 class Supercell(object):
     """docstring for Supercell."""
@@ -12,7 +12,6 @@ class Supercell(object):
         self.mportin = mportin
         self.beat_clock_count = 0
         self.midi_clock_divider = 6
-        # self.mportin.callback = self.process_incoming_midi()
         self.conductor = Conductor(mport)
         self.display = display
         self.display.command_cb = self.command_cb
@@ -23,25 +22,27 @@ class Supercell(object):
         debug("Running...")
         self.draw()
         while True:
-            self.get_cmds()
+            if not buttons_bus.empty():
+                debug("button pressed")
+                m = buttons_bus.get()
+                self.process_cmds(m)
+                self.draw()
+            if not clock_bus.empty():
+                clock_tick = clock_bus.get()
+                self.conductor.step_beat(clock_tick)
+                self.draw()
             sleep(0.01)
-            # self.conductor.step_beat()
-            clock_tick = clock_bus.get()
-            self.conductor.step_beat(clock_tick)
-            # debug('---')
-            self.draw()
-        pass
+        return
 
     def command_cb(self, m):
         self.process_cmds(m)
         return
 
     def get_cmds(self):
-        m = self.display.get_cmds()
-        # if not buttons_bus.empty():
-        #     debug("button pressed")
-        #     m = buttons_bus.get()
-        self.process_cmds(m)
+        if not buttons_bus.empty():
+            debug("button pressed")
+            m = buttons_bus.get()
+            self.process_cmds(m)
 
     def process_cmds(self, m):
         if m['cmd'] is None:
@@ -73,4 +74,4 @@ class Supercell(object):
     def draw(self):
         status = self.conductor.get_status()
         led_grid = self.conductor.get_led_grid()
-        self.display.draw_all(status, led_grid)
+        LEDs_bus.put((status, led_grid))
