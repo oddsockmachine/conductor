@@ -1,5 +1,5 @@
 # coding=utf-8
-from instruments.drum_deviator import DrumDeviator
+from instruments._drum_deviator import DrumDeviator
 import constants as c
 from note_grid import Note_Grid
 from screens import oct_cfg_grid_defn, generate_screen, get_cb_from_touch
@@ -81,109 +81,6 @@ class Octopus(DrumDeviator):
             return led_grid
         return led_grid
 
-    # def advance_page(self):
-    #     '''Go to next repeat or page'''
-    #     if self.random_pages:
-    #         # Create a distribution of the pages and their repeats, pick one at random
-    #         dist = []
-    #         for index, page in enumerate(self.pages):
-    #             for r in range(page.repeats):
-    #                 dist.append(index)
-    #         next_page_num = choice(dist)
-    #         self.curr_page_num = next_page_num
-    #         self.curr_rept_num = 0  # Reset, for this page or next page
-    #         return
-    #     self.curr_rept_num += 1  # inc repeat number
-    #     if self.curr_rept_num >= self.get_curr_page().repeats:
-    #         # If we're overfowing repeats, time to go to next available page
-    #         self.curr_rept_num = 0  # Reset, for this page or next page
-    #         self.curr_page_num = self.get_next_page_num()
-    #         self.selected_next_page_num = None
-    #
-    #     # Take control figures from new page, apply to controls
-    #     # notes = self.get_curr_page().note_grid
-    #     # for y in range(8, 16):
-    #         # for x in range(16):
-    #             # if notes[x][y] ==c.NOTE_ON:
-    #                 # self.apply_control(x, y)
-    #     # self.apply_randomness()
-    #     return
-
-    # # def get_led_status(self, cell, beat_pos):
-    # #     '''Determine which type of LED should be shown for a given cell'''
-    # #     led = LED_BLANK  # Start with blank / no led
-    # #     if beat_pos == self.local_beat_position:
-    # #         led = LED_BEAT  # If we're on the beat, we'll want to show the beat marker
-    # #         if cell ==c.NOTE_ON:
-    # #             led = LED_SELECT  # Unless we want a selected + beat cell to be special
-    # #     elif cell ==c.NOTE_ON:
-    # #         led = LED_ACTIVE  # Otherwise if the cell is active (touched)
-    # #     return led
-    # #
-    # # def inc_page_repeats(self, page):
-    # #     '''Increase how many times the current page will loop'''
-    # #     if page > len(self.pages)-1:
-    # #         return False
-    # #     self.pages[page].inc_repeats()
-    # #     return True
-    # #
-    # # def dec_page_repeats(self, page):
-    # #     '''Reduce how many times the current page will loop'''
-    # #     if page > len(self.pages)-1:
-    # #         return False
-    # #     self.pages[page].dec_repeats()
-    # #     return True
-    # #
-    # # def step_beat(self, global_beat):
-    # #     '''Increment the beat counter, and do the math on pages and repeats'''
-    # #     local = self.calc_local_beat(global_beat)
-    # #     if not self.has_beat_changed(local):
-    # #         # Intermediate beat for this instrument, do nothing
-    # #         return
-    # #     self.local_beat_position = local
-    # #     if self.is_page_end():
-    # #         self.advance_page()
-    # #     new_notes = self.get_curr_notes()
-    # #     self.output(self.old_notes, new_notes)
-    # #     self.old_notes = new_notes  # Keep track of which notes need stopping next beat
-    # #     return
-    #
-    # def is_page_end(self):
-    #     return self.local_beat_position == 0
-    #
-    # def has_beat_changed(self, local_beat):
-    #     if self.prev_loc_beat != local_beat:
-    #         self.prev_loc_beat = local_beat
-    #         return True
-    #     self.prev_loc_beat = local_beat
-    #     return False
-    #
-    # def get_curr_notes(self):
-    #     grid = self.temp_page.note_grid
-    #     beat_pos = self.local_beat_position
-    #     beat_notes = [n for n in grid[beat_pos][:8]]
-    #     notes_on = [i for i, x in enumerate(beat_notes) if x == NOTE_ON]  # get list of cells that are on
-    #     return notes_on
-    #
-
-    # def output(self, old_notes, new_notes):
-    #     """Return all note-ons from the current beat, and all note-offs from the last"""
-    #     notes_off = [self.cell_to_midi(c) for c in old_notes]
-    #     notes_on = [self.cell_to_midi(c) for c in new_notes]
-    #     if self.sustain:
-    #         _notes_off = [n for n in notes_off if n not in notes_on]
-    #         _notes_on = [n for n in notes_on if n not in notes_off]
-    #         notes_off = _notes_off
-    #         notes_on = _notes_on
-    #     notes_off = [n for n in notes_off if n<128 and n>0]
-    #     notes_on = [n for n in notes_on if n<128 and n>0]
-    #     off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
-    #     on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
-    #     msgs = off_msgs + on_msgs
-    #     if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
-    #         for msg in msgs:
-    #             self.mport.send(msg)
-
     def save(self):
         # TODO
         saved = {
@@ -203,8 +100,4 @@ class Octopus(DrumDeviator):
             page = Note_Grid(self.bars, self.height)
             page.load(p)
             self.pages.append(page)
-        return
-
-    def clear_page(self):
-        self.get_curr_page().clear_page()
         return

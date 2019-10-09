@@ -99,20 +99,6 @@ class DrumDeviator(DrumMachine):
             return led_grid
         return led_grid
 
-    def step_beat(self, global_beat):
-        '''Increment the beat counter, and do the math on pages and repeats'''
-        local = self.calc_local_beat(global_beat)
-        if not self.has_beat_changed(local):
-            # Intermediate beat for this instrument, do nothing
-            return
-        self.local_beat_position = local
-        if self.is_page_end():
-            self.advance_page()
-        new_notes = self.get_curr_notes()
-        self.output(self.old_notes, new_notes)
-        self.old_notes = new_notes  # Keep track of which notes need stopping next beat
-        return
-
     def advance_page(self):
         '''Go to next repeat or page'''
         if self.random_pages:
@@ -162,13 +148,6 @@ class DrumDeviator(DrumMachine):
         c = choice(choices)
         return c
 
-    def get_curr_notes(self):
-        grid = self.temp_page.note_grid
-        beat_pos = self.local_beat_position
-        beat_notes = [n for n in grid[beat_pos][:8]]
-        notes_on = [i for i, x in enumerate(beat_notes) if x == c.NOTE_ON]  # get list of cells that are on
-        return notes_on
-
     def save(self):
         saved = {
           "pages": [p.save() for p in self.pages],
@@ -192,9 +171,3 @@ class DrumDeviator(DrumMachine):
             page.load(p)
             self.pages.append(page)
         return
-
-
-#     def clear_page(self):
-#         self.get_curr_page().clear_page()
-#         return
-#

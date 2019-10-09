@@ -184,7 +184,3 @@ class Euclidean(Sequencer):
         self.lengths = saved["lengths"]
         self.curr_notes_pos = saved["curr_notes_pos"]
         return
-
-    def clear_page(self):
-        self.get_curr_page().clear_page()
-        return

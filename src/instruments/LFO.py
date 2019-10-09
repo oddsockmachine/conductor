@@ -10,6 +10,7 @@ class LFO(Instrument):
     - Sets ControlChange values
     - Multiple pages of sliders
     - Options for slew rate, transitions etc
+    - Draw curve with interpolation between points
     - Choose pages of 16 big sliders, 32 small sliders, etc"""
 
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):

@@ -95,19 +95,6 @@ class Marbles(Instrument):
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
         return
 
-    def output(self, old_notes, new_notes):
-        """Return all note-ons from the current beat, and all note-offs from the last"""
-        notes_off = [self.cell_to_midi(c) for c in old_notes]
-        notes_on = [self.cell_to_midi(c) for c in new_notes]
-        notes_off = [n for n in notes_off if n < 128 and n > 0]
-        notes_on = [n for n in notes_on if n < 128 and n > 0]
-        off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
-        on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
-        msgs = off_msgs + on_msgs
-        if len(msgs) > 0:
-            c.debug(msgs)
-            midi_out_bus.put(msgs)
-
     def save(self):
         saved = {
         }

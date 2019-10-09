@@ -225,6 +225,20 @@ class Instrument(Thread):
     def is_page_end(self):
         return self.local_beat_position == 0
 
+    def inc_page_repeats(self, page):
+        '''Increase how many times the current page will loop'''
+        if page > len(self.pages)-1:
+            return False
+        self.pages[page].inc_repeats()
+        return True
+
+    def dec_page_repeats(self, page):
+        '''Reduce how many times the current page will loop'''
+        if page > len(self.pages)-1:
+            return False
+        self.pages[page].dec_repeats()
+        return True
+
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
         local = self.calc_local_beat(global_beat)

@@ -17,6 +17,7 @@ class DrumBig(Instrument):
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(DrumBig, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Drum Big"
+        self.is_drum = True
         self.bars = 4
         self.curr_page_num = 0
         self.curr_rept_num = 0
@@ -32,17 +33,11 @@ class DrumBig(Instrument):
         self.note_converter = create_cell_to_midi_note_lookup('chromatic', self.octave, self.key, self.height)
         self.half = False  # Bool to track whether we are on the second half of the extended notegrid
 
-    # def set_scale(self, scale):
-    #     return  # Not used
-    #
-    # def set_key(self, key):
-    #     return  # Not used
-
-    def get_curr_page(self):
-        return self.pages[self.curr_page_num]
-
-    def get_page_stats(self):
-        return [x.repeats for x in self.pages]
+    def set_scale(self, scale):
+        return  # Not used
+    
+    def set_key(self, key):
+        return  # Not used
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
@@ -101,20 +96,6 @@ class DrumBig(Instrument):
             led = c.LED_ACTIVE  # Otherwise if the cell is active (touched)
         return led
 
-    def inc_page_repeats(self, page):
-        '''Increase how many times the current page will loop'''
-        if page > len(self.pages)-1:
-            return False
-        self.pages[page].inc_repeats()
-        return True
-
-    def dec_page_repeats(self, page):
-        '''Reduce how many times the current page will loop'''
-        if page > len(self.pages)-1:
-            return False
-        self.pages[page].dec_repeats()
-        return True
-
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
         local = self.calc_local_beat(global_beat)
@@ -128,46 +109,6 @@ class DrumBig(Instrument):
         new_notes = self.get_curr_notes()
         self.output(self.old_notes, new_notes)
         self.old_notes = new_notes  # Keep track of which notes need stopping next beat
-        return
-
-    def calc_local_beat(self, global_beat):
-        '''Calc local_beat_pos for this instrument'''
-        div = self.get_beat_division()
-        local_beat = int(global_beat / div) % (self.width * 1)
-        return local_beat
-
-    def is_page_end(self):
-        return self.local_beat_position == 0
-
-    def has_beat_changed(self, local_beat):
-        if self.prev_loc_beat != local_beat:
-            self.prev_loc_beat = local_beat
-            return True
-        self.prev_loc_beat = local_beat
-        return False
-
-    def get_beat_division(self):
-        return 2**self.speed
-
-    def get_beat_division_str(self):
-        return self.speed
-        # return {0:'>>>',1:'>>',2:'>',3:'-'}.get(self.speed, 'ERR')
-
-    def change_division(self, div):
-        '''Find current instrument, inc or dec its beat division as appropriate'''
-        if div == "-":
-            if self.speed == 0:
-                return
-            self.speed -= 1
-            return
-        if div == "+":
-            if self.speed == 4:
-                return
-            self.speed += 1
-            return
-
-        # Direct set
-        self.speed = div
         return
 
     def get_curr_notes(self):
@@ -201,8 +142,4 @@ class DrumBig(Instrument):
             page = Note_Grid(self.bars, self.height)
             page.load(p)
             self.pages.append(page)
-        return
-
-    def clear_page(self):
-        self.get_curr_page().clear_page()
         return
