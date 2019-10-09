@@ -11,6 +11,7 @@
 
 ### Threads
 - Run each instrument in a thread
+- Refactor instruments to share more common code, thread framework
 - Handle shutdown of curses and all threads
 
 ### Add small screen for better feedback

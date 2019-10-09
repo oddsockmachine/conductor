@@ -160,7 +160,7 @@ def get_keys_for_scale(row_scale, starting_note, rotate, length, scale, key, b_w
     scale = n.SCALE_INTERVALS[row_scale]
     for interval in scale:
         keys.append(1)
-        for gap in range(interval-1):
+        for _gap in range(interval-1):
             keys.append(0)
     if rotate:
         keys = keys[rotate:] + keys[:rotate]
@@ -199,14 +199,14 @@ def create_scalar_grid(scale, key):
     keys = []
     scale_notes = list(n.create_cell_to_midi_note_lookup(scale, -1, key, 62).values())
     root_notes = list(scale_notes)[::(5 if 'penta' in scale else 7)]
-    for octave, y in enumerate(range(7)):
+    for octave, _y in enumerate(range(7)):
         keys.append(list(n.create_cell_to_midi_note_lookup(scale, octave, key, c.W).values()))
     grid = []
-    for x in range(5):
+    for _x in range(5):
         grid.append([Key(0, c.LED_BLANK) for i in range(c.W)])
     for row in keys[::-1]:
         grid.append([Key(k, c.KEY_ROOT if (n in root_notes) else c.KEY_SCALE) for i, k in enumerate(row)])
-    for x in range(4):
+    for _x in range(4):
         grid.append([Key(0, c.LED_BLANK) for i in range(c.W)])
     return grid
 
@@ -215,15 +215,15 @@ def create_iso_grid(scale, key):
     keys = []
     scale_notes = list(n.create_cell_to_midi_note_lookup(scale, -1, key, 62).values())
     root_notes = list(scale_notes)[::(5 if 'penta' in scale else 7)]
-    for octave, y in enumerate(range(7)):
+    for octave, _y in enumerate(range(7)):
         keys.append([Key(n, c.KEY_ROOT if (n in root_notes) else c.KEY_SCALE)
                      for n in scale_notes[5+(5*octave):5+(5*octave)+c.W]])
     grid = []
-    for x in range(5):
+    for _x in range(5):
         grid.append([Key(0, c.LED_BLANK) for i in range(c.W)])
     for row in keys[::-1]:
         grid.append(row)
-    for x in range(4):
+    for _x in range(4):
         grid.append([Key(0, c.LED_BLANK) for i in range(c.W)])
     return grid
 
@@ -233,7 +233,7 @@ def create_guitar_grid(scale, key):
     root_notes = list(scale_notes)[::(5 if 'penta' in scale else 7)]
     start = 21 + n.KEYS.index(key)
     grid = []
-    for i, r in enumerate(range(c.H-2)):
+    for _i, _r in enumerate(range(c.H-2)):
         row = []
         for x in range(c.W):
             note = start + x

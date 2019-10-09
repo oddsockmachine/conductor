@@ -31,8 +31,8 @@ class LCD(object):
 
     def render(self):
         # Check for change
-        self.disp.clear()
-        self.disp.display()
+        # self.disp.clear()
+        # self.disp.display()
         return
 
     def flash(self, text):

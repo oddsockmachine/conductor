@@ -13,9 +13,6 @@ class Elaborator(Instrument):
 
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         super(Elaborator, self).__init__(ins_num, mport, key, scale, octave, speed)
-        if not isinstance(ins_num, int):
-            print("Instrument num {} must be an int".format(ins_num))
-            exit()
         self.type = "Elaborator"
         self.height = 16
         self.width = 16

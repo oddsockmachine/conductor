@@ -24,14 +24,6 @@ class Conductor(object):
         self.octave = octave  # Starting octave
         self.instruments = [instrument_lookup(5)(ins_num=0, **self.instrument_ctx())]
         self.instruments[0].start()
-        # for x in range(4):
-        #     self.instruments.append(instrument_lookup(4)(ins_num=x+3, **self.instrument_ctx()))
-        # self.instruments.append(instrument_lookup(9)(ins_num=8, **self.instrument_ctx()))
-        # self.instruments.append(instrument_lookup(8)(ins_num=9, **self.instrument_ctx()))
-        # self.instruments.append(instrument_lookup('Octopus')(ins_num=10, **self.instrument_ctx()))
-        #
-        # self.instruments.append(instrument_lookup(7)(ins_num=14, **self.instrument_ctx()))
-        # self.instruments.append(instrument_lookup(5)(ins_num=15, **self.instrument_ctx()))
         self.current_visible_instrument_num = 0
         self.current_state = 'load'  # Current state to be shown on display(s)
         lcd.flash("Conductor started")
@@ -93,7 +85,6 @@ class Conductor(object):
             'curr_ins': self.get_curr_instrument_num()-1})
         self.gbl_cfg_cb_grid = cb_grid
         return led_grid
-        # return create_gbl_cfg_grid(range(len(self.instruments)), self.key, self.scale)
 
     def ins_cfg_screen(self):
         led_grid = self.get_curr_instrument().get_led_grid('ins_cfg')

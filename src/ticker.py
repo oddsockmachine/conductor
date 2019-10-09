@@ -17,8 +17,6 @@ class SelfTicker(Thread):
         debug("SelfTicker")
         while True:
             sleep(60/self.bpm)
-            # self.ticker_bus.put("x")
-            # debug("tick in")
             tick = self.process_midi_tick()
             self.ticker_bus.put(tick)
 

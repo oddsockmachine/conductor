@@ -45,10 +45,6 @@ class Sequencer(Instrument):
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
             return True
 
-    def get_notes_from_curr_beat(self):
-        self.get_curr_page().get_notes_from_beat(self.local_beat_position)
-        return
-
     def get_led_grid(self, state):
         if state == 'play':
             led_grid = []
@@ -97,55 +93,6 @@ class Sequencer(Instrument):
         self.pages[page].dec_repeats()
         return True
 
-    def step_beat(self, global_beat):
-        '''Increment the beat counter, and do the math on pages and repeats'''
-        local = self.calc_local_beat(global_beat)
-        if not self.has_beat_changed(local):
-            # Intermediate beat for this instrument, do nothing
-            return
-        self.local_beat_position = local
-        if self.is_page_end():
-            self.advance_page()
-        new_notes = self.get_curr_notes()
-        self.output(self.old_notes, new_notes)
-        self.old_notes = new_notes  # Keep track of which notes need stopping next beat
-        return
-
-    def is_page_end(self):
-        return self.local_beat_position == 0
-
-    def has_beat_changed(self, local_beat):
-        if self.prev_loc_beat != local_beat:
-            self.prev_loc_beat = local_beat
-            return True
-        self.prev_loc_beat = local_beat
-        return False
-
-    def get_curr_notes(self):
-        grid = self.get_led_grid('play')
-        beat_pos = self.local_beat_position
-        beat_notes = [n for n in grid[beat_pos]]
-        notes_on = [i for i, x in enumerate(beat_notes) if x == c.NOTE_ON]  # get list of cells that are on
-        return notes_on
-
-    def output(self, old_notes, new_notes):
-        """Return all note-ons from the current beat, and all note-offs from the last"""
-        notes_off = [self.cell_to_midi(c) for c in old_notes]
-        notes_on = [self.cell_to_midi(c) for c in new_notes]
-        if self.sustain:
-            _notes_off = [n for n in notes_off if n not in notes_on]
-            _notes_on = [n for n in notes_on if n not in notes_off]
-            notes_off = _notes_off
-            notes_on = _notes_on
-        notes_off = [n for n in notes_off if n < 128 and n > 0]
-        notes_on = [n for n in notes_on if n < 128 and n > 0]
-        off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
-        on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
-        msgs = off_msgs + on_msgs
-        if len(msgs) > 0:
-            c.debug(msgs)
-            midi_out_bus.put(msgs)
-
     def save(self):
         saved = {
           "pages": [p.save() for p in self.pages],
@@ -164,8 +111,4 @@ class Sequencer(Instrument):
             page = Note_Grid(self.bars, self.height)
             page.load(p)
             self.pages.append(page)
-        return
-
-    def clear_page(self):
-        self.get_curr_page().clear_page()
         return

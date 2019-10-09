@@ -7,19 +7,15 @@ class Supercell(object):
 
     def __init__(self, clock_bus, buttons_bus, LEDs_bus):
         super(Supercell, self).__init__()
-        # self.mport = mport
         self.clock_bus = clock_bus
         self.buttons_bus = buttons_bus
         self.LEDs_bus = LEDs_bus
         self.beat_clock_count = 0
         self.midi_clock_divider = 6
         self.conductor = Conductor()
-        # self.display = display
-        # self.display.command_cb = self.command_cb
         self.save_on_exit = False
 
     def run(self):
-        # self.display.start()
         debug("Running...")
         self.draw()
         while True:

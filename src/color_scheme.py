@@ -35,9 +35,9 @@ class ColorScheme(object):
         self.brightness = yaml['brightness']
         self.gradient_from = Color(yaml['gradient']['from'])
         self.gradient_to = Color(yaml['gradient']['to'])
-        print(yaml['pallette'])
+        c.debug(yaml['pallette'])
         for p in c.pallette_lookup.keys():
-            print(p)
+            c.debug(p)
             self.pallette[p] = yaml['pallette'][c.pallette_lookup[p]]
         self
         return

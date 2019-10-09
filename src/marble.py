@@ -72,7 +72,7 @@ class Marbles(object):
         self.last_picked_bias = 0
         self.ring_buffer = RingBuffer(16)
         self.ctl_djv = 0  # 0 to 15
-        for i in range(8):
+        for _i in range(8):
             self.ring_buffer.set(DJVPoint(randint(-3, 3), 0, 0, 0))
             self.ring_buffer.next()
 
@@ -131,7 +131,7 @@ class Marbles(object):
 
     def generate_new_notes(self):
         # TODO put into buffer
-        pass
+        return []
 
     def get_next_notes(self):
         if self.ctl_djv < 11:

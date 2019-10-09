@@ -1,3 +1,4 @@
+from constants import debug
 import constants as c
 from threading import Thread
 from board import SCL, SDA, D13, D6
@@ -8,7 +9,7 @@ from adafruit_neotrellis.multitrellis import MultiTrellis
 from time import sleep
 from interfaces.lcd import lcd
 from color_scheme import select_scheme, next_scheme  # TODO add gbl button to cycle scheme
-print("Imported hardware connections")
+debug("Imported hardware connections")
 
 AUTO_WRITE = False
 
@@ -17,13 +18,13 @@ class Display(Thread):
 
     def __init__(self, w=c.W, h=c.H, command_cb=None):
         super(Display, self).__init__()
-        print("Creating i2c bus")
+        debug("Creating i2c bus")
         lcd.flash("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
         lcd.setup_hw(i2c_bus)
-        print("i2c bus created")
+        debug("i2c bus created")
         lcd.flash("i2c bus created")
-        print("Creating Trelli")
+        debug("Creating Trelli")
         lcd.flash("Creating Trelli")
         trelli = [[], [], [], []]
         addrs = [[0x31, 0x30, 0x2f, 0x2e],
@@ -37,11 +38,11 @@ class Display(Thread):
                 t.pixels.auto_write = False
                 trelli[x].append(t)
                 sleep(0.2)
-        print("Linking Trelli")
+        debug("Linking Trelli")
         lcd.flash("Linking Trelli")
         self.trellis = MultiTrellis(trelli)
 
-        print("Trelli linked")
+        debug("Trelli linked")
         lcd.flash("Trelli linked")
         self.grid_h = h
         self.grid_w = w
@@ -49,7 +50,7 @@ class Display(Thread):
         self.led_matrix = [[(0, 0, 0) for x in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0, 0, 0) for x in range(w)] for y in range(h)]
         button_cb = self.make_cb()
-        print("Initializing Trelli inputs")
+        debug("Initializing Trelli inputs")
         lcd.flash("Initializing Trelli inputs")
         for y in range(h):
             for x in range(w):
@@ -60,7 +61,7 @@ class Display(Thread):
                 self.trellis.set_callback(x, y, button_cb)
         self.ins_button = digitalio.DigitalInOut(D13)
         self.gbl_button = digitalio.DigitalInOut(D6)
-        print("Inputs initialized")
+        debug("Inputs initialized")
         lcd.flash("Inputs initialized")
         self.col_scheme = select_scheme('default')
         return
@@ -78,7 +79,7 @@ class Display(Thread):
         try:
             self.trellis.sync()  # TODO undo? Fails if called too often
         except Exception as e:
-            print("HW error: {}".format(str(e)))
+            debug("HW error: {}".format(str(e)))
         m = {'cmd': None}
         if self.read_gbl_button():
             if self.state != 'gbl_cfg':

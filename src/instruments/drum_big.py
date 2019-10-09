@@ -179,7 +179,7 @@ class DrumBig(Instrument):
             beat_notes = [c.LED_BLANK for i in range(int(self.height/2))] + beat_notes
         # else:
         #     beat_notes = beat_notes[int(self.height/2):]
-        c.logging.info(beat_notes)
+        # c.logging.info(beat_notes)
         notes_on = [i for i, x in enumerate(beat_notes) if x == c.NOTE_ON]  # get list of cells that are on
         return notes_on
 

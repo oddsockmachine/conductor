@@ -1,7 +1,7 @@
 # coding=utf-8
 import constants as c
 from note_grid import Note_Grid
-from note_conversion import create_cell_to_midi_note_lookup
+from note_conversion import create_cell_to_midi_note_lookup, constrain_midi_notes
 import mido
 from random import choice, random, randint
 from copy import deepcopy
@@ -24,6 +24,7 @@ class Instrument(Thread):
         self.mport = mport
         self.height = 16
         self.width = 16
+        self.bars = 4
         self.prev_loc_beat = 0
         self.local_beat_position = 0
         self.speed = speed  # Relative speed of this instrument compared to global clock
@@ -35,11 +36,16 @@ class Instrument(Thread):
         self.note_converter = create_cell_to_midi_note_lookup(scale, octave, key, self.height)
         self.selected_next_page_num = None
         self.edit_page = None  # Track which page we want to show and edit while playback continues
- 
+        self.droplet_starts = []
+        self.pages = []
+        self.chaos = 0
+        self.sustain = False
+
     def run(self):
         c.debug("Instrument starting")
         while True:
             cmd = self.instrument_cmd_bus.get()
+            c.debug(cmd)
         return
 
     def restart(self):
@@ -144,7 +150,7 @@ class Instrument(Thread):
             # Create a distribution of the pages and their repeats, pick one at random
             dist = []
             for index, page in enumerate(self.pages):
-                for r in range(page.repeats):
+                for _r in range(page.repeats):
                     dist.append(index)
             next_page_num = choice(dist)
             return next_page_num
@@ -163,7 +169,7 @@ class Instrument(Thread):
             # Create a distribution of the pages and their repeats, pick one at random
             dist = []
             for index, page in enumerate(self.pages):
-                for r in range(page.repeats):
+                for _r in range(page.repeats):
                     dist.append(index)
             next_page_num = choice(dist)
             self.curr_page_num = next_page_num
@@ -177,16 +183,20 @@ class Instrument(Thread):
             self.selected_next_page_num = None
         return
 
+    def get_led_grid(self, state):
+        c.debug("ERROR: get_led_grid, instrument.py")
+        return [1]
+
     def get_curr_notes(self):
-        grid = self.get_led_grid()
+        grid = self.get_led_grid('play')
         beat_pos = self.local_beat_position
         beat_notes = [n for n in grid[beat_pos]]
-        if self.chaos > 0:  # If using chaos, switch up some notes
-            if beat_notes.count(c.NOTE_ON) > 0:  # Only if there are any notes in use
-                if random() < self.chaos:
-                    rand_note = randint(0, self.height-1)
-                    beat_notes[rand_note] = c.NOTE_ON if beat_notes[rand_note] != c.NOTE_ON else c.NOTE_OFF
-        # beat_notes = [n if random() < self.chaos else (NOTE_ON if n==NOTE_OFF else NOTE_OFF) for n in beat_notes]
+        # TODO is this necessary?
+        # if self.chaos > 0:  # If using chaos, switch up some notes
+        #     if beat_notes.count(c.NOTE_ON) > 0:  # Only if there are any notes in use
+        #         if random() < self.chaos:
+        #             rand_note = randint(0, self.height-1)
+        #             beat_notes[rand_note] = c.NOTE_ON if beat_notes[rand_note] != c.NOTE_ON else c.NOTE_OFF
         notes_on = [i for i, x in enumerate(beat_notes) if x == c.NOTE_ON]  # get list of cells that are on
         return notes_on
 
@@ -195,6 +205,25 @@ class Instrument(Thread):
 
     def get_beat_division_str(self):
         return self.speed
+
+    def change_division(self, div):
+        '''Find current instrument, inc or dec its beat division as appropriate'''
+        if div == "-":
+            if self.speed == 0:
+                return
+            self.speed -= 1
+            return
+        if div == "+":
+            if self.speed == 4:
+                return
+            self.speed += 1
+            return
+        # Direct set
+        self.speed = div
+        return
+
+    def is_page_end(self):
+        return self.local_beat_position == 0
 
     def step_beat(self, global_beat):
         '''Increment the beat counter, and do the math on pages and repeats'''
@@ -232,17 +261,20 @@ class Instrument(Thread):
             _notes_on = [n for n in notes_on if n not in notes_off]
             notes_off = _notes_off
             notes_on = _notes_on
-        notes_off = [n for n in notes_off if n < 128 and n > 0]
-        notes_on = [n for n in notes_on if n < 128 and n > 0]
+        notes_off = constrain_midi_notes(notes_off)
+        notes_on = constrain_midi_notes(notes_on)
+        # notes_off = [n for n in notes_off if n < 128 and n > 0]
+        # notes_on = [n for n in notes_on if n < 128 and n > 0]
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
         msgs = off_msgs + on_msgs
         if len(msgs) > 0:
             c.debug(msgs)
             midi_out_bus.put(msgs)
-        # if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
-        #     for msg in msgs:
-        #         self.mport.send(msg)
+
+    def clear_page(self):
+        self.get_curr_page().clear_page()
+        return
 
     def default_save_info(self):
         return {
