@@ -1,15 +1,17 @@
 from conductor import Conductor
 from time import sleep
 from constants import debug
-from buses import clock_bus, buttons_bus, LEDs_bus
+# from buses import clock_bus, buttons_bus, LEDs_bus
 
 class Supercell(object):
     """docstring for Supercell."""
 
-    def __init__(self, display, mport, mportin):
+    def __init__(self, display, mport, clock_bus, buttons_bus, LEDs_bus):
         super(Supercell, self).__init__()
         self.mport = mport
-        self.mportin = mportin
+        self.clock_bus = clock_bus
+        self.buttons_bus = buttons_bus
+        self.LEDs_bus = LEDs_bus
         self.beat_clock_count = 0
         self.midi_clock_divider = 6
         self.conductor = Conductor(mport)
@@ -22,13 +24,13 @@ class Supercell(object):
         debug("Running...")
         self.draw()
         while True:
-            if not buttons_bus.empty():
+            if not self.buttons_bus.empty():
                 debug("button pressed")
-                m = buttons_bus.get()
+                m = self.buttons_bus.get()
                 self.process_cmds(m)
                 self.draw()
-            if not clock_bus.empty():
-                clock_tick = clock_bus.get()
+            if not self.clock_bus.empty():
+                clock_tick = self.clock_bus.get()
                 self.conductor.step_beat(clock_tick)
                 self.draw()
             sleep(0.01)
@@ -39,9 +41,9 @@ class Supercell(object):
         return
 
     def get_cmds(self):
-        if not buttons_bus.empty():
+        if not self.buttons_bus.empty():
             debug("button pressed")
-            m = buttons_bus.get()
+            m = self.buttons_bus.get()
             self.process_cmds(m)
 
     def process_cmds(self, m):
@@ -74,4 +76,4 @@ class Supercell(object):
     def draw(self):
         status = self.conductor.get_status()
         led_grid = self.conductor.get_led_grid()
-        LEDs_bus.put((status, led_grid))
+        self.LEDs_bus.put((status, led_grid))

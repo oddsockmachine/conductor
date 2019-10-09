@@ -31,7 +31,7 @@ def console_main(stdscr):
             # clock.set_input("tick")
             debug(midi)
 
-            supercell = Supercell(display, mport, mportin)
+            supercell = Supercell(display, mport, clock_bus, buttons_bus, LEDs_bus)
             supercell.run()
 
 
@@ -52,9 +52,8 @@ def hardware_main():
             # clock.set_input("tick")
             debug(midi)
             print("Done")
-            print(mportin)
             print(mport)
-            supercell = Supercell(display, mport, midi)
+            supercell = Supercell(display, mport, clock_bus, buttons_bus, LEDs_bus)
             supercell.run()
 
 
