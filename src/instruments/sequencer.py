@@ -4,7 +4,7 @@ import constants as c
 from note_grid import Note_Grid
 import mido
 from screens import seq_cfg_grid_defn, generate_screen, get_cb_from_touch
-
+from buses import midi_out_bus
 
 class Sequencer(Instrument):
     """Grid Sequencer
@@ -142,9 +142,9 @@ class Sequencer(Instrument):
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
         msgs = off_msgs + on_msgs
-        if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
-            for msg in msgs:
-                self.mport.send(msg)
+        if len(msgs) > 0:
+            c.debug(msgs)
+            midi_out_bus.put(msgs)
 
     def save(self):
         saved = {

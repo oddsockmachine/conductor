@@ -6,6 +6,7 @@ class SelfTicker(Thread):
     """Automatically generate clock pulses at the required BPM"""
     def __init__(self, initial_bpm, ticker_bus):
         Thread.__init__(self, name='SelfTicker')
+        self.daemon = True
         self.bpm = initial_bpm
         self.ticker_bus = ticker_bus
         self.beat_clock_count = 0

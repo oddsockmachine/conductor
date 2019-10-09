@@ -8,6 +8,7 @@ class MidiInListener(Thread):
     """Listen on MIDI in port. Clock msgs go to clock bus, note msgs go to note bus"""
     def __init__(self, mportin, midi_in_bus):
         Thread.__init__(self, name='MidiInListener')
+        self.daemon = True
         self.mportin = mportin
         self.midi_in_bus = midi_in_bus
         self.beat_clock_count = 0

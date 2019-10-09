@@ -2,6 +2,7 @@
 from instruments.instrument import Instrument
 import constants as c
 import mido
+from buses import midi_out_bus
 
 
 class Elaborator(Instrument):
@@ -85,9 +86,9 @@ class Elaborator(Instrument):
         off_msgs = [mido.Message('note_off', note=n, channel=self.ins_num) for n in notes_off]
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
         msgs = off_msgs + on_msgs
-        if self.mport:  # Allows us to not send messages if testing. TODO This could be mocked later
-            for msg in msgs:
-                self.mport.send(msg)
+        if len(msgs) > 0:
+            c.debug(msgs)
+            midi_out_bus.put(msgs)
 
     def save(self):
         saved = {

@@ -5,6 +5,7 @@ class Clock(Thread):
     """Listen on both midi and ticker clock buses, pass through clock messages based on chosen input"""
     def __init__(self, midi_in_bus, ticker_bus, clock_bus, inp):
         Thread.__init__(self, name='Clock')
+        self.daemon = True
         self.input = inp
         self.ticker_bus = ticker_bus
         self.midi_in_bus = midi_in_bus
