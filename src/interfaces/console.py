@@ -4,13 +4,19 @@ import curses
 import locale
 from interfaces.lcd import lcd
 locale.setlocale(locale.LC_ALL, '')
+from time import sleep
+from threading import Thread
 
 
-class Display(object):
+class Display(Thread):
     """docstring for Display."""
 
-    def __init__(self, stdscr, w=c.W, h=c.H):
-        super(Display, self).__init__()
+    def __init__(self, stdscr, button_bus, led_bus, w=c.W, h=c.H):
+        # super(Display, self).__init__()
+        Thread.__init__(self, name='Display')
+        # self.button_bus = button_bus
+        # self.led_bus = led_bus
+
         curses.use_default_colors()
         for i in range(0, curses.COLORS):
             curses.init_pair(i + 1, i, -1)
@@ -28,6 +34,19 @@ class Display(object):
         self.page_w = 9
         self.page_h = c.MAX_INSTRUMENTS + 2
         return
+
+    def run(self):
+        c.debug("Display thread started")
+        while True:
+            sleep(1)
+            c.debug("Display thread running")
+
+            # m = self.get_cmds()
+            # if m.get('cmd') != None:
+            #     self.button_bus.put(m)
+            # if not self.led_bus.empty():
+            #     status, led_grid = self.led_bus.get()
+            #     self.draw_all(status, led_grid)
 
     def get_cmds(self):
         m = {'cmd': None}

@@ -18,7 +18,7 @@ class MidiInListener(Thread):
         debug("MidiInListener")
         while True:
             # beat = randint(110,120)
-            debug("midi still running")
+            # debug("midi still running")
             sleep(1)
             # self.midi_in_bus.put("x")
         return

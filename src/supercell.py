@@ -1,7 +1,7 @@
 from conductor import Conductor
 from time import sleep
 from constants import debug
-from buses import clock_bus
+from buses import clock_bus, buttons_bus
 
 class Supercell(object):
     """docstring for Supercell."""
@@ -19,17 +19,16 @@ class Supercell(object):
         self.save_on_exit = False
 
     def run(self):
+        self.display.start()
         debug("Running...")
         self.draw()
         while True:
             self.get_cmds()
-            debug("?")
             sleep(0.01)
             # self.conductor.step_beat()
-            # debug(clock_bus.get())
             clock_tick = clock_bus.get()
             self.conductor.step_beat(clock_tick)
-            debug('---')
+            # debug('---')
             self.draw()
         pass
 
@@ -39,6 +38,9 @@ class Supercell(object):
 
     def get_cmds(self):
         m = self.display.get_cmds()
+        # if not buttons_bus.empty():
+        #     debug("button pressed")
+        #     m = buttons_bus.get()
         self.process_cmds(m)
 
     def process_cmds(self, m):
@@ -55,7 +57,7 @@ class Supercell(object):
         elif m['cmd'] == 'CONFIG_B':
             self.conductor.ins_cfg_state()
         elif m['cmd'] == 'step_beat':
-            self.conductor.step_beat()
+            self.conductor.step_beat(1)
         elif m['cmd'] == 'note':
             self.conductor.touch_note(m['x'], m['y'])
         return

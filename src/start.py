@@ -19,16 +19,16 @@ def console_main(stdscr):
     curses.mousemask(1)
     curses.mouseinterval(10)
     stdscr.nodelay(1)
-    display = Display(stdscr)
+    display = Display(stdscr, buttons_bus, LEDs_bus)
     with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mport:
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
             midi = MidiInListener(mportin, midi_in_bus)
             ticker = SelfTicker(100, ticker_bus)
-            clock = Clock(midi_in_bus, ticker_bus, clock_bus)
+            clock = Clock(midi_in_bus, ticker_bus, clock_bus, 'tick')
             midi.start()
             ticker.start()
             clock.start()
-            clock.set_input("midi")
+            # clock.set_input("tick")
             debug(midi)
 
             supercell = Supercell(display, mport, mportin)
@@ -37,7 +37,7 @@ def console_main(stdscr):
 
 def hardware_main():
     from interfaces.hardware import Display
-    display = Display()
+    display = Display(buttons_bus, LEDs_bus)
     print(mido.get_input_names())
     print(mido.get_output_names())
     print("Creating MIDI ports")
@@ -45,11 +45,11 @@ def hardware_main():
         with mido.open_input('f_midi:f_midi 16:0') as mportin:
             midi = MidiInListener(mportin, midi_in_bus)
             ticker = SelfTicker(100, ticker_bus)
-            clock = Clock(midi_in_bus, ticker_bus, clock_bus)
+            clock = Clock(midi_in_bus, ticker_bus, clock_bus, 'tick')
             midi.start()
             ticker.start()
             clock.start()
-            clock.set_input("midi")
+            # clock.set_input("tick")
             debug(midi)
             print("Done")
             print(mportin)
