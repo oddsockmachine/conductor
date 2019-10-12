@@ -12,6 +12,17 @@ class Clock(Thread):
         self.midi_in_bus = midi_in_bus
         self.clock_bus = clock_bus
 
+    def run(self):
+        debug("foo")
+        while True:
+            if self.input == "midi":
+                x = self.midi_in_bus.get()
+                self.clock_bus.put(x)
+            else:
+                x = self.ticker_bus.get()
+                self.clock_bus.put(x)
+        return
+
     def set_input(self, inp):
         # TODO maybe delete this, no need to change inputs mid-set
         if inp == self.input:
@@ -21,17 +32,3 @@ class Clock(Thread):
         self.midi_in_bus.queue.clear()
         self.ticker_bus.queue.clear()
         return
-
-    def run(self):
-        debug("foo")
-        while True:
-            if self.input == "midi":
-                x = self.midi_in_bus.get()
-                self.clock_bus.put(x)
-                # debug(x)
-            else:
-                x = self.ticker_bus.get()
-                self.clock_bus.put(x)
-                # debug(x)
-        return
-

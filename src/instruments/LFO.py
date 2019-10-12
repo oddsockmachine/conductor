@@ -2,8 +2,7 @@
 from instruments.instrument import Instrument
 import constants as c
 import mido
-from interfaces.lcd import lcd
-
+from time import sleep
 
 class LFO(Instrument):
     """LFO
@@ -21,16 +20,12 @@ class LFO(Instrument):
         self.curr_page_num = 0
         self.max_pages = 4
         self.pages = []
-        for i in range(self.max_pages):
-            self.pages.append(SliderBank(len(self.pages*15)))
-        #     self.pages.append(SliderBank(0))
-        # self.pages.append(SliderBank(15))
-        # self.pages.append(SliderBank(30))
-        # self.pages.append(SliderBank(45))
-
-    def add_page(self, type):
-        self.pages.append(SliderBank(len(self.pages*15)))
-
+    
+    def run(self):
+        while True:
+            sleep(1)
+            c.debug("bar")
+        return
     def get_status(self):
         status = {
             'ins_num': self.ins_num+1,
@@ -87,6 +82,7 @@ class LFO(Instrument):
         return grid
 
     def step_beat(self, global_beat):
+        c.debug("foo")
         return
 
     def output(self, old_notes, new_notes):
@@ -94,20 +90,12 @@ class LFO(Instrument):
 
     def save(self):
         saved = {
-          "values": [[v.value for v in p.sliders] for p in self.pages]
         }
         saved.update(self.default_save_info())
         return saved
 
     def load(self, saved):
         self.load_default_info(saved)
-        values = saved["values"]
-        self.pages = []
-        for p in values:
-            sb = SliderBank(len(self.pages*15))
-            for i, v in enumerate(p):
-                sb.sliders[i].value = v
-            self.pages.append(sb)
         return
 
     def clear_page(self):

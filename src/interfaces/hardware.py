@@ -16,8 +16,9 @@ AUTO_WRITE = False
 class Display(Thread):
     """docstring for Display."""
 
-    def __init__(self, w=c.W, h=c.H, command_cb=None):
-        super(Display, self).__init__()
+    def __init__(self, button_bus, led_bus, w=c.W, h=c.H, command_cb=None):
+        Thread.__init__(self, name='Display')
+        # super(Display, self).__init__()
         debug("Creating i2c bus")
         lcd.flash("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
@@ -67,6 +68,17 @@ class Display(Thread):
         return
 
     def run(self):
+        c.debug("Display thread started")
+        while True:
+            sleep(0.01)
+            m = self.get_cmds()
+            if m.get('cmd') != None:
+                c.debug(m)
+                self.button_bus.put(m)
+            if not self.led_bus.empty():
+                status, led_grid = self.led_bus.get()
+                self.draw_all(status, led_grid)
+
         return
 
     def read_gbl_button(self):

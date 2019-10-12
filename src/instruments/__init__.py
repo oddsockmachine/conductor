@@ -31,7 +31,7 @@ instrument_lookup_data = {
     # 11: Transformer,
     7: CC,
     8: LFO,
-    8: Keyboard,
+    9: Keyboard,
     'Instrument': Instrument,  # Generic, fallback, no functionality
     # 'BeatMaker': BeatMaker,
     # 'BinarySequencer': BinarySequencer,
@@ -46,7 +46,7 @@ instrument_lookup_data = {
     'Sequencer': Sequencer,
     # 'Transformer': Transformer,
     'CC': CC,
-    # 'LFO': LFO,
+    'LFO': LFO,
     'Keyboard': Keyboard,
 }
 
