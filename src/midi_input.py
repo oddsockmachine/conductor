@@ -2,7 +2,6 @@ from threading import Thread
 from constants import debug, TICK, BEAT
 from time import sleep
 from random import randint
-from queue import Queue
 
 class MidiInListener(Thread):
     """Listen on MIDI in port. Clock msgs go to clock bus, note msgs go to note bus"""
@@ -38,6 +37,5 @@ class MidiInListener(Thread):
         self.beat_clock_count += 1
         if self.beat_clock_count >= self.midi_clock_divider:
             self.beat_clock_count %= self.midi_clock_divider
-            print(".")
             return BEAT
         return TICK

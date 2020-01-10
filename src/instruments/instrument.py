@@ -15,7 +15,7 @@ class Instrument(Thread):
 
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         # super(Instrument, self).__init__()
-        Thread.__init__(self, name=f"Ins: {ins_num}")
+        Thread.__init__(self, name="Ins: " + str(ins_num))
         self.daemon = True
 
         self.instrument_cmd_bus = Queue()

@@ -6,7 +6,7 @@ from interfaces.lcd import lcd
 locale.setlocale(locale.LC_ALL, '')
 from time import sleep
 from threading import Thread
-
+from color_scheme import select_scheme, next_scheme  # TODO add gbl button to cycle scheme
 
 class Display(Thread):
     """docstring for Display."""
@@ -33,6 +33,8 @@ class Display(Thread):
         self.page_y = self.grid_y
         self.page_w = 9
         self.page_h = c.MAX_INSTRUMENTS + 2
+        self.col_scheme = select_scheme('default')
+
         return
 
     def run(self):
@@ -103,6 +105,8 @@ class Display(Thread):
                 x = (i * 2) + 1
                 y = (c.H - r - 1) + 1
                 glyph = c.DISPLAY[cell]
+                # color = self.col_scheme.get_color(cell, x, y)
+                # c.debug(color)
                 win.addstr(y, x, glyph, curses.color_pair(40))
         win.refresh()
         return

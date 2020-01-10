@@ -83,6 +83,7 @@ def select_scheme(name):
 
 def next_scheme():
     names = SCHEMES.keys()
+    # global CURR_SCHEME_NAME
     i = names.index(CURR_SCHEME_NAME)
     new_i = (i+1) % len(SCHEMES.keys())
     new_name = SCHEMES.keys()[new_i]

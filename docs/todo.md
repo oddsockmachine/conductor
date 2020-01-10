@@ -2,12 +2,11 @@
 - color_char function: char acts as bitmask over selected color, useful for menus
 - overlay colorscheme: add sprites on top of background gradient
 - multi-instrument support: program new ones, and add cfg pages
-  - marbles
+  - marbles, gridseq
   - beatmaker, binarysequencer, chordsequencer, drumdeviator, elaborator, transformer
 - save/load colorscheme in set
-- Choose to sync to external midi clock, or self-generate
 - double drum machine: 8 channels, 32 steps
-- threads/async?
+- clock in/out for VCV (calculate 24/beat rate)
 
 ### Threads
 - Run each instrument in a thread

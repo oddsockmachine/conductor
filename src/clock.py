@@ -7,7 +7,7 @@ class Clock(Thread):
         Thread.__init__(self, name='Clock')
         self.daemon = True
         self.input = inp
-        debug(f"Clock input is {inp}")
+        debug("Clock input is " + str(inp))
         self.ticker_bus = ticker_bus
         self.midi_in_bus = midi_in_bus
         self.clock_bus = clock_bus
@@ -27,7 +27,7 @@ class Clock(Thread):
         # TODO maybe delete this, no need to change inputs mid-set
         if inp == self.input:
             return
-        debug(f"Changing clock input to {inp}")
+        debug("Changing clock input to " + inp)
         self.input = inp
         self.midi_in_bus.queue.clear()
         self.ticker_bus.queue.clear()

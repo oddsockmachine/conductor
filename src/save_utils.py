@@ -6,19 +6,16 @@ from json import load, dump
 
 def get_next_filename():
     files = glob(save_location+'*'+save_extension)
-    # print(files)
     files = [f for f in files if fullmatch(save_location+'\d+\.json', f)]
     files = [f.replace(save_location, '').replace(save_extension, '') for f in files if fullmatch(
         save_location+'\d+'+save_extension, f)]
     files = sorted([int(f) for f in files])
-    # print(files)
     next_num = 0
     for num in files:
         if int(num)+1 not in files:
             next_num = int(num)+1
             break
     next_file = save_location + str(next_num) + save_extension
-    # print(next_file)
     return next_file
 
 
@@ -33,7 +30,6 @@ def get_all_set_file_numbers():
 
 
 ALL_FILE_NAMES = get_all_set_file_numbers()
-# logging.info(str(ALL_FILE_NAMES))
 
 
 def filenum_from_touch(x, y):

@@ -19,6 +19,8 @@ class Display(Thread):
     def __init__(self, button_bus, led_bus, w=c.W, h=c.H, command_cb=None):
         Thread.__init__(self, name='Display')
         # super(Display, self).__init__()
+        self.button_bus = button_bus
+        self.led_bus = led_bus
         debug("Creating i2c bus")
         lcd.flash("Creating i2c bus")
         i2c_bus = busio.I2C(SCL, SDA)
@@ -38,7 +40,7 @@ class Display(Thread):
                 t = NeoTrellis(i2c_bus, False, addr=addr)
                 t.pixels.auto_write = False
                 trelli[x].append(t)
-                sleep(0.2)
+                sleep(0.1)
         debug("Linking Trelli")
         lcd.flash("Linking Trelli")
         self.trellis = MultiTrellis(trelli)
@@ -137,15 +139,15 @@ class Display(Thread):
     def draw_note_grid(self, led_grid):
         for x in range(len(led_grid)):
             for y in range(len(led_grid[x])):
-                col = self.col_scheme.get_color(led_grid[x][y], x, y)
+                color = self.col_scheme.get_color(led_grid[x][y], x, y)
                 # col = c.PALLETE[led_grid[x][y]]
-                self.led_matrix[x][self.grid_h-1-y] = col
+                self.led_matrix[x][self.grid_h-1-y] = color
         return
 
     def make_cb(self):
         def button_cb(xcoord, ycoord, edge):
             if edge == NeoTrellis.EDGE_RISING:
-                self.command_cb({'cmd': 'note', 'x': xcoord, 'y': self.grid_h-1-ycoord})
+                self.button_bus.put({'cmd': 'note', 'x': xcoord, 'y': self.grid_h-1-ycoord})
             return
         return button_cb
 

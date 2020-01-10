@@ -50,8 +50,7 @@ class RingBuffer(object):
         self.position = self.position % self.length
 
     def stats(self):
-        print(self.position, str(self.buffer))
-
+        return
 
 DJVPoint = namedtuple('DJVPoint', 't x1 x2 x3')
 
@@ -107,7 +106,6 @@ class Marbles(object):
         div = self.get_beat_division()
         jitter = self.ring_buffer.get().t
         local_beat = int((global_beat + jitter) / div) % self.width
-        # print(local_beat)
         return int(local_beat)
 
     def get_beat_division(self):
@@ -118,9 +116,7 @@ class Marbles(object):
         local = self.calc_local_beat(global_beat)
         if not self.has_beat_changed(local):
             # Intermediate beat for this instrument, do nothing
-            print('.')
             return
-        print('!')
         self.ring_buffer.next()
         self.local_beat_position = local
         new_notes = []

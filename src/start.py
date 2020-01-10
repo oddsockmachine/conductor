@@ -20,6 +20,7 @@ def console_main(stdscr):
     from interfaces.console import Display
     curses.mousemask(1)
     curses.mouseinterval(10)
+    curses.curs_set(0)
     stdscr.nodelay(1)
     display = Display(stdscr, buttons_bus, LEDs_bus)
     with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mportout:
@@ -41,7 +42,7 @@ def hardware_main():
 def start_supercell(display, mportin, mportout, midi_in_bus, midi_out_bus, ticker_bus, clock_bus, bpm):
     midi_in = MidiInListener(mportin, midi_in_bus)
     midi_out = MidiOut(mportout, midi_out_bus)
-    ticker = SelfTicker(bpm, ticker_bus)
+    ticker = SelfTicker(bpm, ticker_bus, midi_out_bus)
     clock = Clock(midi_in_bus, ticker_bus, clock_bus, 'tick' if bpm else 'midi')
     midi_in.start()
     midi_out.start()
