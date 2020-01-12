@@ -16,7 +16,6 @@ class SelfTicker(Thread):
         self.midi_clock_divider = 4
         self.midi_out_bus = midi_out_bus
         
-
     def run(self):
         if not self.bpm:
             debug("Not using self ticker")

@@ -1,3 +1,15 @@
+## v2
+- How to manage shared access to i2c bus from different threads?
+    - share/get i2cbus object from global import, create i2c_device for encoders
+    - pass i2c bus to Display, Encoders etc from start.py
+- threaded handles for 4x RGB encoders and 4x oled screens
+
+## Fix
+- Octopus regenerates each page
+- Maybe droplets should move faster - still have the ability to slow them down (maybe slow all down by a factor using encoder)
+- Menu buttons should illuminate based on which is active
+- CC and LFO crashing
+
 ## Top
 - color_char function: char acts as bitmask over selected color, useful for menus
 - overlay colorscheme: add sprites on top of background gradient
@@ -13,6 +25,14 @@
 - Refactor instruments to share more common code, thread framework
 - Handle shutdown of curses and all threads
 
+### Encoders
+- 4 RGB LED encoders
+- Control instrument parameters, menu options, CC msgs
+
+### Screens
+- 4 screens, 1 under each encoder
+- Show info about current instrument, or what the encoder is currently assigned to
+
 ### Add small screen for better feedback
 - from lcd import lcd
 - lcd.line1("Select:")
@@ -20,6 +40,7 @@
 - Or 4 lines, plus a line for recent messages/alerts
 
 ### Handle LED colors better
+- Use HSB
 - different backgrounds for each instrument number and type
 - create color engine, for different themes, brightnesses, background gradient, etc https://www.sweetwater.com/store/detail/Fire--akai-professional-fire-grid-controller-for-fl-studio
 - Show gridlines, root notes, pentatonic notes, etc in different colors/shades

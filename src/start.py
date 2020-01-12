@@ -30,7 +30,9 @@ def console_main(stdscr):
 
 def hardware_main():
     from interfaces.hardware import Display
-    display = Display(buttons_bus, LEDs_bus)
+    from interfaces.i2c_bus import i2c_bus
+    # TODO create  i2c bus here, pass to Display
+    display = Display(buttons_bus, LEDs_bus, i2c_bus)
     debug(mido.get_input_names())
     debug(mido.get_output_names())
     debug("Creating MIDI ports")

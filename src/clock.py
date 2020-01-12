@@ -13,7 +13,7 @@ class Clock(Thread):
         self.clock_bus = clock_bus
 
     def run(self):
-        debug("foo")
+        debug("Clock started")
         while True:
             if self.input == "midi":
                 x = self.midi_in_bus.get()

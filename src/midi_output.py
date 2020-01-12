@@ -4,7 +4,7 @@ from constants import debug
 class MidiOut(Thread):
     """Listen to MIDI queue, send msgs out thru bus"""
     def __init__(self, mportout, midi_out_bus):
-        Thread.__init__(self, name='MidiInListener')
+        Thread.__init__(self, name='MidiOutput')
         self.daemon = True
         self.mportout = mportout
         self.midi_out_bus = midi_out_bus
@@ -15,5 +15,5 @@ class MidiOut(Thread):
             msgs = self.midi_out_bus.get()
             for msg in msgs:
                 self.mportout.send(msg)
-                debug(msg)
+                # debug(msg)
         return

@@ -26,10 +26,12 @@ class Octopus(DrumDeviator):
             y -= 8
             if x < 8:
                 self.densities[y] = x
+                c.debug("calling regen...")
                 self.regen(x, y)
 
     def regen(self, amt, note):
         '''A randomize menu bar has been clicked, regen that bar's notes'''
+        c.debug("regen")
         gen_notes = [self.calc_chance(amt) for x in range(16)]
         page = self.get_curr_page()
         gen_notes = [{True: c.NOTE_ON, False: c.NOTE_OFF}[note] for note in gen_notes]
@@ -52,6 +54,17 @@ class Octopus(DrumDeviator):
             cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
         return True
+
+    def advance_page(self):
+        '''Go to next repeat or page'''
+        self.curr_rept_num += 1  # inc repeat number
+        if self.curr_rept_num >= self.get_curr_page().repeats:
+            # If we're overfowing repeats, time to go to next available page
+            self.curr_rept_num = 0  # Reset, for this page or next page
+            self.curr_page_num = self.get_next_page_num()
+            self.selected_next_page_num = None
+        return
+
 
     def get_led_grid(self, state):
         if state == 'play':

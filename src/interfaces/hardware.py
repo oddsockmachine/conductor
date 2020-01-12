@@ -16,14 +16,14 @@ AUTO_WRITE = False
 class Display(Thread):
     """docstring for Display."""
 
-    def __init__(self, button_bus, led_bus, w=c.W, h=c.H, command_cb=None):
+    def __init__(self, button_bus, led_bus, i2c_bus w=c.W, h=c.H, command_cb=None):
         Thread.__init__(self, name='Display')
         # super(Display, self).__init__()
         self.button_bus = button_bus
         self.led_bus = led_bus
         debug("Creating i2c bus")
         lcd.flash("Creating i2c bus")
-        i2c_bus = busio.I2C(SCL, SDA)
+        # i2c_bus = busio.I2C(SCL, SDA)
         lcd.setup_hw(i2c_bus)
         debug("i2c bus created")
         lcd.flash("i2c bus created")

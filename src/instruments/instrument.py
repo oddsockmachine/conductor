@@ -283,7 +283,7 @@ class Instrument(Thread):
         on_msgs = [mido.Message('note_on', note=n, channel=self.ins_num) for n in notes_on]
         msgs = off_msgs + on_msgs
         if len(msgs) > 0:
-            c.debug(msgs)
+            # c.debug(msgs)
             midi_out_bus.put(msgs)
 
     def clear_page(self):

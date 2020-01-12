@@ -13,7 +13,7 @@
 
 import constants as c
 from glob import glob
-from yaml import load
+from yaml import safe_load
 from colour import Color
 # https://pypi.org/project/colour/0.1.1/
 
@@ -65,7 +65,7 @@ def load_schemes():
     files = glob('./src/color_schemes/*.yml')
     for y_path in files:
         with open(y_path, 'r') as y_file:
-            y_scheme = load(y_file)
+            y_scheme = safe_load(y_file)
         new_scheme = ColorScheme(y_scheme)
         SCHEMES[y_scheme['name']] = new_scheme
     return SCHEMES
