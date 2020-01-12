@@ -18,7 +18,7 @@ class Droplets(Instrument):
     - Touch below note to catch/remove it
     - Add multiple drops per line?"""
 
-    def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
+    def __init__(self, ins_num, mport, key, scale, octave=1, speed=8):
         super(Droplets, self).__init__(ins_num, mport, key, scale, octave, speed)
         self.type = "Droplets"
         self.height = 16
@@ -87,9 +87,9 @@ class Droplets(Instrument):
         '''Increment the beat counter, and do the math on pages and repeats'''
         # TODO enable off-beat/smaller division steps
         local = self.calc_local_beat(global_beat)
-        if not self.has_beat_changed(local):
-            # Intermediate beat for this instrument, do nothing
-            return
+        # if not self.has_beat_changed(local):
+        #     # Intermediate beat for this instrument, do nothing
+        #     return
         self.local_beat_position = local
         new_notes = []
         for i in range(self.width):

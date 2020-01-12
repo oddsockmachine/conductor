@@ -5,8 +5,6 @@
 - threaded handles for 4x RGB encoders and 4x oled screens
 
 ## Fix
-- Octopus regenerates each page
-- Maybe droplets should move faster - still have the ability to slow them down (maybe slow all down by a factor using encoder)
 - Menu buttons should illuminate based on which is active
 - CC and LFO crashing
 
@@ -28,6 +26,7 @@
 ### Encoders
 - 4 RGB LED encoders
 - Control instrument parameters, menu options, CC msgs
+
 
 ### Screens
 - 4 screens, 1 under each encoder
