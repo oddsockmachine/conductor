@@ -6,32 +6,36 @@ from time import sleep
 from math import radians, sin
 
 class Oscillator(object):
-    def __init__(self):
+    def __init__(self, speed):
         self.x = 0
         self.y = 0
-        self.scale = 360  # or speed
+        self.scale = 10 + speed # or speed
         self.uni_bi = 'uni'
-        self.state = 'running' # running, pause
+        self.running = True # running, pause
         self.waveform = 'sine'
-    
+        self.pos = 0  # cc value, 0-127
+        self.last_pos = 0
+
     def step(self):
         # TODO can calculate pos by interpolating time since last step
-        if self.state == 'running':
-            self.x = 0 if self.x >= 1 else self.x + 0.01
+        if self.running:
+            self.x = 0 if self.x >= 10 else self.x + 0.01
             self.y = sin(radians(self.x * self.scale))
-            c.debug(str(self.x) + str(self.y))
-            # If uni, add 0.5
-            # Check old pos, to decide whether to send midi cc
+            # c.debug(str(self.x) + str(self.y))
+            self.pos = int(((self.y + 1) / 2) * 128)  # Convert -1..1 to 0..127
+            if self.pos == self.last_pos:
+                return None  # No noticable change in cc value
+            self.last_pos = self.pos
+            return self.pos
         return
 
     def pos_to_led_grid(self):
-        return int(self.y * c.H)
+        return int(self.pos / 8)
 
 class LFO(Instrument):
     """LFO
     Pages of 8x LFOs
     Visualize current position (dot or bar)
-    Unipolar (0-1, all green) or bipolar (-1 to 1, red/green)
     At 100hz, probably possible to calculate LFO position each frame
     Choose waveform (sine, pulse, saw)
     Select an LFO, encoders set speed, division of bpm, play/pause,offset, nextpage
@@ -46,8 +50,9 @@ class LFO(Instrument):
         self.width = 16
         self.counter = 0
         self.pages = []
-        self.oscillators = [Oscillator() for i in range(2)]
-    
+        self.oscillators = [Oscillator(i) for i in range(8)]
+        self.selected_osc = 0
+
     def run(self):
         while True:
             sleep(0.01)
@@ -56,7 +61,11 @@ class LFO(Instrument):
 
     def bump_counters(self):
         for osc in self.oscillators:
-            osc.step()
+            cc = osc.step()
+            if cc:
+                pass
+                # c.debug(str(cc))
+                # TODO send CC msg to midi bus
         return
 
     def get_status(self):
@@ -95,32 +104,37 @@ class LFO(Instrument):
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
-        # if x == 15:
-        #     if y < c.H - self.max_pages:
-        #         return
-        #     self.curr_page_num = c.H-y-1
-        #     return
-        # msg = self.get_curr_page().touch(x, y)
-        # msg.channel = self.ins_num
-        # self.mport.send(msg)
+        if not x % 2:
+            return
+        c.debug("!")
+        osc = int((x-1)/2)
+        # c.debug(osc)
+        if y == 15:
+            # Play/Pause button
+            c.debug(f"play/pause {osc}")
+            self.oscillators[osc].running = not self.oscillators[osc].running
+        if y == 0:
+            c.debug(f"selected {osc}")
+            self.selected_osc = osc
+            c.debug(self.selected_osc)
         return True
 
     def get_led_grid(self, state):
-        c.debug("grid")
         grid = [
             [c.LED_BLANK for x in range(c.H)] for y in range(c.W)
         ]
-        o1 = self.oscillators[0].pos_to_led_grid()
-        grid[3][o1] = c.LED_ACTIVE
-        # grid[15][15] = c.SLIDER_BODY
-        # grid[15][14] = c.SLIDER_BODY
-        # grid[15][13] = c.SLIDER_BODY
-        # grid[15][12] = c.SLIDER_BODY
-        # grid[15][c.H-self.curr_page_num-1] = c.SLIDER_TOP
+        for i, osc in enumerate(self.oscillators):
+            o1 = osc.pos_to_led_grid()
+            grid[i*2][o1] = c.LED_ACTIVE
+        for i in range(1, c.W, 2):
+            # Red/Green play/pause buttons at y=0
+            grid[i][15] = c.LED_BEAT
+            # White select buttoons at y=15
+            grid[i][0] = c.LED_CURSOR
         return grid
 
     def step_beat(self, global_beat):
-        c.debug("foo")
+        # c.debug("foo")
         return
 
     def output(self, old_notes, new_notes):
