@@ -109,7 +109,6 @@ class Display(Thread):
 
     def draw_oleds(self, oled_data):
         for i in range(4):
-            c.debug(i)
             lines = oled_data[i]
             num_lines = 4
             num_chars = 16
@@ -117,9 +116,6 @@ class Display(Thread):
             win.border()
             for x in range(num_lines):
                 win.addstr(x+1,1,lines[x])
-            # win.addstr(2,1,lines[x])
-            # win.addstr(3,1,lines[x])
-            # win.addstr(4,1,lines[x])
             win.refresh()
         return
 
@@ -141,7 +137,6 @@ class Display(Thread):
         return
 
     def draw_all(self, status, led_grid, oled_data):
-        c.debug("!")
         self.draw_stats(status)
         self.draw_grid(led_grid)
         self.draw_oleds(oled_data)

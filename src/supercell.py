@@ -78,6 +78,4 @@ class Supercell(object):
         status = self.conductor.get_status()
         led_grid = self.conductor.get_led_grid()
         screens = self.OLED_Screens.get_text().get()
-        # screens = [['hello', '', '', ''], ['', 'world', '', ''], ['', '', '', ''], ['', '', '', '']]
-        # c.debug(screens)
         self.LEDs_bus.put((status, led_grid, screens))

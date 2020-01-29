@@ -27,7 +27,6 @@ class OLED_Screens(ThreadingActor):
 
     def get_text(self):
         lines = [s.get_text().get() for s in self.screens]
-        debug(lines)
         return lines
 
 
@@ -56,5 +55,4 @@ class OLED(ThreadingActor):
         return
 
     def get_text(self):
-        debug(self.text)
         return self.text
