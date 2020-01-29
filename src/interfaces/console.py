@@ -11,7 +11,7 @@ from color_scheme import select_scheme, next_scheme  # TODO add gbl button to cy
 class Display(Thread):
     """docstring for Display."""
 
-    def __init__(self, stdscr, button_bus, led_bus, w=c.W, h=c.H):
+    def __init__(self, stdscr, button_bus, led_bus, oled_screens):
         # super(Display, self).__init__()
         Thread.__init__(self, name='Display')
         self.button_bus = button_bus
@@ -21,8 +21,8 @@ class Display(Thread):
         for i in range(0, curses.COLORS):
             curses.init_pair(i + 1, i, -1)
         self.stdscr = stdscr
-        self.grid_h = h
-        self.grid_w = w*2
+        self.grid_h = c.H
+        self.grid_w = c.W*2
         self.grid_x = 5
         self.grid_y = 3
         self.ins_x = self.grid_x+self.grid_w+3
@@ -34,6 +34,7 @@ class Display(Thread):
         self.page_w = 9
         self.page_h = c.MAX_INSTRUMENTS + 2
         self.col_scheme = select_scheme('default')
+        self.oled_screens = oled_screens
         return
     
     def run(self):
@@ -45,8 +46,8 @@ class Display(Thread):
                 c.debug(m)
                 self.button_bus.put(m)
             if not self.led_bus.empty():
-                status, led_grid = self.led_bus.get()
-                self.draw_all(status, led_grid)
+                status, led_grid, oled_data = self.led_bus.get()
+                self.draw_all(status, led_grid, oled_data)
 
     def get_cmds(self):
         m = {'cmd': None}
@@ -87,9 +88,7 @@ class Display(Thread):
         if x >= (self.grid_w+self.grid_x + 10) and x <= (self.grid_w+self.grid_x + 10 + 18) and \
             y >= self.grid_y and y < (self.grid_y + 24):
             screen_no = int((y - self.grid_y) / 6)
-            # c.debug(str(screen_no))
             mouse_action = {1: "button", curses.A_LOW: "+", curses.BUTTON4_PRESSED: "-"}.get(m[4])
-            # c.debug(str(mouse_action))
             if mouse_action:
                 return {'cmd': 'encoder', 'action': mouse_action, 'id': screen_no}
         # If x, y in grids1-4
@@ -108,16 +107,19 @@ class Display(Thread):
         self.stdscr.addstr(self.grid_y+18+len(lines)+1, self.grid_x+2, lcd.flash_line)  # , curses.color_pair(4))
         return
 
-    def draw_oleds(self, text):
+    def draw_oleds(self, oled_data):
         for i in range(4):
+            c.debug(i)
+            lines = oled_data[i]
             num_lines = 4
             num_chars = 16
             win = curses.newwin(num_lines+2, num_chars+2, self.grid_y+(i*6), self.grid_w+self.grid_x + 10)
             win.border()
-            win.addstr(1,1,"foo")
-            win.addstr(2,1,"fooobarrfizzbuzz")
-            win.addstr(3,1,"foo")
-            win.addstr(4,1,"foo")
+            for x in range(num_lines):
+                win.addstr(x+1,1,lines[x])
+            # win.addstr(2,1,lines[x])
+            # win.addstr(3,1,lines[x])
+            # win.addstr(4,1,lines[x])
             win.refresh()
         return
 
@@ -138,8 +140,9 @@ class Display(Thread):
         win.refresh()
         return
 
-    def draw_all(self, status, led_grid):
+    def draw_all(self, status, led_grid, oled_data):
+        c.debug("!")
         self.draw_stats(status)
         self.draw_grid(led_grid)
-        self.draw_oleds("foo")
+        self.draw_oleds(oled_data)
         return

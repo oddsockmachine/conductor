@@ -30,6 +30,7 @@ pluggy==0.8.0
 pycodestyle==2.4.0
 pydocstyle==3.0.0
 pyflakes==2.0.0
+Pykka==2.0.2
 pylint==2.4.2
 python-jsonrpc-server==0.0.2
 python-language-server==0.21.4

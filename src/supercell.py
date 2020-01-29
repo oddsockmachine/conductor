@@ -1,6 +1,7 @@
 from conductor import Conductor
 from time import sleep
 from constants import debug
+from pykka import ActorRegistry
 
 class Supercell(object):
     """docstring for Supercell."""
@@ -14,6 +15,9 @@ class Supercell(object):
         self.midi_clock_divider = 6
         self.conductor = Conductor()
         self.save_on_exit = False
+        self.OLED_Screens = ActorRegistry.get_by_class_name('OLED_Screens')[0].proxy()
+        self.OLED_Screens.write(0, 0, "hello")
+        self.OLED_Screens.write(1, 1, "world...")
 
     def run(self):
         debug("Running...")
@@ -73,4 +77,7 @@ class Supercell(object):
     def draw(self):
         status = self.conductor.get_status()
         led_grid = self.conductor.get_led_grid()
-        self.LEDs_bus.put((status, led_grid))
+        screens = self.OLED_Screens.get_text().get()
+        # screens = [['hello', '', '', ''], ['', 'world', '', ''], ['', '', '', ''], ['', '', '', '']]
+        # c.debug(screens)
+        self.LEDs_bus.put((status, led_grid, screens))

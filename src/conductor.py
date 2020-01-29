@@ -6,7 +6,6 @@ from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_fi
 from screens import generate_screen, gbl_cfg_grid_defn, get_cb_from_touch
 from interfaces.lcd import lcd
 
-
 class Conductor(object):
     """docstring for Conductor."""
 
@@ -26,7 +25,7 @@ class Conductor(object):
         self.instruments[0].start()
         self.current_visible_instrument_num = 0
         self.current_state = 'load'  # Current state to be shown on display(s)
-        lcd.flash("Conductor started")
+
         return
 
     def instrument_ctx(self):

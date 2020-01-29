@@ -18,11 +18,13 @@ bpm = int(args.bpm) if args.bpm else None
 
 def console_main(stdscr):
     from interfaces.console import Display
+    from interfaces.oled import OLED_Screens
+    OLED_Screens = OLED_Screens.start(4).proxy()
     curses.mousemask(1)
     curses.mouseinterval(10)
     curses.curs_set(0)
     stdscr.nodelay(1)
-    display = Display(stdscr, buttons_bus, LEDs_bus)
+    display = Display(stdscr, buttons_bus, LEDs_bus, OLED_Screens)
     with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mportout:
         with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
             start_supercell(display, mportin, mportout, midi_in_bus, midi_out_bus, ticker_bus, clock_bus, bpm)
