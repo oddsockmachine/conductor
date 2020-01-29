@@ -1,7 +1,7 @@
 from supercell import Supercell
 import mido
 import argparse
-from buses import midi_in_bus, midi_out_bus, LEDs_bus, buttons_bus, clock_bus, ticker_bus
+from buses import midi_in_bus, midi_out_bus, LEDs_bus, buttons_bus, clock_bus, ticker_bus, encoder_in_bus, encoder_out_bus, button_out_bus
 from midi_input import MidiInListener
 from midi_output import MidiOut
 from clock import Clock
@@ -30,9 +30,14 @@ def console_main(stdscr):
 
 def hardware_main():
     from interfaces.hardware import Display
+    from interfaces.encoders import Encoder_Inputs, Encoder_RGB
     from interfaces.i2c_bus import i2c_bus
     # TODO create  i2c bus here, pass to Display
     display = Display(buttons_bus, LEDs_bus, i2c_bus)
+    encoders = Encoder_Inputs(encoder_out_bus, button_out_bus, i2c_bus)
+    encoders.start()
+    encoders_RGB = Encoder_RGB(encoder_in_bus, i2c_bus)
+    encoders_RGB.start()
     debug(mido.get_input_names())
     debug(mido.get_output_names())
     debug("Creating MIDI ports")

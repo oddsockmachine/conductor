@@ -2,9 +2,13 @@ from queue import Queue
 
 midi_in_bus = Queue(100)
 midi_out_bus = Queue(200)
+encoder_in_bus = Queue(200)
+encoder_out_bus = Queue(100)
+OLED_bus = Queue(100)
 ticker_bus = Queue(100)
 clock_bus = Queue(100)
 buttons_bus = Queue()
+button_out_bus = Queue()
 LEDs_bus = Queue()
 
 def clear_queue(q):

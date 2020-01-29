@@ -4,4 +4,4 @@ sequencer.log
 __pycache__
 Adafruit_Trellis
 saved/*.json
-experimentation
+# experimentation

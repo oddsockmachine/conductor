@@ -34,9 +34,8 @@ class Display(Thread):
         self.page_w = 9
         self.page_h = c.MAX_INSTRUMENTS + 2
         self.col_scheme = select_scheme('default')
-
         return
-
+    
     def run(self):
         c.debug("Display thread started")
         while True:
@@ -84,14 +83,34 @@ class Display(Thread):
             grid_x = int((x-6)/2)
             grid_y = int(y-4)
             return {'cmd': 'note', 'x': grid_x, 'y': self.grid_h - grid_y - 1}
+        # TODO Scroll detection on encoder boxes
+        # If x, y in grids1-4
+        # If m[4] = click, send relevant encoder button press
+        # If m[4] = scroll up/down, send relevant encoder cmds
+        # 134217728 = up  A_LOW
+        # 524288 = down  BUTTON4_PRESSED
+
         return {'cmd': None}
 
-    def draw_gui(self, status):
+    def draw_stats(self, status):
         self.stdscr.addstr(1, self.grid_x+2, "C O N D U C T O R")  # , curses.color_pair(4))
         lines = ["{}: {}        ".format(k, v) for k, v in status.items()]
         for i, line in enumerate(lines):
             self.stdscr.addstr(self.grid_y+18+i, self.grid_x+2, line)  # , curses.color_pair(4))
         self.stdscr.addstr(self.grid_y+18+len(lines)+1, self.grid_x+2, lcd.flash_line)  # , curses.color_pair(4))
+        return
+
+    def draw_screens(self, text):
+        for i in range(4):
+            num_lines = 4
+            num_chars = 16
+            win = curses.newwin(num_lines+2, num_chars+2, self.grid_y+(i*6), self.grid_w+self.grid_x + 10)
+            win.border()
+            win.addstr(1,1,"foo")
+            win.addstr(2,1,"fooobarrfizzbuzz")
+            win.addstr(3,1,"foo")
+            win.addstr(4,1,"foo")
+            win.refresh()
         return
 
     def draw_grid(self, led_grid):
@@ -112,6 +131,7 @@ class Display(Thread):
         return
 
     def draw_all(self, status, led_grid):
-        self.draw_gui(status)
+        self.draw_stats(status)
         self.draw_grid(led_grid)
+        self.draw_screens("foo")
         return

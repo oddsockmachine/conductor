@@ -2,6 +2,7 @@ from threading import Thread
 from constants import debug, TICK, BEAT
 from time import sleep
 from random import randint
+from buses import OLED_bus
 
 class OLED_Screens(Thread):
     """4x OLED screens
@@ -14,8 +15,10 @@ class OLED_Screens(Thread):
     def run(self):
         debug("OLED_Screens")
         while True:
-            # beat = randint(110,120)
-            # debug("midi still running")
+            msg = self.OLED_bus.get()
+            screen = msg['screen']  # Which screen to send txt to
+            # Send switch msg to i2c mux
+            
             sleep(1)
-            # self.midi_in_bus.put("x")
+            
         return

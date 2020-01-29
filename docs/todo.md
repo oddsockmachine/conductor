@@ -1,4 +1,5 @@
 ## v2
+- convert to  pykka?   https://www.pykka.org/en/latest/quickstart/
 - How to manage shared access to i2c bus from different threads?
     - share/get i2cbus object from global import, create i2c_device for encoders
     - pass i2c bus to Display, Encoders etc from start.py
@@ -6,7 +7,6 @@
 
 ## Fix
 - Menu buttons should illuminate based on which is active
-- CC and LFO crashing
 
 ## Top
 - color_char function: char acts as bitmask over selected color, useful for menus
@@ -16,6 +16,7 @@
   - beatmaker, binarysequencer, chordsequencer, drumdeviator, elaborator, transformer
 - save/load colorscheme in set
 - double drum machine: 8 channels, 32 steps
+- ??quad drum machine - 64 steps, 16 (or 32) note selection+display grid - for very long sequences, or very intricate?
 - clock in/out for VCV (calculate 24/beat rate)
 
 ### Threads
@@ -26,11 +27,11 @@
 ### Encoders
 - 4 RGB LED encoders
 - Control instrument parameters, menu options, CC msgs
-
+- Each encoder can also be clicked - maybe to enable menus/controls?
 
 ### Screens
 - 4 screens, 1 under each encoder
-- Show info about current instrument, or what the encoder is currently assigned to
+- Show info about current instrument, recent action, or what the encoder is currently assigned to
 
 ### Add small screen for better feedback
 - from lcd import lcd

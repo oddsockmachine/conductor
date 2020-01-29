@@ -109,23 +109,12 @@ class CC(Instrument):
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
-        if x == 15:
-            if y < c.H - self.max_pages:
-                return
-            self.curr_page_num = c.H-y-1
-            return
-        msg = self.get_curr_page().touch(x, y)
-        msg.channel = self.ins_num
-        self.mport.send(msg)
         return True
 
     def get_led_grid(self, state):
-        grid = self.get_curr_page().get_led_grid()
-        grid[15][15] = c.SLIDER_BODY
-        grid[15][14] = c.SLIDER_BODY
-        grid[15][13] = c.SLIDER_BODY
-        grid[15][12] = c.SLIDER_BODY
-        grid[15][c.H-self.curr_page_num-1] = c.SLIDER_TOP
+        grid = [
+            [c.LED_BLANK for x in range(c.H)] for y in range(c.W)
+        ]
         return grid
 
     def step_beat(self, global_beat):
