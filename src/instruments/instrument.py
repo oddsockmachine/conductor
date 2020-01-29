@@ -128,6 +128,10 @@ class Instrument(Thread):
         }
         return status
 
+    def touch_encoder(self, id, action):
+        c.debug("Encoder {id} {action}".format(id=id, action=action))
+        return
+
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
         page = self.get_curr_page()

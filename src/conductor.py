@@ -158,9 +158,15 @@ class Conductor(object):
         self.current_state = 'gbl_cfg'
         return
 
+    def touch_encoder(self, id, action):
+        self.get_curr_instrument().touch_encoder(id, action)
+        self.get_curr_instrument().instrument_cmd_bus.put("foo")
+
     def touch_note(self, x, y):
         if self.current_state == 'play':
             self.get_curr_instrument().touch_note(self.current_state, x, y)
+            self.get_curr_instrument().instrument_cmd_bus.put("foo")
+
         elif self.current_state == 'load':
             c.logging.info("loading")
             filenum = filenum_from_touch(x, y)
@@ -189,6 +195,7 @@ class Conductor(object):
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
         elif self.current_state == 'ins_cfg':
             self.get_curr_instrument().touch_note(self.current_state, x, y)
+            self.get_curr_instrument().instrument_cmd_bus.put("foo")
             # cb = get_cb_from_touch(get_ins_cfg_cb_grid(self.get_curr_instrument_num()), x, y)
         return
 

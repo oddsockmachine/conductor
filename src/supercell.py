@@ -58,6 +58,8 @@ class Supercell(object):
             self.conductor.step_beat(1)
         elif m['cmd'] == 'note':
             self.conductor.touch_note(m['x'], m['y'])
+        elif m['cmd'] == 'encoder':
+            self.conductor.touch_encoder(id=m['id'], action=m['action'])
         return
 
     def process_midi_tick(self):

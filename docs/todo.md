@@ -4,6 +4,7 @@
     - share/get i2cbus object from global import, create i2c_device for encoders
     - pass i2c bus to Display, Encoders etc from start.py
 - threaded handles for 4x RGB encoders and 4x oled screens
+- Instruments are still running in main thread - how to use their ins_cmd_bus?
 
 ## Fix
 - Menu buttons should illuminate based on which is active

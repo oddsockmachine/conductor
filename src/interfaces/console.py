@@ -84,6 +84,14 @@ class Display(Thread):
             grid_y = int(y-4)
             return {'cmd': 'note', 'x': grid_x, 'y': self.grid_h - grid_y - 1}
         # TODO Scroll detection on encoder boxes
+        if x >= (self.grid_w+self.grid_x + 10) and x <= (self.grid_w+self.grid_x + 10 + 18) and \
+            y >= self.grid_y and y < (self.grid_y + 24):
+            screen_no = int((y - self.grid_y) / 6)
+            # c.debug(str(screen_no))
+            mouse_action = {1: "button", curses.A_LOW: "+", curses.BUTTON4_PRESSED: "-"}.get(m[4])
+            # c.debug(str(mouse_action))
+            if mouse_action:
+                return {'cmd': 'encoder', 'action': mouse_action, 'id': screen_no}
         # If x, y in grids1-4
         # If m[4] = click, send relevant encoder button press
         # If m[4] = scroll up/down, send relevant encoder cmds
@@ -100,7 +108,7 @@ class Display(Thread):
         self.stdscr.addstr(self.grid_y+18+len(lines)+1, self.grid_x+2, lcd.flash_line)  # , curses.color_pair(4))
         return
 
-    def draw_screens(self, text):
+    def draw_oleds(self, text):
         for i in range(4):
             num_lines = 4
             num_chars = 16
@@ -133,5 +141,5 @@ class Display(Thread):
     def draw_all(self, status, led_grid):
         self.draw_stats(status)
         self.draw_grid(led_grid)
-        self.draw_screens("foo")
+        self.draw_oleds("foo")
         return
