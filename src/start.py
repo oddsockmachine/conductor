@@ -1,4 +1,4 @@
-from supercell import Supercell
+from supervisor import Supervisor
 import mido
 import argparse
 from buses import midi_in_bus, midi_out_bus, LEDs_bus, buttons_bus, clock_bus, ticker_bus, encoder_in_bus, encoder_out_bus, button_out_bus
@@ -25,9 +25,9 @@ def console_main(stdscr):
     curses.curs_set(0)
     stdscr.nodelay(1)
     display = Display(stdscr, buttons_bus, LEDs_bus, OLED_Screens)
-    with mido.open_output('SuperCell_Out', autoreset=True, virtual=True) as mportout:
-        with mido.open_input('SuperCell_In', autoreset=True, virtual=True) as mportin:
-            start_supercell(display, mportin, mportout, midi_in_bus, midi_out_bus, ticker_bus, clock_bus, bpm)
+    with mido.open_output('supervisor_Out', autoreset=True, virtual=True) as mportout:
+        with mido.open_input('supervisor_In', autoreset=True, virtual=True) as mportin:
+            start_supervisor(display, mportin, mportout, midi_in_bus, midi_out_bus, ticker_bus, clock_bus, bpm)
 
 
 def hardware_main():
@@ -45,10 +45,10 @@ def hardware_main():
     debug("Creating MIDI ports")
     with mido.open_output('f_midi:f_midi 16:0') as mportout:
         with mido.open_input('f_midi:f_midi 16:0') as mportin:
-            start_supercell(display, mportin, mportout, midi_in_bus, midi_out_bus, ticker_bus, clock_bus, bpm)
+            start_supervisor(display, mportin, mportout, midi_in_bus, midi_out_bus, ticker_bus, clock_bus, bpm)
 
 
-def start_supercell(display, mportin, mportout, midi_in_bus, midi_out_bus, ticker_bus, clock_bus, bpm):
+def start_supervisor(display, mportin, mportout, midi_in_bus, midi_out_bus, ticker_bus, clock_bus, bpm):
     midi_in = MidiInListener(mportin, midi_in_bus)
     midi_out = MidiOut(mportout, midi_out_bus)
     ticker = SelfTicker(bpm, ticker_bus, midi_out_bus)
@@ -58,8 +58,8 @@ def start_supercell(display, mportin, mportout, midi_in_bus, midi_out_bus, ticke
     ticker.start()
     clock.start()
     display.start()
-    supercell = Supercell(clock_bus, buttons_bus, LEDs_bus)
-    supercell.run()
+    supervisor = Supervisor(clock_bus, buttons_bus, LEDs_bus)
+    supervisor.run()
 
 
 if __name__ == '__main__':

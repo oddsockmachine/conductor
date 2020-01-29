@@ -3,11 +3,11 @@ from time import sleep
 from constants import debug
 from pykka import ActorRegistry
 
-class Supercell(object):
+class Supervisor(object):
     """docstring for Supercell."""
 
     def __init__(self, clock_bus, buttons_bus, LEDs_bus):
-        super(Supercell, self).__init__()
+        super(Supervisor, self).__init__()
         self.clock_bus = clock_bus
         self.buttons_bus = buttons_bus
         self.LEDs_bus = LEDs_bus
