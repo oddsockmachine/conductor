@@ -20,12 +20,12 @@ class Encoder_Inputs(Thread):
     Buttons are connected to GPIO, send pushes on button bus"""
     # TODO Should number of encoders be specified/hardcoded here?
     # TODO Maybe RGB LEDS and Encoder/Button status should be separate threads, to avoid blocking behavior
-    def __init__(self, encoder_out_bus, button_out_bus, i2c_bus):
+    def __init__(self, encoder_out_bus, encoder_button_bus, i2c_bus):
         Thread.__init__(self, name='Encoder_Inputs')
         self.daemon = True
         self.encoder_in_bus = encoder_in_bus
         self.encoder_out_bus = encoder_out_bus
-        self.button_out_bus = button_out_bus
+        self.encoder_button_bus = encoder_button_bus
         Thread.start()
 
     def run(self):

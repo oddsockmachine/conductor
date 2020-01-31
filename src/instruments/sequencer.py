@@ -26,6 +26,12 @@ class Sequencer(Instrument):
         self.sustain = True  # Don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
 
+    def touch_encoder(self, id, action):
+        c.debug("Encoder {id} {action}".format(id=id, action=action))
+        if id == 1 and action == '+':
+            self.octave += 1
+        return
+
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''
         if state == 'play':

@@ -2,19 +2,20 @@ from threading import Thread
 from time import sleep
 from constants import debug, TICK, BEAT
 from mido import Message
+from buses import bus_registry
 
 class SelfTicker(Thread):
     """Automatically generate clock pulses at the required BPM"""
-    def __init__(self, initial_bpm, ticker_bus, midi_out_bus=None):
+    def __init__(self, initial_bpm):
         Thread.__init__(self, name='SelfTicker')
         self.daemon = True
         self.bpm = initial_bpm
         if initial_bpm:
             debug("ticker's bpm is " + str(initial_bpm))
-        self.ticker_bus = ticker_bus
+        self.ticker_bus = bus_registry.get('ticker_bus')
         self.beat_clock_count = 0
         self.midi_clock_divider = 4
-        self.midi_out_bus = midi_out_bus
+        self.midi_out_bus = bus_registry.get('midi_out_bus')
         
     def run(self):
         if not self.bpm:

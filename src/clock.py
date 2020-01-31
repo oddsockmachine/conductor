@@ -1,16 +1,17 @@
 from threading import Thread
 from constants import debug, TICK, BEAT
+from buses import bus_registry
 
 class Clock(Thread):
     """Listen on both midi and ticker clock buses, pass through clock messages based on chosen input"""
-    def __init__(self, midi_in_bus, ticker_bus, clock_bus, inp):
+    def __init__(self, inp):
         Thread.__init__(self, name='Clock')
         self.daemon = True
         self.input = inp
         debug("Clock input is " + str(inp))
-        self.ticker_bus = ticker_bus
-        self.midi_in_bus = midi_in_bus
-        self.clock_bus = clock_bus
+        self.ticker_bus = bus_registry.get('ticker_bus')
+        self.midi_in_bus = bus_registry.get('midi_in_bus')
+        self.clock_bus = bus_registry.get('clock_bus')
 
     def run(self):
         debug("Clock started")

@@ -7,15 +7,16 @@ locale.setlocale(locale.LC_ALL, '')
 from time import sleep
 from threading import Thread
 from color_scheme import select_scheme, next_scheme  # TODO add gbl button to cycle scheme
+from buses import bus_registry, actor_registry
 
 class Display(Thread):
     """docstring for Display."""
 
-    def __init__(self, stdscr, button_bus, led_bus, oled_screens):
+    def __init__(self, stdscr):
         # super(Display, self).__init__()
         Thread.__init__(self, name='Display')
-        self.button_bus = button_bus
-        self.led_bus = led_bus
+        self.button_grid_bus = bus_registry.get('button_grid_bus')
+        self.LED_grid_bus = bus_registry.get('LED_grid_bus')
 
         curses.use_default_colors()
         for i in range(0, curses.COLORS):
@@ -34,7 +35,7 @@ class Display(Thread):
         self.page_w = 9
         self.page_h = c.MAX_INSTRUMENTS + 2
         self.col_scheme = select_scheme('default')
-        self.oled_screens = oled_screens
+        self.OLED_Screens = actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
         return
     
     def run(self):
@@ -44,9 +45,9 @@ class Display(Thread):
             m = self.get_cmds()
             if m.get('cmd') != None:
                 c.debug(m)
-                self.button_bus.put(m)
-            if not self.led_bus.empty():
-                status, led_grid, oled_data = self.led_bus.get()
+                self.button_grid_bus.put(m)
+            if not self.LED_grid_bus.empty():
+                status, led_grid, oled_data = self.LED_grid_bus.get()
                 self.draw_all(status, led_grid, oled_data)
 
     def get_cmds(self):

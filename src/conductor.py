@@ -5,6 +5,7 @@ from note_conversion import SCALE_INTERVALS, KEYS
 from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_filenum, load_filenum, save_filenum
 from screens import generate_screen, gbl_cfg_grid_defn, get_cb_from_touch
 from interfaces.lcd import lcd
+from queue import Queue
 
 class Conductor(object):
     """docstring for Conductor."""
@@ -21,6 +22,7 @@ class Conductor(object):
         self.max_beat_division = 32
         self.scale = scale
         self.octave = octave  # Starting octave
+        self.multiplexor = [Queue(100) for i in range(c.MAX_INSTRUMENTS)]  # TODO pass relevant queue to each instrument
         self.instruments = [instrument_lookup(5)(ins_num=0, **self.instrument_ctx())]
         self.instruments[0].start()
         self.current_visible_instrument_num = 0
@@ -159,12 +161,15 @@ class Conductor(object):
 
     def touch_encoder(self, id, action):
         self.get_curr_instrument().touch_encoder(id, action)
-        self.get_curr_instrument().instrument_cmd_bus.put("foo")
+        # self.get_curr_instrument().instrument_cmd_bus.put("bar1")
 
     def touch_note(self, x, y):
-        if self.current_state == 'play':
+        if self.current_state in ['play', 'ins_cfg']:
+            self.get_curr_instrument().instrument_cmd_bus.put({'state': self.current_state, 'action': 'button_touch', 'details': (x, y)})
             self.get_curr_instrument().touch_note(self.current_state, x, y)
-            self.get_curr_instrument().instrument_cmd_bus.put("foo")
+        # elif self.current_state == 'ins_cfg':
+        #     self.get_curr_instrument().touch_note(self.current_state, x, y)
+        #     self.get_curr_instrument().instrument_cmd_bus.put({'state': 'ins_cfg', 'action': 'button_touch', 'details': (x, y)})
 
         elif self.current_state == 'load':
             c.logging.info("loading")
@@ -192,9 +197,6 @@ class Conductor(object):
                 return
             cb_func = self.__getattribute__('cb_' + cb_text)  # Lookup the relevant conductor function
             cb_func(_x, _y)  # call it, passing it x/y args (which may not be needed)
-        elif self.current_state == 'ins_cfg':
-            self.get_curr_instrument().touch_note(self.current_state, x, y)
-            self.get_curr_instrument().instrument_cmd_bus.put("foo")
             # cb = get_cb_from_touch(get_ins_cfg_cb_grid(self.get_curr_instrument_num()), x, y)
         return
 

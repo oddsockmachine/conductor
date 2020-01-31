@@ -46,6 +46,10 @@ class Instrument(Thread):
         while True:
             cmd = self.instrument_cmd_bus.get()
             c.debug(cmd)
+            # {'state': self.current_state, 'action': 'button_touch', 'details': (x, y)}
+            if cmd['action'] == 'button_touch':
+                x, y = cmd['details']
+                # self.touch_note(cmd['state'], x, y)
         return
 
     def restart(self):

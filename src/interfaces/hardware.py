@@ -1,5 +1,4 @@
-from constants import debug
-import constants as c
+from constants import debug, W, H, OFF
 from threading import Thread
 from board import SCL, SDA, D13, D6
 import busio
@@ -16,7 +15,7 @@ AUTO_WRITE = False
 class Display(Thread):
     """docstring for Display."""
 
-    def __init__(self, button_bus, led_bus, i2c_bus w=c.W, h=c.H, command_cb=None):
+    def __init__(self, button_bus, led_bus, i2c_bus):
         Thread.__init__(self, name='Display')
         # super(Display, self).__init__()
         self.button_bus = button_bus
@@ -47,16 +46,16 @@ class Display(Thread):
 
         debug("Trelli linked")
         lcd.flash("Trelli linked")
-        self.grid_h = h
-        self.grid_w = w
+        self.grid_h = H
+        self.grid_w = W
         self.state = 'play'
         self.led_matrix = [[(0, 0, 0) for x in range(w)] for y in range(h)]
         self.old_led_matrix = [[(0, 0, 0) for x in range(w)] for y in range(h)]
         button_cb = self.make_cb()
         debug("Initializing Trelli inputs")
         lcd.flash("Initializing Trelli inputs")
-        for y in range(h):
-            for x in range(w):
+        for y in range(self.grid_h):
+            for x in range(self.grid_w):
                 sleep(0.01)
                 self.trellis.activate_key(x, y, NeoTrellis.EDGE_RISING)
                 sleep(0.01)
@@ -70,12 +69,12 @@ class Display(Thread):
         return
 
     def run(self):
-        c.debug("Display thread started")
+        debug("Display thread started")
         while True:
             sleep(0.01)
             m = self.get_cmds()
             if m.get('cmd') != None:
-                c.debug(m)
+                debug(m)
                 self.button_bus.put(m)
             if not self.led_bus.empty():
                 status, led_grid = self.led_bus.get()
@@ -117,7 +116,7 @@ class Display(Thread):
     def blank_screen(self):
         for x in range(len(self.led_matrix)):
             for y in range(len(self.led_matrix[x])):
-                self.led_matrix[x][y] = c.OFF
+                self.led_matrix[x][y] = OFF
 
     def redraw_diff(self):
         diffs = []

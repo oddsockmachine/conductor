@@ -1,21 +1,21 @@
 from conductor import Conductor
 from time import sleep
 from constants import debug
-from pykka import ActorRegistry
+from buses import actor_registry, bus_registry
 
 class Supervisor(object):
     """docstring for Supercell."""
 
-    def __init__(self, clock_bus, buttons_bus, LEDs_bus):
+    def __init__(self):
         super(Supervisor, self).__init__()
-        self.clock_bus = clock_bus
-        self.buttons_bus = buttons_bus
-        self.LEDs_bus = LEDs_bus
+        self.clock_bus = bus_registry.get('clock_bus')
+        self.button_grid_bus = bus_registry.get('button_grid_bus')
+        self.LED_grid_bus = bus_registry.get('LED_grid_bus')
         self.beat_clock_count = 0
         self.midi_clock_divider = 6
         self.conductor = Conductor()
         self.save_on_exit = False
-        self.OLED_Screens = ActorRegistry.get_by_class_name('OLED_Screens')[0].proxy()
+        self.OLED_Screens = actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
         self.OLED_Screens.write(0, 0, "hello")
         self.OLED_Screens.write(1, 1, "world...")
 
@@ -23,9 +23,9 @@ class Supervisor(object):
         debug("Running...")
         self.draw()
         while True:
-            if not self.buttons_bus.empty():
-                debug("button pressed")
-                m = self.buttons_bus.get()
+            if not self.button_grid_bus.empty():
+                # debug("button pressed")
+                m = self.button_grid_bus.get()
                 self.process_cmds(m)
                 self.draw()
             if not self.clock_bus.empty():
@@ -40,9 +40,9 @@ class Supervisor(object):
         return
 
     def get_cmds(self):
-        if not self.buttons_bus.empty():
-            debug("button pressed")
-            m = self.buttons_bus.get()
+        if not self.button_grid_bus.empty():
+            # debug("button pressed")
+            m = self.button_grid_bus.get()
             self.process_cmds(m)
 
     def process_cmds(self, m):
@@ -78,4 +78,4 @@ class Supervisor(object):
         status = self.conductor.get_status()
         led_grid = self.conductor.get_led_grid()
         screens = self.OLED_Screens.get_text().get()
-        self.LEDs_bus.put((status, led_grid, screens))
+        self.LED_grid_bus.put((status, led_grid, screens))

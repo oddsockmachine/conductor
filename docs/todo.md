@@ -4,7 +4,7 @@
     - share/get i2cbus object from global import, create i2c_device for encoders
     - pass i2c bus to Display, Encoders etc from start.py
 - threaded handles for 4x RGB encoders and 4x oled screens
-- Instruments are still running in main thread - how to use their ins_cmd_bus?
+- Instruments are still running in main thread - how to use their ins_cmd_bus? - This is less responsive, for some reason
 
 ## Fix
 - Menu buttons should illuminate based on which is active
@@ -24,6 +24,9 @@
 - Run each instrument in a thread
 - Refactor instruments to share more common code, thread framework
 - Handle shutdown of curses and all threads
+- Supervisor tree
+- Routing and directory
+- Merge pykka and threaded ideas
 
 ### Encoders
 - 4 RGB LED encoders

@@ -2,14 +2,15 @@ from threading import Thread
 from constants import debug, TICK, BEAT
 from time import sleep
 from random import randint
+from buses import bus_registry
 
 class MidiInListener(Thread):
     """Listen on MIDI in port. Clock msgs go to clock bus, note msgs go to note bus"""
-    def __init__(self, mportin, midi_in_bus):
+    def __init__(self, mportin):
         Thread.__init__(self, name='MidiInListener')
         self.daemon = True
         self.mportin = mportin
-        self.midi_in_bus = midi_in_bus
+        self.midi_in_bus = bus_registry.get('midi_in_bus')
         self.beat_clock_count = 0
         self.midi_clock_divider = 12
 
