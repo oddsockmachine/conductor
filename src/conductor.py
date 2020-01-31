@@ -23,8 +23,13 @@ class Conductor(object):
         self.scale = scale
         self.octave = octave  # Starting octave
         self.multiplexor = [Queue(100) for i in range(c.MAX_INSTRUMENTS)]  # TODO pass relevant queue to each instrument
-        self.instruments = [instrument_lookup(5)(ins_num=0, **self.instrument_ctx())]
-        self.instruments[0].start()
+        self.instruments = []
+        # i = instrument_lookup(4).start(ins_num=0, **self.instrument_ctx()).proxy()
+        # self.instruments[0].start()
+        self.instruments.append(instrument_lookup(4).start(ins_num=0, **self.instrument_ctx()).proxy())
+        self.instruments.append(instrument_lookup(2).start(ins_num=1, **self.instrument_ctx()).proxy())
+        self.instruments.append(instrument_lookup(1).start(ins_num=2, **self.instrument_ctx()).proxy())
+        self.instruments.append(instrument_lookup(6).start(ins_num=3, **self.instrument_ctx()).proxy())
         self.current_visible_instrument_num = 0
         self.current_state = 'load'  # Current state to be shown on display(s)
 
@@ -75,7 +80,7 @@ class Conductor(object):
         return display_func()
 
     def play_screen(self):
-        led_grid = self.get_curr_instrument().get_led_grid(self.current_state)
+        led_grid = self.get_curr_instrument().get_led_grid(self.current_state).get()
         return led_grid
 
     def gbl_cfg_screen(self):
@@ -88,7 +93,7 @@ class Conductor(object):
         return led_grid
 
     def ins_cfg_screen(self):
-        led_grid = self.get_curr_instrument().get_led_grid('ins_cfg')
+        led_grid = self.get_curr_instrument().get_led_grid('ins_cfg').get()
         return led_grid
 
     def load_screen(self):
@@ -114,13 +119,14 @@ class Conductor(object):
         if len(self.instruments) == 16:
             return
         ins_type = instrument_lookup(type)
-        new_ins = ins_type(ins_num=len(self.instruments), **self.instrument_ctx())
-        new_ins.start()
+        c.debug(ins_type)
+        new_ins = ins_type.start(ins_num=len(self.instruments), **self.instrument_ctx()).proxy()
+        c.debug(new_ins)
         self.instruments.append(new_ins)
         return
 
     def get_status(self):
-        status = self.get_curr_instrument().get_status()
+        status = self.get_curr_instrument().get_status().get()
         return status
 
     def step_beat(self, tick_type):
@@ -142,7 +148,7 @@ class Conductor(object):
         data = {
             "height": 16,
             "width": 16,
-            "instruments": [i.save() for i in self.instruments]
+            "instruments": [i.save().get() for i in self.instruments]
         }
         save_filenum(data, filenum)
 
@@ -165,7 +171,7 @@ class Conductor(object):
 
     def touch_note(self, x, y):
         if self.current_state in ['play', 'ins_cfg']:
-            self.get_curr_instrument().instrument_cmd_bus.put({'state': self.current_state, 'action': 'button_touch', 'details': (x, y)})
+            # self.get_curr_instrument().instrument_cmd_bus.put({'state': self.current_state, 'action': 'button_touch', 'details': (x, y)})
             self.get_curr_instrument().touch_note(self.current_state, x, y)
         # elif self.current_state == 'ins_cfg':
         #     self.get_curr_instrument().touch_note(self.current_state, x, y)
@@ -268,8 +274,7 @@ class Conductor(object):
         if self.get_total_instrument_num() >= 16:
             return
         ins = instrument_lookup(y+1)  # +1 because base class isn't playable
-        new_ins = ins(ins_num=self.get_total_instrument_num(), **self.instrument_ctx())
-        new_ins.start()
+        new_ins = ins.start(ins_num=self.get_total_instrument_num(), **self.instrument_ctx()).proxy()
         self.instruments.append(new_ins)
         lcd.flash("Added {}".format(self.instruments[~0].type))
 

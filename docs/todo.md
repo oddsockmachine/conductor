@@ -8,6 +8,7 @@
 
 ## Fix
 - Menu buttons should illuminate based on which is active
+- Octopus sends all notes on at end of page
 
 ## Top
 - color_char function: char acts as bitmask over selected color, useful for menus

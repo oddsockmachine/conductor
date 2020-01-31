@@ -8,14 +8,16 @@ from copy import deepcopy
 from interfaces.lcd import lcd
 from buses import midi_out_bus
 from threading import Thread
+from pykka import ThreadingActor
 from queue import Queue
 
-class Instrument(Thread):
+class Instrument(ThreadingActor):
     """docstring for Instrument."""
 
     def __init__(self, ins_num, mport, key, scale, octave=1, speed=1):
         # super(Instrument, self).__init__()
-        Thread.__init__(self, name="Ins: " + str(ins_num))
+        # Thread.__init__(self, name="Ins: " + str(ins_num))
+        super().__init__()
         self.daemon = True
 
         self.instrument_cmd_bus = Queue()
@@ -41,16 +43,16 @@ class Instrument(Thread):
         self.chaos = 0
         self.sustain = False
 
-    def run(self):
-        c.debug("Instrument starting")
-        while True:
-            cmd = self.instrument_cmd_bus.get()
-            c.debug(cmd)
-            # {'state': self.current_state, 'action': 'button_touch', 'details': (x, y)}
-            if cmd['action'] == 'button_touch':
-                x, y = cmd['details']
-                # self.touch_note(cmd['state'], x, y)
-        return
+    # def run(self):
+    #     c.debug("Instrument starting")
+    #     while True:
+    #         cmd = self.instrument_cmd_bus.get()
+    #         c.debug(cmd)
+    #         # {'state': self.current_state, 'action': 'button_touch', 'details': (x, y)}
+    #         if cmd['action'] == 'button_touch':
+    #             x, y = cmd['details']
+    #             # self.touch_note(cmd['state'], x, y)
+    #     return
 
     def restart(self):
         """Set all aspects of instrument back to starting state"""
