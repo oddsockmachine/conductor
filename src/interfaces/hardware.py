@@ -1,4 +1,5 @@
 from constants import debug, W, H, OFF
+from config import trellis_addresses
 from threading import Thread
 from board import SCL, SDA, D13, D6
 import busio
@@ -29,12 +30,9 @@ class Display(Thread):
         debug("Creating Trelli")
         lcd.flash("Creating Trelli")
         trelli = [[], [], [], []]
-        addrs = [[0x31, 0x30, 0x2f, 0x2e],
-                 [0x35, 0x34, 0x33, 0x32],
-                 [0x36, 0x37, 0x38, 0x39],
-                 [0x3a, 0x3c, 0x3b, 0x3d]]
+        # addrs = trellis_addresses
         # Create trelli sequentially with a slight pause between each
-        for x, slice in enumerate(addrs):
+        for x, slice in enumerate(trellis_addresses):
             for y, addr in enumerate(slice):
                 t = NeoTrellis(i2c_bus, False, addr=addr)
                 t.pixels.auto_write = False

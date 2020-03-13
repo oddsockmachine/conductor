@@ -1,10 +1,18 @@
+https://github.com/adafruit/Adafruit_CircuitPython_TCA9548A
+2 problems:
+- how to generalize LED grid, encoders and screens for both hardware and console?
+- How to define screen contents like menus for each instrument?
+
 ## v2
+- Define encoder controls and oled params for each instrument
+- Convert to pypy https://stackoverflow.com/questions/55703832/install-pypy3-on-raspberry-pi
 - convert to  pykka?   https://www.pykka.org/en/latest/quickstart/
 - How to manage shared access to i2c bus from different threads?
     - share/get i2cbus object from global import, create i2c_device for encoders
     - pass i2c bus to Display, Encoders etc from start.py
 - threaded handles for 4x RGB encoders and 4x oled screens
 - Instruments are still running in main thread - how to use their ins_cmd_bus? - This is less responsive, for some reason
+- Import midi to sequencer?
 
 ## Fix
 - Menu buttons should illuminate based on which is active
@@ -37,12 +45,6 @@
 ### Screens
 - 4 screens, 1 under each encoder
 - Show info about current instrument, recent action, or what the encoder is currently assigned to
-
-### Add small screen for better feedback
-- from lcd import lcd
-- lcd.line1("Select:")
-- Each instrument presents 5 lines of status
-- Or 4 lines, plus a line for recent messages/alerts
 
 ### Handle LED colors better
 - Use HSB
@@ -133,11 +135,3 @@ Volume Faders for each instrument?
 - Button/whatever to trigger transfer currently playing instrument (or all) to ableton clips
 - Send cmds to start recording at start of page/bar for each active instrument/channel, then stop recording once page(s) completed
 - Could do the same thing in reverse to import and manipulate live midi
-
-### convert everything to asynchronous/event driven
-- midi time and button pressed events kind of already are, can it be better?
-- Not sure necessary, speed is more than adequate now
-
-### MIDI control
-- Each variable has a uid and can have midi CC's routed to it
-- Might not be useful or practical, each instrument has its own config, why add more controls?

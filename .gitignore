@@ -1,5 +1,8 @@
 *.pyc
 venv
+pypy
+pypyvenv
+.vscode
 sequencer.log
 __pycache__
 Adafruit_Trellis

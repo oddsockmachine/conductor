@@ -278,18 +278,18 @@ NUM_INSTRUMENTS = {
 }
 
 SCALE_CHARS = {
-    'ionian':     'io',
-    'dorian':     'do',
-    'phrygian':   'ph',
-    'lydian':     'ly',
-    'mixolydian': 'mx',
-    'aeolian':    'ae',
-    'locrian':    'lo',
-    'major':      'ma',
-    'minor':      'mi',
+    'ionian':          'io',
+    'dorian':          'do',
+    'phrygian':        'ph',
+    'lydian':          'ly',
+    'mixolydian':      'mx',
+    'aeolian':         'ae',
+    'locrian':         'lo',
+    'major':           'ma',
+    'minor':           'mi',
     'pentatonic_maj':  'p+',
     'pentatonic_min':  'p-',
-    'chromatic':  'ch',
+    'chromatic':       'ch',
 }
 
 LETTERS = {'a': A, 'b': B, 'c': C, 'd': D, 'e': E, 'f': F, 'g': G, 'h': h, 'i': I, 'l': L, 'm': M,

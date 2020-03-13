@@ -2,6 +2,7 @@ from threading import Thread
 from queue import Queue
 from time import sleep
 from constants import debug
+from pykka import ThreadingActor
 
 class Actor(Thread):
     """A Python Actor"""
@@ -80,3 +81,13 @@ actor2.start()
 sleep(5)
 directory.get('actor1')._stop()
 directory.get('actor2')._stop()
+
+
+class Foo(ThreadingActor):
+    def __init__(self):
+        super().__init__()
+        self.x = 0
+    def bar(self):
+        self.x += 1
+        return self.x
+

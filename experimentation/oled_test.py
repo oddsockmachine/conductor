@@ -1,4 +1,5 @@
-# pip3 install adafruit-circuitpython-ssd1306
+# https://github.com/adafruit/Adafruit_CircuitPython_TCA9548A
+# https://github.com/adafruit/Adafruit_CircuitPython_SSD1306
 
 
 # Import all board pins.
@@ -7,38 +8,73 @@ import busio
 from time import sleep
 # Import the SSD1306 module.
 import adafruit_ssd1306
+# import Mux
+import adafruit_tca9548a
 
 from PIL import Image, ImageDraw, ImageFont
 
 
 class OLED(object):
-    def __init__(self):
-        self.address = 0x00
-        self.text = {}
-        self.i2c = None
+    def __init__(self,id, i2c):
+        self.id = 0
+        self.w = 128
+        self.h = 32
+        self.max_lines = 4
+        self.text = ["" for i in range(self.max_lines)]
+        self.i2c = i2c
+        self.style = ""
+        self.SSD1306_I2C = adafruit_ssd1306.SSD1306_I2C(self.w, self.h, self.i2c)
+        self.image = Image.new('1', (self.w, self.h))
+        self.draw = ImageDraw.Draw(self.image)
+        self.draw.rectangle((0, 0, self.w, self.h), outline=0, fill=0)
+        self.font = ImageFont.load_default()
+        self.SSD1306_I2C.fill(0)
+        self.SSD1306_I2C.show()
         return
     def write(self, text, line_no, style):
         """Write text to the relevant line in a particular style (highlighted, plain, inverted, etc)"""
+        self.text[line_no] = text
+        self.display()
         return
-    def highlight(self, line_no, style):
+
+    def write_lines(self, text_lines, style):
+        """Write text to the relevant line in a particular style (highlighted, plain, inverted, etc)"""
+        self.text_lines = text_lines
+        self.display()
         return
+
+    def highlight(self, line_no):
+        return
+
+    def set_style(self, style):
+        # TODO What about scrolling text? Menu items?
+        # TODO Different modes? Menu, title, info, graph
+        return
+
     def clear(self):
+        self.text = ["" for i in range(self.max_lines)]
+        self.SSD1306_I2C.fill(0)
+        self.SSD1306_I2C.show()
         return
-    # TODO What about scrolling text? Menu items?
-    # TODO Different modes? Menu, title, info, graph
-    pass
+
+    def display(self):
+        print(self.text)
+        self.draw.text((0, 0), self.text[0], font=font, fill=255)
+        self.draw.text((0, 8), self.text[1], font=font, fill=255)
+        self.draw.text((0, 16), self.text[2], font=font, fill=255)
+        self.draw.text((0, 24), self.text[3], font=font, fill=255)
+        self.SSD1306_I2C.image(image)
+        self.SSD1306_I2C.show()
+        return
 
 
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)
-
+tca = adafruit_tca9548a.TCA9548A(i2c)
 # Create the SSD1306 OLED class.
-# The first two parameters are the pixel width and pixel height.  Change these
-# to the right size for your display!
-# display = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c)
-display = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3d)
-# Alternatively you can change the I2C address of the device with an addr parameter:
-#display = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c, addr=0x31)
+display = adafruit_ssd1306.SSD1306_I2C(128, 32, tca[0])
+display2 = adafruit_ssd1306.SSD1306_I2C(128, 32, tca[1])
+oled3 = OLED(2, tca[2])
 print(display)
 # Clear the display.  Always call show after changing pixels to make the display
 # update visible!
@@ -81,14 +117,10 @@ exit()
 
 
 
-# font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 28)
-# font2 = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 14)
-
-# # Draw the text
-# draw.text((0, 0), 'Hello!', font=font, fill=255)
-# draw.text((0, 30), 'Hello!', font=font2, fill=255)
-# draw.text((34, 46), 'Hello!', font=font2, fill=255)
-
-# # Display image
-# oled.image(image)
-# oled.show()
+oled3.write("hello", 0, None)
+sleep(1)
+oled3.write("world", 1, None)
+sleep(1)
+oled3.write_lines(["howdy", "wurld", ":)", ":D"], None)
+sleep(1)
+exit()
