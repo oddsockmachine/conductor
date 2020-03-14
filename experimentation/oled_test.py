@@ -7,8 +7,8 @@ from board import SCL, SDA
 import busio
 from time import sleep
 # Import the SSD1306 module.
-import adafruit_ssd1306
 from sh1106 import SH1106_I2C
+from x_adafruit_ssd1306 import SSD1306_I2C as SH1106_I2C
 # import Mux
 import adafruit_tca9548a
 
@@ -18,7 +18,7 @@ from PIL import Image, ImageDraw, ImageFont
 class OLED(object):
     def __init__(self,id, i2c):
         self.id = 0
-        self.w = 132
+        self.w = 128
         self.h = 16
         self.max_lines = 4
         self.text = ["" for i in range(self.max_lines)]
@@ -73,43 +73,43 @@ class OLED(object):
 i2c = busio.I2C(SCL, SDA)
 # tca = adafruit_tca9548a.TCA9548A(i2c)
 # Create the SSD1306 OLED class.
-display = SH1106_I2C(132, 64, i2c)
-# display2 = adafruit_ssd1306.SSD1306_I2C(132, 16, tca[1])
+display = SH1106_I2C(128, 64, i2c)
+# display2 = adafruit_ssd1306.SSD1306_I2C(128, 16, tca[1])
 # oled3 = OLED(2, tca[2])
 print(display)
 # Clear the display.  Always call show after changing pixels to make the display
 # update visible!
-# display.fill(0)
-# display.show()
-# sleep(0.2)
-# display.fill(1)
-# display.show()
-# sleep(0.2)
-# display.fill(0)
-# display.show()
-# sleep(0.2)
-# # Set a pixel in the origin 0,0 position.
-# display.pixel(0, 0, 1)
-# display.pixel(1, 1, 1)
-# display.pixel(2, 2, 1)
-# display.pixel(3, 3, 1)
-# display.pixel(4, 4, 1)
-# display.pixel(5, 5, 1)
-# sleep(0.2)
-# display.show()
-# sleep(0.2)
+display.fill(0)
+display.show()
+sleep(0.2)
+display.fill(1)
+display.show()
+sleep(0.2)
+display.fill(0)
+display.show()
+sleep(0.2)
+# Set a pixel in the origin 0,0 position.
+display.pixel(0, 0, 1)
+display.pixel(1, 1, 1)
+display.pixel(2, 2, 1)
+display.pixel(3, 3, 1)
+display.pixel(4, 4, 1)
+display.pixel(5, 5, 1)
+sleep(0.2)
+display.show()
+sleep(0.2)
 display.fill(0)
 display.show()
 sleep(0.2)
 
-# image = Image.new('1', (132, 64))
+# image = Image.new('1', (128, 64))
 # # Get drawing object to draw on image.
 # draw = ImageDraw.Draw(image)
 # # Draw a white background
-# draw.rectangle((0, 0, 132, 64), outline=255, fill=0)
+# draw.rectangle((0, 0, 128, 64), outline=255, fill=0)
 # # Draw a smaller inner rectangle
 # BORDER = 5
-# draw.rectangle((BORDER, BORDER, 132 - BORDER - 1, 64 - BORDER - 1),
+# draw.rectangle((BORDER, BORDER, 128 - BORDER - 1, 64 - BORDER - 1),
 #                outline=0, fill=0)
 # # Load default font.
 # font = ImageFont.load_default()
@@ -118,6 +118,15 @@ sleep(0.2)
 display.text("hello world", 8, 8, 255)
 display.text("hello world", 8, 16, 255)
 display.text("hello world", 8, 24, 255)
+display.text("It's Dave", 8, 40, 255)
+# Display image
+# display.image(image)
+display.show()
+sleep(0.2)
+display.fill(0)
+display.text("abcdefghijklmnop", 8, 8, 255)
+display.text("abcdefghijklmnop", 8, 16, 255)
+display.text("abcdefghijklmnop", 8, 24, 255)
 display.text("It's Dave", 8, 40, 255)
 # Display image
 # display.image(image)
