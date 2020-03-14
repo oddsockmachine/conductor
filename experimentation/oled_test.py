@@ -8,6 +8,7 @@ import busio
 from time import sleep
 # Import the SSD1306 module.
 import adafruit_ssd1306
+from sh1106 import SH1106_I2C
 # import Mux
 import adafruit_tca9548a
 
@@ -17,8 +18,8 @@ from PIL import Image, ImageDraw, ImageFont
 class OLED(object):
     def __init__(self,id, i2c):
         self.id = 0
-        self.w = 128
-        self.h = 32
+        self.w = 132
+        self.h = 16
         self.max_lines = 4
         self.text = ["" for i in range(self.max_lines)]
         self.i2c = i2c
@@ -70,57 +71,66 @@ class OLED(object):
 
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)
-tca = adafruit_tca9548a.TCA9548A(i2c)
+# tca = adafruit_tca9548a.TCA9548A(i2c)
 # Create the SSD1306 OLED class.
-display = adafruit_ssd1306.SSD1306_I2C(128, 32, tca[0])
-display2 = adafruit_ssd1306.SSD1306_I2C(128, 32, tca[1])
-oled3 = OLED(2, tca[2])
+display = SH1106_I2C(132, 64, i2c)
+# display2 = adafruit_ssd1306.SSD1306_I2C(132, 16, tca[1])
+# oled3 = OLED(2, tca[2])
 print(display)
 # Clear the display.  Always call show after changing pixels to make the display
 # update visible!
+# display.fill(0)
+# display.show()
+# sleep(0.2)
+# display.fill(1)
+# display.show()
+# sleep(0.2)
+# display.fill(0)
+# display.show()
+# sleep(0.2)
+# # Set a pixel in the origin 0,0 position.
+# display.pixel(0, 0, 1)
+# display.pixel(1, 1, 1)
+# display.pixel(2, 2, 1)
+# display.pixel(3, 3, 1)
+# display.pixel(4, 4, 1)
+# display.pixel(5, 5, 1)
+# sleep(0.2)
+# display.show()
+# sleep(0.2)
 display.fill(0)
 display.show()
-sleep(1)
-# Set a pixel in the origin 0,0 position.
-display.pixel(0, 0, 1)
-# Set a pixel in the middle 64, 16 position.
-display.pixel(64, 16, 1)
-# Set a pixel in the opposite 127, 31 position.
-display.pixel(127, 31, 1)
-display.show()
-sleep(1)
-display.fill(0)
-display.show()
-sleep(1)
+sleep(0.2)
 
-image = Image.new('1', (display.width, display.height))
-# Get drawing object to draw on image.
-draw = ImageDraw.Draw(image)
-# Draw a white background
-draw.rectangle((0, 0, display.width, display.height), outline=255, fill=255)
-# Draw a smaller inner rectangle
-BORDER = 5
-draw.rectangle((BORDER, BORDER, display.width - BORDER - 1, display.height - BORDER - 1),
-               outline=0, fill=0)
-# Load default font.
-font = ImageFont.load_default()
-# Draw Some Text
-text = "Hello World!"
-(font_width, font_height) = font.getsize(text)
-draw.text((display.width//2 - font_width//2, display.height//2 - font_height//2),
-          text, font=font, fill=255)
+# image = Image.new('1', (132, 64))
+# # Get drawing object to draw on image.
+# draw = ImageDraw.Draw(image)
+# # Draw a white background
+# draw.rectangle((0, 0, 132, 64), outline=255, fill=0)
+# # Draw a smaller inner rectangle
+# BORDER = 5
+# draw.rectangle((BORDER, BORDER, 132 - BORDER - 1, 64 - BORDER - 1),
+#                outline=0, fill=0)
+# # Load default font.
+# font = ImageFont.load_default()
+# # Draw Some Text
+# (font_width, font_height) = font.getsize(text)
+display.text("hello world", 8, 8, 255)
+display.text("hello world", 8, 16, 255)
+display.text("hello world", 8, 24, 255)
+display.text("It's Dave", 8, 40, 255)
 # Display image
-display.image(image)
+# display.image(image)
 display.show()
-sleep(1)
+sleep(0.2)
 exit()
 
 
 
-oled3.write("hello", 0, None)
-sleep(1)
-oled3.write("world", 1, None)
-sleep(1)
-oled3.write_lines(["howdy", "wurld", ":)", ":D"], None)
-sleep(1)
-exit()
+# oled3.write("hello", 0, None)
+# sleep(0.2)
+# oled3.write("world", 1, None)
+# sleep(0.2)
+# oled3.write_lines(["howdy", "wurld", ":)", ":D"], None)
+# sleep(0.2)
+# exit()

@@ -8,6 +8,8 @@ sudo apt-get install -y git vim
 sudo apt-get install -y python3-smbus
 python3 --version
 sudo apt-get install -y i2c-tools
+sudo apt-get install -y libopenjp2-7-dev
+sudo apt-get install -y libtiff5
 echo "interfacing > i2c > enable"
 sleep(10)
 
