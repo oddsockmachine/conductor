@@ -102,18 +102,7 @@ display.fill(0)
 display.show()
 sleep(0.2)
 
-# image = Image.new('1', (128, 64))
-# # Get drawing object to draw on image.
-# draw = ImageDraw.Draw(image)
-# # Draw a white background
-# draw.rectangle((0, 0, 128, 64), outline=255, fill=0)
-# # Draw a smaller inner rectangle
-# BORDER = 5
-# draw.rectangle((BORDER, BORDER, 128 - BORDER - 1, 64 - BORDER - 1),
-#                outline=0, fill=0)
-# # Load default font.
-# font = ImageFont.load_default()
-# # Draw Some Text
+# Draw Some Text
 # (font_width, font_height) = font.getsize(text)
 display.text("hello world", 8, 8, 255)
 display.text("hello world", 8, 16, 255)
@@ -128,10 +117,33 @@ display.text("abcdefghijklmnop", 8, 8, 255)
 display.text("abcdefghijklmnop", 8, 16, 255)
 display.text("abcdefghijklmnop", 8, 24, 255)
 display.text("It's Dave", 8, 40, 255)
-# Display image
-# display.image(image)
 display.show()
 sleep(0.2)
+# Display image
+
+
+image = Image.new('1', (128, 64))
+# Get drawing object to draw on image.
+draw = ImageDraw.Draw(image)
+# Draw a white background
+draw.rectangle((0, 0, 126, 62), outline=255, fill=0)
+# Draw a smaller inner rectangle
+BORDER = 5
+draw.rectangle((BORDER, BORDER, 126 - BORDER - 1, 62 - BORDER - 1),
+               outline=0, fill=0)
+# Load default font.
+font = ImageFont.load_default()
+# Draw Some Text
+text = "Hello World!"
+(font_width, font_height) = font.getsize(text)
+draw.text((126//2 - font_width//2, 62//2 - font_height//2),
+          text, font=font, fill=255)
+# Display image
+display.image(image)
+display.show()
+sleep(1)
+
+
 exit()
 
 
