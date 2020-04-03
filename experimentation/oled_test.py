@@ -24,9 +24,10 @@ class OLED():
         self.h = 64
         self.max_lines = 7
         self.text = ["" for i in range(self.max_lines)]
+        print(i2c)
         self.i2c = i2c
         self.style = ""
-        self.SH1106 = SH1106_I2C(self.w, self.h, self.i2c)
+        self.SH1106 = SH1106_I2C(self.w, self.h, self.i2c)#, addr=0x70)
         self.image = Image.new('1', (self.w, self.h))
         self.draw = ImageDraw.Draw(self.image)
         self.draw.rectangle((0, 0, self.w, self.h), outline=0, fill=0)
@@ -45,9 +46,7 @@ class OLED():
 
     def write_lines(self, text_lines, style=None):
         """Write text to the relevant line in a particular style (highlighted, plain, inverted, etc)"""
-        print(f"text lines {len(text_lines)}")
         for i in range(len(self.text)):
-            print(i)
             if i >= len(text_lines):
                 break
             self.text[i] = text_lines[i]
@@ -85,22 +84,29 @@ class OLED():
 
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)
-# tca = adafruit_tca9548a.TCA9548A(i2c)
+tca = adafruit_tca9548a.TCA9548A(i2c)
+print(tca)
 # Create the SSD1306 OLED class.
 # TODO Hook up a separate i2c bus to the rpi
 # display = SH1106_I2C(128, 64, i2c)
 # display2 = adafruit_ssd1306.SSD1306_I2C(128, 16, tca[1])
-oled3 = OLED(2, i2c)
+oled1 = OLED(2, tca[1])
+print(oled1)
+oled2 = OLED(2, tca[0])
+print(oled2)
+oled3 = OLED(2, tca[7])
 print(oled3)
-# oled3 = OLED(2, tca[2])
 
 
 
 
-# oled3.write("hello", 0, None)
+# oled1.write("hello", 0, None)
 # sleep(0.2)
-# oled3.write("world", 1, None)
+# oled1.write("world", 1, None)
 # sleep(0.2)
-oled3.write_lines(["hello", "world", "123456789012345678901","lol","I'm","in","QUARANTINE!"], None)
+oled1.write_lines(["hello", "world", "123456789012345678901","lol","I'm","in","QUARANTINE!"], None)
+sleep(0.5)
+oled2.write_lines("here come that boi o shit waddup".split(' '), None)
+oled3.write_lines("I'm a little teapot short and stout".split(' '), None)
 # sleep(0.2)
 # exit()
