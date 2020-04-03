@@ -11,36 +11,46 @@ from sh1106 import SH1106_I2C
 from x_adafruit_ssd1306 import SSD1306_I2C as SH1106_I2C
 # import Mux
 import adafruit_tca9548a
-
+# import pykka
 from PIL import Image, ImageDraw, ImageFont
 
 
-class OLED(object):
+# class OLED(pykka.ThreadingActor):
+class OLED():
     def __init__(self,id, i2c):
+        super().__init__()
         self.id = 0
         self.w = 128
-        self.h = 16
-        self.max_lines = 4
+        self.h = 64
+        self.max_lines = 7
         self.text = ["" for i in range(self.max_lines)]
         self.i2c = i2c
         self.style = ""
-        self.SSD1306_I2C = adafruit_ssd1306.SSD1306_I2C(self.w, self.h, self.i2c)
+        self.SH1106 = SH1106_I2C(self.w, self.h, self.i2c)
         self.image = Image.new('1', (self.w, self.h))
         self.draw = ImageDraw.Draw(self.image)
         self.draw.rectangle((0, 0, self.w, self.h), outline=0, fill=0)
         self.font = ImageFont.load_default()
-        self.SSD1306_I2C.fill(0)
-        self.SSD1306_I2C.show()
+        self.SH1106.fill(0)
+        self.SH1106.show()
         return
-    def write(self, text, line_no, style):
+    def write(self, text, line_no, style=None):
         """Write text to the relevant line in a particular style (highlighted, plain, inverted, etc)"""
+        if line_no > self.max_lines-1:
+            # TODO log error
+            return
         self.text[line_no] = text
         self.display()
         return
 
-    def write_lines(self, text_lines, style):
+    def write_lines(self, text_lines, style=None):
         """Write text to the relevant line in a particular style (highlighted, plain, inverted, etc)"""
-        self.text_lines = text_lines
+        print(f"text lines {len(text_lines)}")
+        for i in range(len(self.text)):
+            print(i)
+            if i >= len(text_lines):
+                break
+            self.text[i] = text_lines[i]
         self.display()
         return
 
@@ -54,18 +64,22 @@ class OLED(object):
 
     def clear(self):
         self.text = ["" for i in range(self.max_lines)]
-        self.SSD1306_I2C.fill(0)
-        self.SSD1306_I2C.show()
+        # Clear the display. Always call show after changing pixels to make the display update visible!
+        self.SH1106.show()
         return
+
+    def truncate_text(self, text):
+        return text[:(int(self.w/6))-1]
 
     def display(self):
         print(self.text)
-        self.draw.text((0, 0), self.text[0], font=font, fill=255)
-        self.draw.text((0, 8), self.text[1], font=font, fill=255)
-        self.draw.text((0, 16), self.text[2], font=font, fill=255)
-        self.draw.text((0, 24), self.text[3], font=font, fill=255)
-        self.SSD1306_I2C.image(image)
-        self.SSD1306_I2C.show()
+        # self.draw.rectangle((0, 0, 126, 62), outline=255, fill=0)
+        # BORDER = 0
+        self.draw.rectangle((0, 0, self.w - 2, self.h - 1 ), outline=1, fill=0)
+        for i in range(self.max_lines):
+            self.draw.text((2, 1+(i*8)), self.truncate_text(self.text[i]), font=self.font, fill=255)
+        self.SH1106.image(self.image)
+        self.SH1106.show()
         return
 
 
@@ -73,78 +87,13 @@ class OLED(object):
 i2c = busio.I2C(SCL, SDA)
 # tca = adafruit_tca9548a.TCA9548A(i2c)
 # Create the SSD1306 OLED class.
-display = SH1106_I2C(128, 64, i2c)
+# TODO Hook up a separate i2c bus to the rpi
+# display = SH1106_I2C(128, 64, i2c)
 # display2 = adafruit_ssd1306.SSD1306_I2C(128, 16, tca[1])
+oled3 = OLED(2, i2c)
+print(oled3)
 # oled3 = OLED(2, tca[2])
-print(display)
-# Clear the display.  Always call show after changing pixels to make the display
-# update visible!
-display.fill(0)
-display.show()
-sleep(0.2)
-display.fill(1)
-display.show()
-sleep(0.2)
-display.fill(0)
-display.show()
-sleep(0.2)
-# Set a pixel in the origin 0,0 position.
-display.pixel(0, 0, 1)
-display.pixel(1, 1, 1)
-display.pixel(2, 2, 1)
-display.pixel(3, 3, 1)
-display.pixel(4, 4, 1)
-display.pixel(5, 5, 1)
-sleep(0.2)
-display.show()
-sleep(0.2)
-display.fill(0)
-display.show()
-sleep(0.2)
 
-# Draw Some Text
-# (font_width, font_height) = font.getsize(text)
-display.text("hello world", 8, 8, 255)
-display.text("hello world", 8, 16, 255)
-display.text("hello world", 8, 24, 255)
-display.text("It's Dave", 8, 40, 255)
-# Display image
-# display.image(image)
-display.show()
-sleep(0.2)
-display.fill(0)
-display.text("abcdefghijklmnop", 8, 8, 255)
-display.text("abcdefghijklmnop", 8, 16, 255)
-display.text("abcdefghijklmnop", 8, 24, 255)
-display.text("It's Dave", 8, 40, 255)
-display.show()
-sleep(0.2)
-# Display image
-
-
-image = Image.new('1', (128, 64))
-# Get drawing object to draw on image.
-draw = ImageDraw.Draw(image)
-# Draw a white background
-draw.rectangle((0, 0, 126, 62), outline=255, fill=0)
-# Draw a smaller inner rectangle
-BORDER = 5
-draw.rectangle((BORDER, BORDER, 126 - BORDER - 1, 62 - BORDER - 1),
-               outline=0, fill=0)
-# Load default font.
-font = ImageFont.load_default()
-# Draw Some Text
-text = "Hello World!"
-(font_width, font_height) = font.getsize(text)
-draw.text((126//2 - font_width//2, 62//2 - font_height//2),
-          text, font=font, fill=255)
-# Display image
-display.image(image)
-display.show()
-sleep(1)
-
-
-exit()
 
 
 
@@ -152,6 +101,6 @@ exit()
 # sleep(0.2)
 # oled3.write("world", 1, None)
 # sleep(0.2)
-# oled3.write_lines(["howdy", "wurld", ":)", ":D"], None)
+oled3.write_lines(["hello", "world", "123456789012345678901","lol","I'm","in","QUARANTINE!"], None)
 # sleep(0.2)
 # exit()

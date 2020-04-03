@@ -1,10 +1,10 @@
-from i2cEncoderLib import i2cEncoder
+# from i2cEncoderLib import i2cEncoder
+from encoder_lib2 import i2cEncoder
 from board import SCL, SDA
 import busio
 from time import sleep
-# i2c_bus = busio.I2C(SCL, SDA)
-import smbus2
-bus = smbus2.SMBus(1)
+i2c_bus = busio.I2C(SCL, SDA)
+
 
 def on_inc():
     print("inc")
@@ -21,7 +21,7 @@ def on_push():
 
 
 addr1 = 0x0c
-enc1 = i2cEncoder(bus, addr1)
+enc1 = i2cEncoder(i2c_bus, addr1)
 
 
 enc1.onIncrement = on_inc

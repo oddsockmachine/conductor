@@ -46,8 +46,8 @@ encconfig = (i2cEncoderLib.INT_DATA | i2cEncoderLib.WRAP_ENABLE | i2cEncoderLib.
 encoder.begin(encconfig)
 
 encoder.writeCounter(0)
-encoder.writeMax(35)
-encoder.writeMin(-20)
+encoder.writeMax(50)
+encoder.writeMin(-50)
 encoder.writeStep(1)
 encoder.writeAntibouncingPeriod(8)
 encoder.writeDoublePushPeriod(5)
@@ -76,6 +76,7 @@ encoder.writeRGBCode(0x00)
 GPIO.add_event_detect(INT_pin, GPIO.FALLING, callback=Encoder_INT, bouncetime=10)
 
 while True:
-    if GPIO.input(INT_pin) == False: #
-        Encoder_INT(encoder) #
+    # if GPIO.input(INT_pin) == False: #
+    #     Encoder_INT(encoder) #
+    sleep(1)
     pass
