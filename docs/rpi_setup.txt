@@ -16,6 +16,11 @@ sleep(10)
 sudo raspi-config
 	enable spi, i2c, gpio
 
+# For ubuntu
+sudo add-apt-repository ppa:ubuntu-pi-flavour-makers/ppa
+sudo apt update
+sudo apt install raspi-config -y
+
 sudo vim /etc/modules
 	i2c-dev
 	i2c-bcm2708
@@ -48,7 +53,8 @@ echo "heartbeat" | sudo tee -a /sys/class/leds/led0/trigger
 sudo reboot
 ls /dev/snd/midi*
 
-sudo apt install -y python3-pip
+sudo apt install -y python3-pip python3-venv
+sudo apt-get install zlib-dev libjpeg-dev -y
 git clone https://github.com/oddsockmachine/supercell.git
 cd supercell
 pip3 install -r requirements.txt

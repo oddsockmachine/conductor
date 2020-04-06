@@ -15,15 +15,14 @@ import adafruit_tca9548a
 from PIL import Image, ImageDraw, ImageFont
 
 
-# class OLED(pykka.ThreadingActor):
-class OLED():
+class OLED(pykka.ThreadingActor):
+# class OLED():
     def __init__(self,id, i2c):
         super().__init__()
         self.id = 0
         self.w = 128
         self.h = 64
         self.max_lines = 7
-        self.text = ["" for i in range(self.max_lines)]
         print(i2c)
         self.i2c = i2c
         self.style = ""
@@ -35,25 +34,26 @@ class OLED():
         self.SH1106.fill(0)
         self.SH1106.show()
         return
-    def write(self, text, line_no, style=None):
-        """Write text to the relevant line in a particular style (highlighted, plain, inverted, etc)"""
-        if line_no > self.max_lines-1:
-            # TODO log error
-            return
-        self.text[line_no] = text
-        self.display()
-        return
 
-    def write_lines(self, text_lines, style=None):
+    def _write_lines(self, text_lines):
         """Write text to the relevant line in a particular style (highlighted, plain, inverted, etc)"""
-        for i in range(len(self.text)):
+        text_lines = text_lines[:self.max_lines]
+        for i in range(self.max_lines):
             if i >= len(text_lines):
                 break
-            self.text[i] = text_lines[i]
-        self.display()
+            self.draw.text((2, 1+(i*8)), self._truncate_text(text_lines[i]), font=self.font, fill=255)
         return
 
-    def highlight(self, line_no):
+    def _background(self):
+        self.draw.rectangle((0, 0, self.w - 2, self.h - 1 ), outline=1, fill=0)
+        return
+
+    def _truncate_text(self, text):
+        return text[:(int(self.w/6))-1]
+
+    def _display(self):
+        self.SH1106.image(self.image)
+        self.SH1106.show()
         return
 
     def set_style(self, style):
@@ -62,25 +62,26 @@ class OLED():
         return
 
     def clear(self):
-        self.text = ["" for i in range(self.max_lines)]
-        # Clear the display. Always call show after changing pixels to make the display update visible!
-        self.SH1106.show()
+        self.draw.rectangle((0, 0, self.w, self.h), outline=0, fill=0)
+        return
+ 
+    def text(self, text_lines):
+        self.clear()
+        self._background()
+        self._write_lines(text_lines)
+        self._display()
         return
 
-    def truncate_text(self, text):
-        return text[:(int(self.w/6))-1]
+    def menu(self, text_lines, highlight_line):
+        self.clear()
+        self._background()
+        self._write_lines(text_lines)
+        i = highlight_line
+        self.draw.rectangle((0, (i)*8+2, self.w-2, ((i+1)*8+2)), outline=1, fill=1)
+        self.draw.text((2, 1+(i*8)), self._truncate_text(text_lines[i]), font=self.font, fill=0)
 
-    def display(self):
-        print(self.text)
-        # self.draw.rectangle((0, 0, 126, 62), outline=255, fill=0)
-        # BORDER = 0
-        self.draw.rectangle((0, 0, self.w - 2, self.h - 1 ), outline=1, fill=0)
-        for i in range(self.max_lines):
-            self.draw.text((2, 1+(i*8)), self.truncate_text(self.text[i]), font=self.font, fill=255)
-        self.SH1106.image(self.image)
-        self.SH1106.show()
+        self._display()
         return
-
 
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)
@@ -97,16 +98,21 @@ print(oled2)
 oled3 = OLED(2, tca[7])
 print(oled3)
 
+sleep(1)
 
 
 
-# oled1.write("hello", 0, None)
-# sleep(0.2)
-# oled1.write("world", 1, None)
-# sleep(0.2)
-oled1.write_lines(["hello", "world", "123456789012345678901","lol","I'm","in","QUARANTINE!"], None)
+oled1.text(["hello", "world", "123456789012345678901","lol","I'm","in","QUARANTINE!"])
+oled2.text("here come that boi o shit waddup".split(' '))
+oled3.text("I'm a little teapot short and stout".split(' '))
+sleep(1)
+
+oled1.text(["hello", "world", "123456789012345678901","lol","I'm","in","QUARANTINE!"])
+oled2.text("here come that boi o shit waddup".split(' '))
+oled3.text("I'm a little teapot short and stout".split(' '))
+
 sleep(0.5)
-oled2.write_lines("here come that boi o shit waddup".split(' '), None)
-oled3.write_lines("I'm a little teapot short and stout".split(' '), None)
-# sleep(0.2)
-# exit()
+for i in range(7):
+    oled1.menu(["hello", "world", "123456789012345678901","lol","I'm","in","QUARANTINE!"], i)
+    oled2.menu("here come that boi o shit waddup".split(' '), i)
+    oled3.menu("I'm a little teapot short and stout".split(' '), i)
