@@ -9,10 +9,11 @@ class MidiOut(Thread):
         self.daemon = True
         self.mportout = mportout
         self.midi_out_bus = bus_registry.get('midi_out_bus')
+        self.keep_running = True
 
     def run(self):
-        debug("MidiOut")
-        while True:
+        debug("MidiOut starting")
+        while self.keep_running:
             msgs = self.midi_out_bus.get()
             for msg in msgs:
                 self.mportout.send(msg)

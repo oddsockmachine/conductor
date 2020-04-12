@@ -1,3 +1,12 @@
+Fix BPM/clock and speed selection
+Start displaying things on oleds
+
+
+# OLED/Encoder workflows/usecases
+Always show encoder assignment on bottom line
+Replace "lcd.flash"
+
+
 https://github.com/adafruit/Adafruit_CircuitPython_TCA9548A
 2 problems:
 - how to generalize LED grid, encoders and screens for both hardware and console?

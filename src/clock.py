@@ -12,10 +12,11 @@ class Clock(Thread):
         self.ticker_bus = bus_registry.get('ticker_bus')
         self.midi_in_bus = bus_registry.get('midi_in_bus')
         self.clock_bus = bus_registry.get('clock_bus')
+        self.keep_running = True
 
     def run(self):
         debug("Clock started")
-        while True:
+        while self.keep_running:
             if self.input == "midi":
                 x = self.midi_in_bus.get()
                 self.clock_bus.put(x)

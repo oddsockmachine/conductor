@@ -6,6 +6,7 @@ from save_utils import get_all_set_file_numbers, filenum_from_touch, validate_fi
 from screens import generate_screen, gbl_cfg_grid_defn, get_cb_from_touch
 from interfaces.lcd import lcd
 from queue import Queue
+from buses import actor_registry, bus_registry
 
 class Conductor(object):
     """docstring for Conductor."""
@@ -277,6 +278,16 @@ class Conductor(object):
         new_ins = ins.start(ins_num=self.get_total_instrument_num(), **self.instrument_ctx()).proxy()
         self.instruments.append(new_ins)
         lcd.flash("Added {}".format(self.instruments[~0].type))
+        try:
+            OLED_Screens = actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
+            OLED_Screens.text(0,[str(new_ins.type.get())])
+            OLED_Screens.text(1,[str(y+1)])
+            OLED_Screens.text(2,[str(ins)])
+        except Exception as e:
+            c.debug(str(e))
+
+
+        
 
     # ###### GETTERS/SETTERS ######
 

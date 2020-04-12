@@ -14,16 +14,18 @@ class SelfTicker(Thread):
             debug("ticker's bpm is " + str(initial_bpm))
         self.ticker_bus = bus_registry.get('ticker_bus')
         self.beat_clock_count = 0
-        self.midi_clock_divider = 4
+        self.midi_clock_divider = 32
         self.midi_out_bus = bus_registry.get('midi_out_bus')
-        
+        self.keep_running = True
+
     def run(self):
         if not self.bpm:
             debug("Not using self ticker")
             return
         debug("SelfTicker started")
-        while True:
-            sleep(60/self.bpm)
+        sleep_period = 60/self.bpm
+        while self.keep_running:
+            sleep(sleep_period)
             tick = self.process_midi_tick()
             self.ticker_bus.put(tick)
             if self.midi_out_bus:

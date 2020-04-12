@@ -7,6 +7,7 @@ from midi_output import MidiOut
 from clock import Clock
 from ticker import SelfTicker
 from constants import debug
+# import atexit
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--hw",  help="Use real hardware", type=bool)
@@ -18,7 +19,7 @@ bpm = int(args.bpm) if args.bpm else None
 
 def console_main(stdscr):
     from interfaces.console import Display
-    from interfaces.oled import OLED_Screens
+    from interfaces.oled_sw import OLED_Screens
     OLED_Screens = OLED_Screens.start(4)
     curses.mousemask(1)
     curses.mouseinterval(10)
@@ -32,6 +33,8 @@ def console_main(stdscr):
 
 def hardware_main():
     from interfaces.hardware import Display
+    from interfaces.oled_hw import OLED_Screens
+
     # from interfaces.encoders import Encoder_Inputs, Encoder_RGB
     from interfaces.i2c_bus import i2c_bus
     # TODO create  i2c bus here, pass to Display
@@ -59,8 +62,19 @@ def start_supervisor(display, mportin, mportout, bpm):
     clock.start()
     display.start()
     supervisor = Supervisor()
-    supervisor.run()
-
+    try:
+        supervisor.run()
+    finally:
+        debug("Stopping everything")
+        midi_in.keep_running = False
+        midi_out.keep_running = False
+        ticker.keep_running = False
+        clock.keep_running = False
+        display.keep_running = False
+        supervisor.keep_running = False
+        debug("Threads stopped")
+        exit()
+        debug("exiting?")
 
 if __name__ == '__main__':
     if not args.hw:

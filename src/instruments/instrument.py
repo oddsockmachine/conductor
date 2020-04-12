@@ -10,6 +10,7 @@ from buses import midi_out_bus
 from threading import Thread
 from pykka import ThreadingActor
 from queue import Queue
+from buses import actor_registry
 
 class Instrument(ThreadingActor):
     """docstring for Instrument."""
@@ -19,7 +20,6 @@ class Instrument(ThreadingActor):
         # Thread.__init__(self, name="Ins: " + str(ins_num))
         super().__init__()
         self.daemon = True
-
         self.instrument_cmd_bus = Queue()
         self.type = "Generic Instrument"
         self.ins_num = ins_num  # Number of instrument in the sequencer - corresponds to midi channel
@@ -42,6 +42,7 @@ class Instrument(ThreadingActor):
         self.pages = []
         self.chaos = 0
         self.sustain = False
+        # self.OLED_Screens = actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
 
     # def run(self):
     #     c.debug("Instrument starting")

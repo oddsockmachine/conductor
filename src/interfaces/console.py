@@ -35,12 +35,13 @@ class Display(Thread):
         self.page_w = 9
         self.page_h = c.MAX_INSTRUMENTS + 2
         self.col_scheme = select_scheme('default')
-        self.OLED_Screens = actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
+        # # self.OLED_Screens = actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
+        self.keep_running = True
         return
     
     def run(self):
         c.debug("Display thread started")
-        while True:
+        while self.keep_running:
             sleep(0.01)
             m = self.get_cmds()
             if m.get('cmd') != None:
@@ -86,9 +87,9 @@ class Display(Thread):
             grid_y = int(y-4)
             return {'cmd': 'note', 'x': grid_x, 'y': self.grid_h - grid_y - 1}
         # TODO Scroll detection on encoder boxes
-        if x >= (self.grid_w+self.grid_x + 10) and x <= (self.grid_w+self.grid_x + 10 + 18) and \
-            y >= self.grid_y and y < (self.grid_y + 24):
-            screen_no = int((y - self.grid_y) / 6)
+        if x >= (self.grid_w+self.grid_x + 10) and x <= (self.grid_w+self.grid_x + 14 + 18) and \
+            y >= self.grid_y and y < (self.grid_y + 32):
+            screen_no = int((y - self.grid_y) / 8)
             mouse_action = {1: "button", curses.A_LOW: "+", curses.BUTTON4_PRESSED: "-"}.get(m[4])
             if mouse_action:
                 return {'cmd': 'encoder', 'action': mouse_action, 'id': screen_no}
@@ -111,9 +112,9 @@ class Display(Thread):
     def draw_oleds(self, oled_data):
         for i in range(4):
             lines = oled_data[i]
-            num_lines = 4
-            num_chars = 16
-            win = curses.newwin(num_lines+2, num_chars+2, self.grid_y+(i*6), self.grid_w+self.grid_x + 10)
+            num_lines = 7
+            num_chars = 20
+            win = curses.newwin(num_lines+2, num_chars+2, self.grid_y+(i*8), self.grid_w+self.grid_x + 10)
             win.border()
             for x in range(num_lines):
                 win.addstr(x+1,1,lines[x])

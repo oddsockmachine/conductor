@@ -1,7 +1,3 @@
-# https://github.com/adafruit/Adafruit_CircuitPython_TCA9548A
-# https://github.com/adafruit/Adafruit_CircuitPython_SSD1306
-
-
 # Import all board pins.
 from board import SCL, SDA
 import busio
@@ -11,11 +7,38 @@ from sh1106 import SH1106_I2C
 from x_adafruit_ssd1306 import SSD1306_I2C as SH1106_I2C
 # import Mux
 import adafruit_tca9548a
-import pykka
+from pykka import ThreadingActor
 from PIL import Image, ImageDraw, ImageFont
+from buses import OLED_bus
+from interfaces.oled_abstract import OLED_abstract
 
 
-class OLED(pykka.ThreadingActor):
+class OLED_Screens(ThreadingActor, OLED_abstract):
+    """4x OLED screens
+    Send text/animations to each"""
+    def __init__(self, num_screens):
+        super().__init__()
+        self.OLED_bus = OLED_bus
+        self.i2c = None
+        self.num_screens = num_screens
+        self.screens = []
+        for i in range(num_screens):
+            oled = OLED.start(i).proxy()
+            self.screens.append(oled)
+
+    def text(self, screen_num, text):
+        """Write text to the relevant line in a particular style (highlighted, plain, inverted, etc)"""
+        if screen_num >= self.num_screens:
+            return
+        self.screens[screen_num].text(text)
+        return
+
+    def get_text(self):
+        lines = [s.get_text().get() for s in self.screens]
+        return lines
+
+
+class OLED(ThreadingActor):
 # class OLED():
     def __init__(self,id, i2c):
         super().__init__()
@@ -82,37 +105,3 @@ class OLED(pykka.ThreadingActor):
 
         self._display()
         return
-
-# Create the I2C interface.
-i2c = busio.I2C(SCL, SDA)
-tca = adafruit_tca9548a.TCA9548A(i2c)
-print(tca)
-# Create the SSD1306 OLED class.
-# TODO Hook up a separate i2c bus to the rpi
-# display = SH1106_I2C(128, 64, i2c)
-# display2 = adafruit_ssd1306.SSD1306_I2C(128, 16, tca[1])
-oled1 = OLED(2, tca[1])
-print(oled1)
-oled2 = OLED(2, tca[0])
-print(oled2)
-oled3 = OLED(2, tca[7])
-print(oled3)
-
-sleep(1)
-
-
-
-oled1.text(["hello", "world", "123456789012345678901","lol","I'm","in","QUARANTINE!"])
-oled2.text("here come that boi o shit waddup".split(' '))
-oled3.text("I'm a little teapot short and stout".split(' '))
-sleep(1)
-
-oled1.text(["hello", "world", "123456789012345678901","lol","I'm","in","QUARANTINE!"])
-oled2.text("here come that boi o shit waddup".split(' '))
-oled3.text("I'm a little teapot short and stout".split(' '))
-
-sleep(0.5)
-for i in range(7):
-    oled1.menu(["hello", "world", "123456789012345678901","lol","I'm","in","QUARANTINE!"], i)
-    oled2.menu("here come that boi o shit waddup".split(' '), i)
-    oled3.menu("I'm a little teapot short and stout".split(' '), i)

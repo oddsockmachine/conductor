@@ -16,13 +16,16 @@ class Supervisor(object):
         self.conductor = Conductor()
         self.save_on_exit = False
         self.OLED_Screens = actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
-        self.OLED_Screens.write(0, 0, "hello")
-        self.OLED_Screens.write(1, 1, "world...")
+        self.OLED_Screens.text(0, ["hello"])
+        self.OLED_Screens.text(1, ["world..."])
+        for i in range(4):
+            self.OLED_Screens.set_encoder_assignment(i, f"encoder {i}")
+        self.keep_running = True
 
     def run(self):
-        debug("Running...")
+        debug("Supervisor running...")
         self.draw()
-        while True:
+        while self.keep_running:
             if not self.button_grid_bus.empty():
                 # debug("button pressed")
                 m = self.button_grid_bus.get()
