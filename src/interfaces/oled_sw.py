@@ -33,12 +33,18 @@ class OLED_Screens(ThreadingActor, OLED_abstract):
         lines = [s.get_text().get() for s in self.screens]
         return lines
 
-    def set_encoder_assignment(self, screen_num, assignment):
+    def set_encoder_assignment(self, assignment, screen_num=None):
+        if screen_num is None:
+            for i in range(self.num_screens):
+                if len(assignment[i]) > 0:
+                    self.assignments[i] = assignment[i]
+                    self.screens[i].set_encoder_assignment(assignment[i])
+            return                
         if screen_num > self.num_screens:
             return
         self.assignments[screen_num] = assignment
         self.screens[screen_num].set_encoder_assignment(assignment)
-        pass
+        return
 
 
 

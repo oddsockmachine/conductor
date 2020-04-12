@@ -8,6 +8,6 @@ class OLED_abstract(abc.ABC):
     def get_text(self):
         pass
     @abc.abstractmethod
-    def set_encoder_assignment(self, screen_num, assignment):
+    def set_encoder_assignment(self, assignment, screen_num=None):
         pass
     

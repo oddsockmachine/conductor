@@ -19,7 +19,7 @@ class Supervisor(object):
         self.OLED_Screens.text(0, ["hello"])
         self.OLED_Screens.text(1, ["world..."])
         for i in range(4):
-            self.OLED_Screens.set_encoder_assignment(i, f"encoder {i}")
+            self.OLED_Screens.set_encoder_assignment(f"encoder {i}", i)
         self.keep_running = True
 
     def run(self):
