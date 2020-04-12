@@ -4,7 +4,7 @@ import constants as c
 from note_grid import Note_Grid
 import mido
 from screens import seq_cfg_grid_defn, generate_screen, get_cb_from_touch
-from buses import midi_out_bus, actor_registry
+from buses import midi_out_bus, proxy_registry
 
 
 class Sequencer(Instrument):
@@ -26,7 +26,7 @@ class Sequencer(Instrument):
         self.random_pages = False  # Pick page at random
         self.sustain = True  # Don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
-        OLED_Screens = actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
+        OLED_Screens = proxy_registry('OLED_Screens')
         OLED_Screens.set_encoder_assignment(['Sequencer1', '', 'Sequencer3', 'Sequencer4'])
 
     def touch_encoder(self, id, action):

@@ -7,7 +7,7 @@ locale.setlocale(locale.LC_ALL, '')
 from time import sleep
 from threading import Thread
 from color_scheme import select_scheme, next_scheme  # TODO add gbl button to cycle scheme
-from buses import bus_registry, actor_registry
+from buses import bus_registry, proxy_registry
 
 class Display(Thread):
     """docstring for Display."""
@@ -35,7 +35,7 @@ class Display(Thread):
         self.page_w = 9
         self.page_h = c.MAX_INSTRUMENTS + 2
         self.col_scheme = select_scheme('default')
-        # # self.OLED_Screens = actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
+        # self.OLED_Screens = proxy_registry('OLED_Screens')
         self.keep_running = True
         return
     

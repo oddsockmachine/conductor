@@ -1,7 +1,7 @@
 from conductor import Conductor
 from time import sleep
 from constants import debug
-from buses import actor_registry, bus_registry
+from buses import proxy_registry, bus_registry
 
 class Supervisor(object):
     """docstring for Supercell."""
@@ -15,7 +15,7 @@ class Supervisor(object):
         self.midi_clock_divider = 6
         self.conductor = Conductor()
         self.save_on_exit = False
-        self.OLED_Screens = actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
+        self.OLED_Screens = proxy_registry('OLED_Screens')
         self.OLED_Screens.text(0, ["hello"])
         self.OLED_Screens.text(1, ["world..."])
         for i in range(4):

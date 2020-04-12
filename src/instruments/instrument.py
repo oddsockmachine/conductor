@@ -10,7 +10,7 @@ from buses import midi_out_bus
 from threading import Thread
 from pykka import ThreadingActor
 from queue import Queue
-from buses import actor_registry
+from buses import proxy_registry
 
 class Instrument(ThreadingActor):
     """docstring for Instrument."""
@@ -42,7 +42,7 @@ class Instrument(ThreadingActor):
         self.pages = []
         self.chaos = 0
         self.sustain = False
-        # self.OLED_Screens = actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
+        # self.OLED_Screens = proxy_registry('OLED_Screens')
 
     # def run(self):
     #     c.debug("Instrument starting")

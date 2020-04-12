@@ -60,7 +60,6 @@ class OLED(ThreadingActor):
     
     def text(self, text):
         """Write text to the relevant line in a particular style (highlighted, plain, inverted, etc)"""
-        # self.text = ["" for l in range(self.max_lines)]
         text = text[:self.max_lines-1]
         for i in range(self.max_lines-1):
             if i >= len(text):

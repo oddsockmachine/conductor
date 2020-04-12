@@ -44,3 +44,6 @@ bus_registry.add('button_grid_bus', button_grid_bus)
 bus_registry.add('LED_grid_bus', LED_grid_bus)
 
 actor_registry = ActorRegistry
+
+def proxy_registry(name):
+    return actor_registry.get_by_class_name('OLED_Screens')[0].proxy()
