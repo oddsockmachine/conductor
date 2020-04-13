@@ -3,8 +3,22 @@ Start displaying things on oleds
 
 
 # OLED/Encoder workflows/usecases
-Always show encoder assignment on bottom line
+Always show encoder assignment on bottom line - done for sw
 Replace "lcd.flash"
+Instrument picking and adding
+  - show available instsruments on screen, scroll through, click to add
+  - Show added instruments on screen, scroll through, click to select
+Leftmost oled+enc to select modes?
+  Instrument add/select
+  Load/Save
+  Play
+  etc
+How can individual OLED obj keep track of large menu and position?
+  Pass in all menu options
+  oled shows subset of lines in moving window
+  menu_scroll moves highlight_line up/down
+  When reaches top/bottom, window also moves
+  def to get numbered item from original list
 
 
 https://github.com/adafruit/Adafruit_CircuitPython_TCA9548A

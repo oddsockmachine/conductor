@@ -42,7 +42,7 @@ class Instrument(ThreadingActor):
         self.pages = []
         self.chaos = 0
         self.sustain = False
-        # self.OLED_Screens = proxy_registry('OLED_Screens')
+        self.OLED_Screens = proxy_registry('OLED_Screens')
 
     # def run(self):
     #     c.debug("Instrument starting")
@@ -137,6 +137,11 @@ class Instrument(ThreadingActor):
 
     def touch_encoder(self, id, action):
         c.debug("Encoder {id} {action}".format(id=id, action=action))
+        scroll_dir = {"+": "up", "-": "down"}.get(action, None)
+        if scroll_dir:
+            self.OLED_Screens.menu_scroll(id,scroll_dir)
+        if action == "button":
+            c.debug(self.OLED_Screens.get_menu_item(id).get())
         return
 
     def touch_note(self, state, x, y):

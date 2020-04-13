@@ -29,11 +29,11 @@ class Sequencer(Instrument):
         OLED_Screens = proxy_registry('OLED_Screens')
         OLED_Screens.set_encoder_assignment(['Sequencer1', '', 'Sequencer3', 'Sequencer4'])
 
-    def touch_encoder(self, id, action):
-        c.debug("Encoder {id} {action}".format(id=id, action=action))
-        if id == 1 and action == '+':
-            self.octave += 1
-        return
+    # def touch_encoder(self, id, action):
+    #     c.debug("Encoder {id} {action}".format(id=id, action=action))
+    #     if id == 1 and action == '+':
+    #         self.octave += 1
+    #     return
 
     def touch_note(self, state, x, y):
         '''touch the x/y cell on the current page'''

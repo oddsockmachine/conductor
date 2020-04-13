@@ -46,7 +46,17 @@ class OLED_Screens(ThreadingActor, OLED_abstract):
         self.screens[screen_num].set_encoder_assignment(assignment)
         return
 
+    def create_menu(self, screen_num, items):
+        self.screens[screen_num].create_menu(items)
+        # debug(self.screens[screen_num].text_lines)
+        return
 
+    def menu_scroll(self, screen_num, up_down):
+        self.screens[screen_num].menu_scroll(up_down)
+        return
+
+    def get_menu_item(self, screen_num):
+        return self.screens[screen_num].get_menu_item().get()
 
 class OLED(ThreadingActor):
     def __init__(self, num):
@@ -56,6 +66,10 @@ class OLED(ThreadingActor):
         self.address = 0x00
         self.max_lines = 7
         self.max_chars = 20
+        self.menu_mode = False
+        self.menu_window_start = 0
+        self.menu_window_height = self.max_lines - 1 
+        self.highlight_line = 0
         self.text_lines = ["" for l in range(self.max_lines)]
     
     def text(self, text):
@@ -80,3 +94,63 @@ class OLED(ThreadingActor):
     def set_encoder_assignment(self, assignment):
         self.text_lines[-1] = assignment
         return
+
+    def gen_menu(self):
+        debug(str(self.menu_window_start))
+        debug(str(self.menu_window_height))
+        debug(self.menu_items[self.menu_window_start:self.menu_window_start+self.menu_window_height]   )
+        for i, item in enumerate(self.menu_items[self.menu_window_start:self.menu_window_height]):
+            if i > len(self.menu_items):
+                break
+            if i == self.highlight_line:
+                self.text_lines[i] = f">{item}"
+            else:
+                self.text_lines[i] = item
+
+    
+    def create_menu(self, items):
+        self.menu_mode = True
+        self.menu_items = items
+        self.highlight_line = 0
+        self.clear()
+        self.menu_window_start = 0
+        self.menu_window_height = self.max_lines - 1
+        self.gen_menu()
+        # for i, item in enumerate(self.menu_items[self.menu_window[0]:self.menu_window[1]]):
+        #     debug("!")
+        #     debug(i)
+        #     if i > len(self.menu_items):
+        #         break
+        #     if i == self.highlight_line:
+        #         self.text_lines[i] = f">{item}"
+        #     else:
+        #         debug(i)
+        #         debug(item)
+        #         self.text_lines[i] = item
+        return
+
+    def menu_scroll(self, up_down):
+        if not self.menu_mode:
+            return
+        debug(f"scroll {up_down}")
+        if up_down == "up" and self.highlight_line > 0:
+            if self.highlight_line == self.menu_window_start:
+                debug("<<")
+                self.menu_window_start -= 1
+            else:
+                self.highlight_line -= 1
+            # self.highlight_line -= 1
+        elif up_down == "down" and self.highlight_line < len(self.menu_items):
+            if self.highlight_line == self.menu_window_height:
+                debug(">>")
+                self.menu_window_start +=1 
+            else:
+                self.highlight_line += 1
+            # self.highlight_line += 1
+        debug(f"hi {self.highlight_line}")
+        self.gen_menu()
+        return
+
+    def get_menu_item(self):
+        num = self.highlight_line + self.menu_window_start
+        return (num, self.menu_items[num])

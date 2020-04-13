@@ -16,10 +16,10 @@ class Supervisor(object):
         self.conductor = Conductor()
         self.save_on_exit = False
         self.OLED_Screens = proxy_registry('OLED_Screens')
-        self.OLED_Screens.text(0, ["hello"])
         self.OLED_Screens.text(1, ["world..."])
         for i in range(4):
             self.OLED_Screens.set_encoder_assignment(f"encoder {i}", i)
+        self.OLED_Screens.create_menu(2, ['a','b','c','d','e','f','g','h','i','j','k'])
         self.keep_running = True
 
     def run(self):

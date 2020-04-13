@@ -168,7 +168,6 @@ class Conductor(object):
 
     def touch_encoder(self, id, action):
         self.get_curr_instrument().touch_encoder(id, action)
-        # self.get_curr_instrument().instrument_cmd_bus.put("bar1")
 
     def touch_note(self, x, y):
         if self.current_state in ['play', 'ins_cfg']:

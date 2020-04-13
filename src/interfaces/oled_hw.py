@@ -49,6 +49,7 @@ class OLED(ThreadingActor):
         print(i2c)
         self.i2c = i2c
         self.style = ""
+        self.highlight_line = 0
         self.SH1106 = SH1106_I2C(self.w, self.h, self.i2c)#, addr=0x70)
         self.image = Image.new('1', (self.w, self.h))
         self.draw = ImageDraw.Draw(self.image)
@@ -99,9 +100,9 @@ class OLED(ThreadingActor):
         self.clear()
         self._background()
         self._write_lines(text_lines)
+        self.highlight_line = highlight_line
         i = highlight_line
         self.draw.rectangle((0, (i)*8+2, self.w-2, ((i+1)*8+2)), outline=1, fill=1)
         self.draw.text((2, 1+(i*8)), self._truncate_text(text_lines[i]), font=self.font, fill=0)
-
         self._display()
         return

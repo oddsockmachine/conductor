@@ -10,4 +10,6 @@ class OLED_abstract(abc.ABC):
     @abc.abstractmethod
     def set_encoder_assignment(self, assignment, screen_num=None):
         pass
-    
+    @abc.abstractmethod
+    def menu_scroll(self, screen_num, up_down):
+        pass
