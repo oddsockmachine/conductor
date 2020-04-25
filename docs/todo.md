@@ -1,6 +1,7 @@
 Fix BPM/clock and speed selection
 Start displaying things on oleds
 
+!! Pass callbacks to menu items !!
 
 # OLED/Encoder workflows/usecases
 Always show encoder assignment on bottom line - done for sw
@@ -13,12 +14,9 @@ Leftmost oled+enc to select modes?
   Load/Save
   Play
   etc
-How can individual OLED obj keep track of large menu and position?
-  Pass in all menu options
-  oled shows subset of lines in moving window
-  menu_scroll moves highlight_line up/down
-  When reaches top/bottom, window also moves
-  def to get numbered item from original list
+
+Rightmost as status/msgs? What about the encoder?
+
 
 
 https://github.com/adafruit/Adafruit_CircuitPython_TCA9548A

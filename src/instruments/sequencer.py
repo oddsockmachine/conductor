@@ -27,7 +27,7 @@ class Sequencer(Instrument):
         self.sustain = True  # Don't retrigger notes if this is True
         self.pages = [Note_Grid(self.bars, self.height)]
         OLED_Screens = proxy_registry('OLED_Screens')
-        OLED_Screens.set_encoder_assignment(['Sequencer1', '', 'Sequencer3', 'Sequencer4'])
+        # OLED_Screens.set_encoder_assignment(['Sequencer1', '', 'Sequencer3', 'Sequencer4'])
 
     # def touch_encoder(self, id, action):
     #     c.debug("Encoder {id} {action}".format(id=id, action=action))

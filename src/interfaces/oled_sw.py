@@ -48,7 +48,6 @@ class OLED_Screens(ThreadingActor, OLED_abstract):
 
     def create_menu(self, screen_num, items):
         self.screens[screen_num].create_menu(items)
-        # debug(self.screens[screen_num].text_lines)
         return
 
     def menu_scroll(self, screen_num, up_down):
@@ -57,6 +56,9 @@ class OLED_Screens(ThreadingActor, OLED_abstract):
 
     def get_menu_item(self, screen_num):
         return self.screens[screen_num].get_menu_item().get()
+
+    def touch(self, screen_num):
+        return self.screens[screen_num].touch().get()
 
 class OLED(ThreadingActor):
     def __init__(self, num):
@@ -94,13 +96,17 @@ class OLED(ThreadingActor):
         return self.text_lines
 
     def set_encoder_assignment(self, assignment):
+        if len(assignment) < self.max_chars:
+            diff = self.max_chars - len(assignment)
+            l = int(diff/2)
+            r = l + ((diff % 2) > 0)
+            assignment = l*'-' + assignment + r*'-'
+            
         self.assignment = assignment
         self.text_lines[-1] = assignment
         return
 
     def gen_menu(self):
-        # debug(f"window: {self.menu_window_start}:{self.menu_window_start+self.menu_window_height}")
-        # debug(f"items: {self.menu_items[self.menu_window_start:self.menu_window_start+self.menu_window_height]}")
         for i, item in enumerate(self.menu_items[self.menu_window_start:self.menu_window_start+self.menu_window_height]):
             if i > len(self.menu_items):
                 break
@@ -109,7 +115,6 @@ class OLED(ThreadingActor):
             else:
                 self.text_lines[i] = item
         self.text_lines[(self.max_lines-1)] = self.assignment
-        # debug(self.text_lines)
 
     
     def create_menu(self, items):
@@ -134,11 +139,14 @@ class OLED(ThreadingActor):
         elif self.highlight_line < self.menu_window_start:
             self.menu_window_start -= 1
         self.gen_menu()
-        # debug(self.get_menu_item())
         return
 
     def get_menu_item(self):
         num = self.highlight_line # + self.menu_window_start
-        debug(self.highlight_line)
-        debug(self.menu_window_start)
         return (num, self.menu_items[num])
+
+    def touch(self):
+        if self.menu_mode:
+            return self.get_menu_item()
+        else:
+            debug(f"touched encoder {self.num}")

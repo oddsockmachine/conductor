@@ -141,7 +141,7 @@ class Instrument(ThreadingActor):
         if scroll_dir:
             self.OLED_Screens.menu_scroll(id,scroll_dir)
         if action == "button":
-            c.debug(self.OLED_Screens.get_menu_item(id).get())
+            c.debug(self.OLED_Screens.touch(id).get())
         return
 
     def touch_note(self, state, x, y):

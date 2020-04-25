@@ -27,10 +27,14 @@ class Conductor(object):
         self.instruments = []
         # i = instrument_lookup(4).start(ins_num=0, **self.instrument_ctx()).proxy()
         # self.instruments[0].start()
-        self.instruments.append(instrument_lookup(4).start(ins_num=0, **self.instrument_ctx()).proxy())
+        self.instruments.append(instrument_lookup(1).start(ins_num=0, **self.instrument_ctx()).proxy())
         self.instruments.append(instrument_lookup(2).start(ins_num=1, **self.instrument_ctx()).proxy())
-        self.instruments.append(instrument_lookup(1).start(ins_num=2, **self.instrument_ctx()).proxy())
+        self.instruments.append(instrument_lookup(3).start(ins_num=2, **self.instrument_ctx()).proxy())
+        self.instruments.append(instrument_lookup(4).start(ins_num=3, **self.instrument_ctx()).proxy())
+        self.instruments.append(instrument_lookup(5).start(ins_num=3, **self.instrument_ctx()).proxy())
         self.instruments.append(instrument_lookup(6).start(ins_num=3, **self.instrument_ctx()).proxy())
+        self.instruments.append(instrument_lookup(7).start(ins_num=3, **self.instrument_ctx()).proxy())
+        self.instruments.append(instrument_lookup(8).start(ins_num=3, **self.instrument_ctx()).proxy())
         self.current_visible_instrument_num = 0
         self.current_state = 'load'  # Current state to be shown on display(s)
 

@@ -13,3 +13,12 @@ class OLED_abstract(abc.ABC):
     @abc.abstractmethod
     def menu_scroll(self, screen_num, up_down):
         pass
+    @abc.abstractmethod
+    def create_menu(self, screen_num, items):
+        pass
+    @abc.abstractmethod
+    def get_menu_item(self, screen_num):
+        pass
+    @abc.abstractmethod
+    def touch(self, screen_num):
+        pass

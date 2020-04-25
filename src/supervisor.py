@@ -18,7 +18,8 @@ class Supervisor(object):
         self.OLED_Screens = proxy_registry('OLED_Screens')
         self.OLED_Screens.text(1, ["world..."])
         # for i in range(4):
-            # self.OLED_Screens.set_encoder_assignment(f"encoder {i}", i)
+        self.OLED_Screens.set_encoder_assignment(f"Select Mode", 0)
+        self.OLED_Screens.create_menu(0, ['Play','Select Instrument','Add Instrument','Load','Save','Quit'])
         self.OLED_Screens.create_menu(2, ['a','b','c','d','e','f','g','h','i','j','k'])
         self.keep_running = True
 
