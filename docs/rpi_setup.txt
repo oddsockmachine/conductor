@@ -4,22 +4,14 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfiP1UWlRcexJbep5kD1ju89eegLintJs5WM
 
 # i2c
 sudo apt-get update
-sudo apt-get install -y git vim
-sudo apt-get install -y python3-smbus
+sudo apt-get install -y git vim python3-smbus i2c-tools libopenjp2-7-dev libtiff5 libasound2-dev python3-pip python3-venv libjpeg-dev
 python3 --version
-sudo apt-get install -y i2c-tools
-sudo apt-get install -y libopenjp2-7-dev
-sudo apt-get install -y libtiff5
 echo "interfacing > i2c > enable"
 sleep(10)
 
 sudo raspi-config
 	enable spi, i2c, gpio
 
-# For ubuntu
-sudo add-apt-repository ppa:ubuntu-pi-flavour-makers/ppa
-sudo apt update
-sudo apt install raspi-config -y
 
 sudo vim /etc/modules
 	i2c-dev
@@ -28,7 +20,6 @@ sudo vim /etc/modules
 sudo vim /boot/config.txt
 dtparam=spi=on
 
-sudo apt-get install libasound2-dev
 
 sudo reboot
 

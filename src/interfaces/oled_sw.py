@@ -74,6 +74,7 @@ class OLED(ThreadingActor):
         self.highlight_line = 0
         self.text_lines = ["" for l in range(self.max_lines)]
         self.assignment = f"_encoder_{self.num}_"
+        self.callbacks = []
     
     def text(self, text):
         """Write text to the relevant line in a particular style (highlighted, plain, inverted, etc)"""
@@ -117,7 +118,7 @@ class OLED(ThreadingActor):
         self.text_lines[(self.max_lines-1)] = self.assignment
 
     
-    def create_menu(self, items):
+    def create_menu(self, items, callbacks=None):
         self.menu_mode = True
         self.menu_items = items
         self.highlight_line = 0
@@ -125,6 +126,8 @@ class OLED(ThreadingActor):
         self.menu_window_start = 0
         self.menu_window_height = self.max_lines - 1
         self.gen_menu()
+        if callbacks:
+            self.callbacks = callbacks
         return
 
     def menu_scroll(self, up_down):
