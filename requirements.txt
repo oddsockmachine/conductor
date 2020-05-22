@@ -6,6 +6,7 @@ adafruit-circuitpython-seesaw==1.2.6
 adafruit-circuitpython-ssd1306==2.7.3
 Adafruit-GPIO==1.0.3
 Adafruit-PureIO==0.2.3
+adafruit-circuitpython-tca9548a==0.3.1
 aiofiles==0.4.0
 aiohttp==3.6.1
 astroid==2.3.1
